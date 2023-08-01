@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "start-pm2": "pm2 start src/index.js --name chat-app -i max && pm2 monit",
+    "start-pm2": "pm2 start src/index.js --name chat-app -i max && pm2 ls --watch",
     "dev": "nodemon src/index.js"
   },
   "repository": {
