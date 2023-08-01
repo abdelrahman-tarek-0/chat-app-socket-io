@@ -1,18 +1,26 @@
-const _path = require('path');
-const express = require('express');
-const cors = require('cors');
-const app = express();
+const { port, localIp, localHost } = require('./config/app.config')
 
-const port = process.env.PORT || 3000;
+process.on('uncaughtException', (err) => {
+   console.log('UNCAUGHT EXCEPTION! 💥 Shutting down...')
+   console.log(err.name, err.message)
+   process.exit(1)
+})
 
-app.use(cors());
+// init the serve
+const app = require('./app/app')
 
-app.use(express.static(_path.join(__dirname, 'public')));
+// connect to the server after the database is connected
+const locally = 'locally on ' + localHost
+const onNetwork = 'the network on ' + localIp
 
-app.get('/', (req, res) => {
-    res.sendFile(_path.join(__dirname, 'public','pages', 'index.html'));
-});
+server = app.listen(port, () => {
+   console.log(`server is running \n${locally}\n${onNetwork}`)
+})
 
-app.listen(port, () => {
-    console.log(`Server running at \x1b[33m http://localhost:${port} \x1b[0m`);
-});
+process.on('unhandledRejection', (err) => {
+   console.log('UNHANDLED REJECTION! 💥 Shutting down...')
+   console.log(err.name, err.message)
+   server.close(() => {
+      process.exit(1)
+   })
+})
