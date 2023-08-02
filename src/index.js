@@ -6,16 +6,15 @@ process.on('uncaughtException', (err) => {
    process.exit(1)
 })
 
-// init the serve
 const app = require('./app/app')
 
-// connect to the server after the database is connected
 
 server = app.listen(port, () => {
    const locally = 'locally on ' + localHost
    const onNetwork = 'the network on ' + localIp
    console.log(`server is running \n${locally}\n${onNetwork}`)
 })
+
 
 process.on('unhandledRejection', (err) => {
    console.log('UNHANDLED REJECTION! 💥 Shutting down...')
