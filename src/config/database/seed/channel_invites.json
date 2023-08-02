@@ -1,1 +1,32 @@
-[]
+[
+    {
+      "id": "b83fb775-0d66-4c11-bc1c-755748a2c54c",
+      "channel_id": "76a9ac16-e235-4a57-96c0-1a1ee9d27452",
+      "creator_id": "ab9df44f-376c-47bf-9862-1b4e1bdf1a5d",
+      "type": "general",
+      "target_id": null,
+      "expires_at": "2023-08-12T12:00:00Z",
+      "created_at": "2023-08-08T08:00:00Z",
+      "updated_at": "2023-08-08T08:00:00Z"
+    },
+    {
+      "id": "3e9b65f5-059e-4780-aa0a-68920f4a34ac",
+      "channel_id": "76a9ac16-e235-4a57-96c0-1a1ee9d27452",
+      "creator_id": "d8e8f8d9-8877-6543-9abc-987654321001",
+      "type": "directed",
+      "target_id": "e597afaa-275d-48b3-a5ce-25fbfe10e50c",
+      "expires_at": "2023-08-15T14:30:00Z",
+      "created_at": "2023-08-08T10:30:00Z",
+      "updated_at": "2023-08-08T10:30:00Z"
+    },
+    {
+      "id": "c55f6f57-5d91-4e6a-a557-efad2d179c6b",
+      "channel_id": "bfc51c52-c676-4a21-9df4-5a25ec4e6c87",
+      "creator_id": "e597afaa-275d-48b3-a5ce-25fbfe10e50c",
+      "type": "general",
+      "target_id": null,
+      "expires_at": "2023-08-20T16:45:00Z",
+      "created_at": "2023-08-09T12:45:00Z",
+      "updated_at": "2023-08-09T12:45:00Z"
+    }
+  ]

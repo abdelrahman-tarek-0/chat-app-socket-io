@@ -4,6 +4,10 @@ const channelsInvites = require('./channel_invites.json')
 const channelsMembers = require('./channel_members.json')
 const verifications = require('./verifications.json')
 
+
+
+// the seed data is created by chatgpt ai
+
 const tableMapping = {
    users: users,
    verifications: verifications,

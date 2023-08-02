@@ -1,1 +1,77 @@
-[]
+[
+   {
+      "id": "e597afaa-275d-48b3-a5ce-25fbfe10e50c",
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "email_verified": true,
+      "password": "securepassword1",
+      "image_url": "default.png",
+      "phone_number": "1234-56789012",
+      "role": "user",
+      "is_active": true,
+      "tokenizer": "a1b2c3d4",
+      "last_password_change_at": "2023-08-03T12:00:00Z",
+      "created_at": "2023-08-03T08:00:00Z",
+      "updated_at": "2023-08-03T08:00:00Z"
+   },
+   {
+      "id": "ab9df44f-376c-47bf-9862-1b4e1bdf1a5d",
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com",
+      "email_verified": true,
+      "password": "strongpassword2",
+      "image_url": "default.png",
+      "phone_number": "9876-54321098",
+      "role": "admin",
+      "is_active": true,
+      "tokenizer": "e5f6g7h8",
+      "last_password_change_at": "2023-08-02T14:30:00Z",
+      "created_at": "2023-08-02T10:15:00Z",
+      "updated_at": "2023-08-02T10:15:00Z"
+   },
+   {
+      "id": "6cd998d7-867c-4c37-9e66-688394a9f578",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "email_verified": false,
+      "password": "password3",
+      "image_url": "default.png",
+      "phone_number": "1111-22223333",
+      "role": "moderator",
+      "is_active": false,
+      "tokenizer": "i9j0k1l2",
+      "last_password_change_at": "2023-07-31T18:45:00Z",
+      "created_at": "2023-07-31T15:30:00Z",
+      "updated_at": "2023-07-31T15:30:00Z"
+   },
+   {
+      "id": "d8e8f8d9-8877-6543-9abc-987654321001",
+      "name": "Bob Johnson",
+      "email": "bob.johnson@example.com",
+      "email_verified": true,
+      "password": "password4",
+      "image_url": "default.png",
+      "phone_number": "4444-55556666",
+      "role": "user",
+      "is_active": true,
+      "tokenizer": "m3n4o5p6",
+      "last_password_change_at": "2023-08-04T10:00:00Z",
+      "created_at": "2023-08-04T08:30:00Z",
+      "updated_at": "2023-08-04T08:30:00Z"
+   },
+   {
+      "id": "098a7b6c-5432-1abc-2345-def67890fff0",
+      "name": "Emily Williams",
+      "email": "emily.williams@example.com",
+      "email_verified": true,
+      "password": "strongpassword5",
+      "image_url": "default.png",
+      "phone_number": "7777-88889999",
+      "role": "admin",
+      "is_active": true,
+      "tokenizer": "q7r8s9t0",
+      "last_password_change_at": "2023-08-04T15:45:00Z",
+      "created_at": "2023-08-04T12:30:00Z",
+      "updated_at": "2023-08-04T12:30:00Z"
+   }
+]
