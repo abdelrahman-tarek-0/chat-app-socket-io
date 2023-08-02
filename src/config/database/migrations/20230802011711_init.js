@@ -34,11 +34,28 @@ exports.up = function (knex) {
             .defaultTo('default.png')
             .checkLength('<', 511, 'image_url_invalid_length_greater_than_511')
 
-   
+         table
+            .string('phone_number')
+            .notNullable()
+            .unique()
+            .checkRegex(
+               '^[0-9]{1,4}-[0-9]{8,15}$',
+               'phone_number_invalid_format'
+            )
+
+         table
+            .string('role')
+            .defaultTo('user')
+            .checkIn(
+               ['user', 'admin', 'moderator', 'super_admin'],
+               'role_invalid_value'
+            )
+
          table.timestamps(true, true)
       })
    )
 }
+
 
 /**
  * @param { import("knex").Knex } knex
