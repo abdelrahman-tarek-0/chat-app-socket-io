@@ -28,4 +28,5 @@ app.use('/api/v1', router)
 // Rich Text editor 
 // OAuth2
 // response builder
+// add yo user a 'display name' and 'username' fields one for the user to see and the other for the user to use to invite other users to the channels
 module.exports = app

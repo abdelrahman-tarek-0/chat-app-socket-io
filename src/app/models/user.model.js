@@ -1,10 +1,10 @@
 const db = require('../../config/database/db')
 
 class User {
-   static async create({ name, email, password, image_url, phone_number }) {
+   static async signup({ name, email, password, image_url, phone_number }) {
       const tokenizer = Math.random().toString(36).substring(2, 10)
 
-      const user_id = await db('users')
+      const user = await db('users')
          .insert({
             name,
             email,
@@ -13,18 +13,29 @@ class User {
             phone_number,
             tokenizer,
          })
-         .returning('id')
+         .returning('*')
 
-      return {
-         user: {
-            id: user_id[0].id,
-            name,
-            email,
-            image_url,
-            phone_number,
-         },
-         tokenizer,
-      }
+      return user[0]
+   }
+   static async login(email, password) {
+      const user = await db('users')
+         .select('*')
+         .where('email', '=', email)
+         .andWhere('password', '=', password)
+         .first()
+
+      return user
+   }
+
+   static async getUser(index, type) {
+      const user = await db('users')
+         .select('*')
+         .where({
+            [type]: index,
+         })
+         .first()
+
+      return user
    }
 }
 
