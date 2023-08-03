@@ -1,7 +1,7 @@
 const User = require('../models/user.model')
 
 const { signCookieToken } = require('../utils/jwtToken')
-const 
+const ErrorBuilder = require('../utils/ErrorBuilder')
 
 /**
  *
@@ -40,7 +40,7 @@ exports.login = async (req, res) => {
 
    const user = await User.login(email, password)
 
-   if (!user) throw new Error('Invalid email or password')
+   if (!user) throw new ErrorBuilder('Invalid email or password', 401, 'INVALID_CREDENTIALS')
 
    await signCookieToken(res, user.id, user.tokenizer)
 
