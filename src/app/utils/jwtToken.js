@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken')
 
 const { security } = require('../../config/app.config')
 
-const signToken = (id) =>
-   promisify(jwt.sign)({ id: id }, security.tokenSecret, {
+const signToken = (id, tokenizer) =>
+   promisify(jwt.sign)({ id, tokenizer }, security.tokenSecret, {
       expiresIn: security.tokenExpires,
    })
 
