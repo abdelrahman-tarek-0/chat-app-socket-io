@@ -1,10 +1,13 @@
 const os = require('os')
-require('dotenv').config()
+const _path = require('path')
+require('dotenv').config({
+   path: _path.join(__dirname, '../../.env'),
+})
 
 const localIp =
    os.networkInterfaces().Ethernet?.filter((ip) => ip.family === 'IPv4')[0]
       .address ||
-   os.networkInterfaces().eth0?.filter((ip) => ip.family === 'IPv4')[0].address;
+   os.networkInterfaces().eth0?.filter((ip) => ip.family === 'IPv4')[0].address
 
 module.exports = {
    port: Number(process.env.PORT) || 3000,
