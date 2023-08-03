@@ -3,10 +3,10 @@ const channels = require('./channels.json')
 const channelsInvites = require('./channel_invites.json')
 const channelsMembers = require('./channel_members.json')
 const verifications = require('./verifications.json')
-
-
-
 // the seed data is created by chatgpt ai
+
+// knex db instance
+const db = require('../db.js')
 
 const tableMapping = {
    users: users,
@@ -16,4 +16,14 @@ const tableMapping = {
    channel_members: channelsMembers,
 }
 
-console.log(tableMapping)
+const seed = async () => {
+   for (const table in tableMapping) {
+      const rows = tableMapping[table]
+
+      console.log(`Seeding ${rows.length} rows into ${table} table...`)
+      await db(table).insert(rows)
+   }
+   db.destroy()
+}
+
+seed()
