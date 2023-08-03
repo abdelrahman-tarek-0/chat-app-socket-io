@@ -8,6 +8,7 @@ const verifications = require('./verifications.json')
 // knex db instance
 const db = require('../db.js')
 
+
 const tableMapping = {
    users: users,
    verifications: verifications,
