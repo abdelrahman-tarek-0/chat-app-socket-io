@@ -6,7 +6,7 @@
  * @returns {Error} - the error object
  * @example ErrorBuilder('Invalid email or password', 401, 'INVALID_CREDENTIALS')
  */
-export class ErrorBuilder extends Error {
+class ErrorBuilder extends Error {
    constructor(message, statusCode, code) {
       super()
       this.code = code || null
@@ -18,3 +18,5 @@ export class ErrorBuilder extends Error {
       Error.captureStackTrace(this, this.constructor)
    }
 }
+
+module.exports = ErrorBuilder
