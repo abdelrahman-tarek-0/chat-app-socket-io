@@ -3,6 +3,7 @@ const _path = require('path')
 const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const logger = require('./middlewares/logger.middleware')
 
 const router = require('./routes/index.routes')
 
@@ -15,17 +16,18 @@ app.use(cookieParser())
 
 app.use(express.static(_path.join(__dirname, '..', 'public')))
 
+app.use(logger())
+
 app.get('/', (req, res) => {
    res.sendFile(_path.join(__dirname, '..', 'public', 'pages', 'index.html'))
 })
 
 app.use('/api/v1', router)
 
-
 // TODO
 // replaying to message with a message in chat
 // mentioning a user in chat using discord's mention syntax, content: "hello <@{{USER_ID}}> how are you?"
-// Rich Text editor 
+// Rich Text editor
 // OAuth2
 // response builder
 // add yo user a 'display name' and 'username' fields one for the user to see and the other for the user to use to invite other users to the channels
