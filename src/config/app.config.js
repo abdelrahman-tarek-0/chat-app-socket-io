@@ -16,7 +16,11 @@ module.exports = {
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      poolMin :Number(process.env.DB_POOL_MIN) || 2,
-      poolMax : Number(process.env.DB_POOL_MAX)|| 10,
-   }
+      poolMin: Number(process.env.DB_POOL_MIN) || 2,
+      poolMax: Number(process.env.DB_POOL_MAX) || 10,
+   },
+   security: {
+      tokenSecret: process.env.JWT_SECRET,
+      tokenExpires: process.env.JWT_EXPIRE,
+   },
 }
