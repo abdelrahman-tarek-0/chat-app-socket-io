@@ -39,7 +39,7 @@ exports.login = async (req, res) => {
 
    const user = await User.login(email, password)
 
-   if (!user) throw new Error('Invalid email or password');
+   if (!user) throw new Error('Invalid email or password')
 
    await signCookieToken(res, user.id, user.tokenizer)
 
@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
             email: user.email,
             image_url: user.image_url,
             phone_number: user.phone_number,
-         }
+         },
       },
    })
 }
