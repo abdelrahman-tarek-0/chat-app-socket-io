@@ -3,13 +3,19 @@ const { promisify } = require('util')
 
 const { security, env } = require('../../config/app.config')
 
+const verifyToken = (token) =>
+   promisify(jwt.verify)(token, security.tokenSecret)
+
+const verifyCookieToken = async (req) => {
+   const token = req?.cookies?.token
+   if (!token) return null
+   return await verifyToken(token)
+}
+
 const signToken = (id, tokenizer) =>
    promisify(jwt.sign)({ id, tokenizer }, security.tokenSecret, {
       expiresIn: security.tokenExpires,
    })
-
-const verifyToken = (token) =>
-   promisify(jwt.verify)(token, security.tokenSecret)
 
 const setCookieToken = (res, token) => {
    res.cookie('token', token, {
@@ -18,16 +24,9 @@ const setCookieToken = (res, token) => {
       secure: env === 'production',
    })
 }
-
-const verifyCookieToken = (req) => {
-   const token = req.cookies.token
-   if (!token) return null
-   return verifyToken(token)
-}
-
-const signCookieToken = (req, id, tokenizer) => {
-   const token = signToken(id, tokenizer)
-   setCookieToken(req, token)
+const signCookieToken = async (res, id, tokenizer) => {
+   const token = await signToken(id, tokenizer)
+   setCookieToken(res, token)
    return token
 }
 
