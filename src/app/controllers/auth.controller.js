@@ -2,13 +2,14 @@ const User = require('../models/user.model')
 
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
+const catchAsync = require('../utils/catchAsync')
 
 /**
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-exports.signup = async (req, res) => {
+exports.signup = catchAsync(async (req, res) => {
    const { name, email, password, image_url, phone_number } = req.body
 
    const user = await User.signup({
@@ -33,9 +34,9 @@ exports.signup = async (req, res) => {
          },
       },
    })
-}
+})
 
-exports.login = async (req, res) => {
+exports.login = catchAsync(async (req, res) => {
    const { email, password } = req.body
 
    const user = await User.login(email, password)
@@ -56,4 +57,4 @@ exports.login = async (req, res) => {
          },
       },
    })
-}
+})
