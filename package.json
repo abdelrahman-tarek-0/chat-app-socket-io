@@ -13,7 +13,8 @@
 
     "migrate:up": " knex migrate:latest --knexfile src/config/database/knexfile.js --env production",
     "migrate:down": "knex migrate:rollback --knexfile src/config/database/knexfile.js --env production",
-    "migrate:reset":"npm run migrate:down && npm run migrate:up"
+    "migrate:reset":"npm run migrate:down && npm run migrate:up",
+    "seed": "npm run migrate:reset && node src/config/database/seed/seeder.js"
   },
   "repository": {
     "type": "git",
