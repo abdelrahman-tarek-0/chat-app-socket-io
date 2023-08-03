@@ -1,9 +1,11 @@
 const db = require('../../config/database/db')
+const { hashPassword,comparePassword } = require('../utils/passwordHash')
 
 class User {
    static async signup({ name, email, password, image_url, phone_number }) {
       const tokenizer = Math.random().toString(36).substring(2, 10)
 
+      password = await hashPassword(password);
       const user = await db('users')
          .insert({
             name,
@@ -21,9 +23,10 @@ class User {
       const user = await db('users')
          .select('*')
          .where('email', '=', email)
-         .andWhere('password', '=', password)
          .first()
 
+      if (!user || !(await comparePassword(password, user.password))) return null
+      
       return user
    }
 

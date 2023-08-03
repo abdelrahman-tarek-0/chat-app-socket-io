@@ -31,5 +31,6 @@ module.exports = {
             Date.now() + Number(process.env.COOKIE_EXPIRE_IN_H) * 60 * 60 * 1000
          )
       },
+      bcryptSalt: Number(process.env.BCRYPT_SALT),
    },
 }
