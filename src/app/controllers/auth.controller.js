@@ -36,6 +36,11 @@ exports.signup = catchAsync(async (req, res) => {
    })
 })
 
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
 exports.login = catchAsync(async (req, res) => {
    const { email, password } = req.body
 
