@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken')
+const { promisify } = require('util')
 
 const { security } = require('../../config/app.config')
 
