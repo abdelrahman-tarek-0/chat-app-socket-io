@@ -51,7 +51,7 @@ const logger = () => (req, res, next) => {
       const finish = now('millie')
       const took = (finish - start).toFixed(3)
       console.log(
-         ` ${textColors(req.method, colorMethodMap[req.method])} ${textColors(
+         `${textColors(req.method, colorMethodMap[req.method])} ${textColors(
             req.originalUrl,
             'Cyan'
          )} ${textColors(
