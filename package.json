@@ -6,13 +6,19 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+
     "start-pm2": "pm2 start src/index.js --name chat-app -i max && pm2 ls --watch",
     "start-pm2-dev": "pm2 start src/index.js --name chat-app -i 4  && pm2 ls --watch",
     "reset-pm2": "pm2 delete chat-app && npm run start-pm2-dev",
+
     "migrate:up": " knex migrate:latest --knexfile src/config/database/knexfile.js --env production",
     "migrate:down": "knex migrate:rollback --knexfile src/config/database/knexfile.js --env production",
     "migrate:reset": "npm run migrate:down && npm run migrate:up",
-    "seed": "npm run migrate:reset && node src/config/database/seed/seeder.js"
+    "seed": "npm run migrate:reset && node src/config/database/seed/seeder.js",
+
+    "eslint": "eslint --ext .js,.jsx src/**/*.js --fix",
+    "prettier": "prettier --write src/**/*.js",
+    "format": "npm run prettier && npm run eslint"
   },
   "repository": {
     "type": "git",
@@ -37,6 +43,15 @@
     "pm2": "^5.3.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "eslint": "^8.46.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-import": "^2.28.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-react": "^7.33.1",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.1"
   }
 }
