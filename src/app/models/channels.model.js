@@ -1,7 +1,7 @@
 const db = require('../../config/database/db')
 
 class Channel {
-   static async getChannelMetadata(channelId, creatorId) {
+   static async getChannel(channelId, creatorId) {
       if (!channelId) return null
 
       const channel = await db('channels')
