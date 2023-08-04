@@ -55,4 +55,5 @@ app.use((req, res) => {
 // channel have a display name and a channel_name
 // is email case sensitive ?
 // who can change the channel info ? (only the owner for now)
+// when user send image must check if the image is valid not just the extension (if the image is link or buffer)
 module.exports = app

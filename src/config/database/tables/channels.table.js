@@ -21,7 +21,7 @@ exports.channels = (knex) => (table) => {
 
    table
       .string('image_url')
-      .notNullable()
+      .defaultTo('default_channel.png')
       .checkLength('<', 511, 'image_url_invalid_length_greater_than_511')
 
    table
@@ -31,7 +31,7 @@ exports.channels = (knex) => (table) => {
 
    table
       .string('type')
-      .defaultTo('public')
+      .notNullable() 
       .checkIn(['public', 'private'], 'type_invalid_value')
 
    table.timestamps(true, true)
