@@ -69,24 +69,6 @@ class User {
       return { ...user, last_password_change_at: undefined }
    }
 
-   /** NOT SAFE (ADMINS ONLY) */
-   static async getUser(index, type) {
-      const user = await db('users')
-         .select('*')
-         .where({
-            [type]: index,
-         })
-         .first()
-
-      return user
-   }
-
-   /** NOT SAFE (ADMINS ONLY) */
-   static async getAllUsers() {
-      const users = await db('users').select('*')
-
-      return users
-   }
 }
 
 module.exports = User
