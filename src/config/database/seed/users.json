@@ -2,6 +2,7 @@
    {
       "id": "e597afaa-275d-48b3-a5ce-25fbfe10e50c",
       "name": "John Doe",
+      "bio":"hello my name is John Doe",
       "email": "john.doe@example.com",
       "email_verified": true,
       "password": "$2b$12$/ufYPAKoLeBECbS6XXNeXuj4uapQu0Ld3GWTDeXLNLUh6KeR/9N0y",
@@ -17,6 +18,7 @@
    {
       "id": "ab9df44f-376c-47bf-9862-1b4e1bdf1a5d",
       "name": "Jane Smith",
+      "bio":"hello my name is Jane Smith",
       "email": "jane.smith@example.com",
       "email_verified": true,
       "password": "$2b$12$/ufYPAKoLeBECbS6XXNeXuj4uapQu0Ld3GWTDeXLNLUh6KeR/9N0y",
@@ -32,6 +34,7 @@
    {
       "id": "6cd998d7-867c-4c37-9e66-688394a9f578",
       "name": "Alice Johnson",
+      "bio":"hello my name is Alice Johnson",
       "email": "alice.johnson@example.com",
       "email_verified": false,
       "password": "$2b$12$/ufYPAKoLeBECbS6XXNeXuj4uapQu0Ld3GWTDeXLNLUh6KeR/9N0y",
@@ -47,6 +50,7 @@
    {
       "id": "d8e8f8d9-8877-6543-9abc-987654321001",
       "name": "Bob Johnson",
+      "bio":"hello my name is Bob Johnson",
       "email": "bob.johnson@example.com",
       "email_verified": true,
       "password": "$2b$12$/ufYPAKoLeBECbS6XXNeXuj4uapQu0Ld3GWTDeXLNLUh6KeR/9N0y",
@@ -62,6 +66,7 @@
    {
       "id": "098a7b6c-5432-1abc-2345-def67890fff0",
       "name": "Emily Williams",
+      "bio":"hello my name is Emily Williams",
       "email": "emily.williams@example.com",
       "email_verified": true,
       "password": "$2b$12$/ufYPAKoLeBECbS6XXNeXuj4uapQu0Ld3GWTDeXLNLUh6KeR/9N0y",

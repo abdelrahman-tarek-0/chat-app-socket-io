@@ -1,4 +1,3 @@
-
 exports.users = (knex) => (table) => {
    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
    table.increments('raw_id').unique().unsigned().notNullable()
@@ -44,13 +43,20 @@ exports.users = (knex) => (table) => {
          'role_invalid_value'
       )
 
+   table
+      .string('bio')
+      .defaultTo('')
+      .checkLength('<', 255, 'bio_invalid_length_greater_than_255')
+
    table.boolean('is_active').defaultTo(true)
    table.string('tokenizer').defaultTo('')
 
-   table.timestamp('last_password_change_at').defaultTo(knex.fn.now()).notNullable()
+   table
+      .timestamp('last_password_change_at')
+      .defaultTo(knex.fn.now())
+      .notNullable()
    table.timestamps(true, true)
 }
-
 
 exports.verifications = (knex) => (table) => {
    table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
