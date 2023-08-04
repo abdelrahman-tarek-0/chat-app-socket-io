@@ -24,7 +24,6 @@ const optsConstructor = {
          opts?.order?.by !== 'members_count'
       )
          opts.order.by = `channels.${opts.order.by}`
-      if (opts?.order?.by === 'members_count') opts.order.by = 'members_count'
       if (!opts?.order?.ord || !opts.order.ord.match(/^(asc|desc)$/i))
          opts.order.ord = 'asc'
 
