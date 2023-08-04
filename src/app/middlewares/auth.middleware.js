@@ -16,7 +16,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
 
       // verify token
       let decoded = await verifyToken(token)
-      let user = await User.getUser(decoded.id, 'id')
+      let user = await User.getUserSafe(decoded?.id, decoded?.tokenizer,decoded?.iat)
 
       if (!user)
          throw new ErrorBuilder(
@@ -25,24 +25,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
             'TOKEN_ERROR'
          )
 
-      const passwordChangedAt = new Date(
-         user?.last_password_change_at || 0
-      ).getTime()
-      const tokenIssuedAt = new Date(decoded?.iat * 1000 || 0).getTime()
-
-      if (passwordChangedAt >= tokenIssuedAt)
-         throw new ErrorBuilder(
-            'Invalid token, Please login',
-            401,
-            'TOKEN_ERROR'
-         )
-
-      if (user?.tokenizer !== decoded?.tokenizer)
-         throw new ErrorBuilder(
-            'Invalid token, Please login',
-            401,
-            'TOKEN_ERROR'
-         )
+      console.log(user)
 
       if (!opts.skipEmailConfirm && !user?.email_verified)
          throw new ErrorBuilder(

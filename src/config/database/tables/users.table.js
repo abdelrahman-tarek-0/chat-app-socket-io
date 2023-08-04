@@ -47,7 +47,7 @@ exports.users = (knex) => (table) => {
    table.boolean('is_active').defaultTo(true)
    table.string('tokenizer').defaultTo('')
 
-   table.timestamp('last_password_change_at')
+   table.timestamp('last_password_change_at').defaultTo(knex.fn.now()).notNullable()
    table.timestamps(true, true)
 }
 

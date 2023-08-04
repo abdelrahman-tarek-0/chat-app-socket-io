@@ -1,11 +1,11 @@
 const db = require('../../config/database/db')
-const { hashPassword,comparePassword } = require('../utils/passwordHash')
+const { hashPassword, comparePassword } = require('../utils/passwordHash')
 
 class User {
    static async signup({ name, email, password, image_url, phone_number }) {
       const tokenizer = Math.random().toString(36).substring(2, 10)
 
-      password = await hashPassword(password);
+      password = await hashPassword(password)
       const user = await db('users')
          .insert({
             name,
@@ -25,12 +25,13 @@ class User {
          .where('email', '=', email)
          .first()
 
-      if (!user || !(await comparePassword(password, user.password))) return null
-      
+      if (!user || !(await comparePassword(password, user.password)))
+         return null
+
       return user
    }
 
-   /** NOT SAFE PLEASE VALIDATE BEFORE SEND */ 
+   /** NOT SAFE PLEASE VALIDATE BEFORE SEND OR USE getUserSafe */
    static async getUser(index, type) {
       const user = await db('users')
          .select('*')
@@ -40,6 +41,38 @@ class User {
          .first()
 
       return user
+   }
+
+   static async getUserSafe(id, tokenizer, tokenIat) {
+     
+
+      const user = await db('users')
+         .select(
+            'id',
+            'name',
+            'email',
+            'email_verified',
+            'image_url',
+            'phone_number',
+            'last_password_change_at',
+            'role',
+            'email_verified',
+            'created_at'
+         )
+         .where({
+            id,
+            tokenizer,
+            is_active: true,
+         })
+         .first()
+
+         const tokenIssuedAt = new Date(tokenIat*1000 || 0).getTime()
+         const passwordChangedAt = new Date(user?.last_password_change_at || 0).getTime()
+
+
+         if(passwordChangedAt >= tokenIssuedAt) return null
+
+      return {...user, last_password_change_at: undefined}
    }
 }
 
