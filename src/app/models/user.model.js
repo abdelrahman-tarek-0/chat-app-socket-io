@@ -13,7 +13,15 @@ class User {
             password,
             tokenizer,
          })
-         .returning(['id', 'name','bio', 'email', 'image_url', 'phone_number', 'tokenizer'])
+         .returning([
+            'id',
+            'name',
+            'bio',
+            'email',
+            'image_url',
+            'phone_number',
+            'tokenizer',
+         ])
 
       return user[0]
    }
@@ -28,7 +36,7 @@ class User {
             'password',
             'image_url',
             'phone_number',
-            'tokenizer',
+            'tokenizer'
          )
          .where('email', '=', email)
          .first()
@@ -70,7 +78,6 @@ class User {
 
       return { ...user, last_password_change_at: undefined }
    }
-
 }
 
 module.exports = User
