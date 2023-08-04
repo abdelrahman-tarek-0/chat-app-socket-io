@@ -18,6 +18,7 @@ exports.signup = catchAsync(async (req, res) => {
       email,
       password,
    })
+   console.log(user)
 
    await signCookieToken(res, user.id, user.tokenizer)
 

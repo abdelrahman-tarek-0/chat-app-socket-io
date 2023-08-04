@@ -24,14 +24,11 @@ exports.channels = (knex) => (table) => {
       .defaultTo('default_channel.png')
       .checkLength('<', 511, 'image_url_invalid_length_greater_than_511')
 
-   table
-      .string('status')
-      .defaultTo('active')
-      .checkIn(['active', 'inactive'], 'status_invalid_value')
+   table.boolean('is_active').defaultTo(true)
 
    table
       .string('type')
-      .notNullable() 
+      .notNullable()
       .checkIn(['public', 'private'], 'type_invalid_value')
 
    table.timestamps(true, true)

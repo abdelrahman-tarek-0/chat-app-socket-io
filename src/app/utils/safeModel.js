@@ -42,7 +42,7 @@ exports.safeUserUpdate = (update) => {
    return safeUpdate
 }
 
-exports.channelUnsafeFields = ['raw_id', 'status', 'updated_at']
+exports.channelUnsafeFields = ['raw_id', 'is_active', 'updated_at']
 exports.channelSafeUpdateFields = ['name', 'description', 'image_url', 'type']
 exports.channelSafeFields = [
    'id',

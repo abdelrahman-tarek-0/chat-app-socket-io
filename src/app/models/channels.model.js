@@ -29,8 +29,8 @@ const optsConstructor = {
          opts.order.ord = 'asc'
 
       //  pagination: { p: 1, l: 50 }
-      opts.pagination.p = opts.pagination.p * 1
-      opts.pagination.l = opts.pagination.l * 1
+      opts.pagination.p *= 1
+      opts.pagination.l *= 1
       if (!opts.pagination.p || opts.pagination.p < 1) opts.pagination.p = 1
       if (!opts.pagination.l || opts.pagination.l < 1 || opts.pagination.l > 50)
          opts.pagination.l = 50
@@ -66,7 +66,7 @@ class Channel {
          )
          .leftJoin('users', 'users.id', 'members.user_id')
          .where('channels.id', channelId)
-         .andWhere('channels.status', 'active')
+         .andWhere('channels.is_active', 'true')
          .andWhere(function () {
             this.where('channels.type', 'public').orWhere(function () {
                this.where('channels.type', 'private').andWhere(
@@ -103,18 +103,18 @@ class Channel {
          pagination: { p: 1, l: 50, s: 0 },
       }
    ) {
-      let channels = []
       opts = optsConstructor.getAll(opts)
       console.log(opts)
+      let channels = []
 
       const dbChan = db('channels')
          .orderBy(opts.order.by, opts.order.ord)
          .offset(opts.pagination.s)
          .limit(opts.pagination.l)
-         .where('channels.status', 'active')
+         .where('channels.is_active', 'true')
 
       if (!opts.deep) {
-         return await dbChan
+         channels = await dbChan
             .select(
                'channels.id',
                'channels.name',
@@ -129,42 +129,41 @@ class Channel {
             )
             .andWhere('channels.type', 'public')
             .groupBy('channels.id')
-      }
-
-      channels = await dbChan
-         .select(
-            'channels.id',
-            'channels.name',
-            'channels.image_url',
-            'channels.description',
-            'channels.type',
-            db.raw(
-               `json_build_object('id', creator.id, 'name', creator.name, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
-            ),
-            db.raw(
-               `CASE WHEN COUNT(members.user_id) > 0
+      } else {
+         channels = await dbChan
+            .select(
+               'channels.id',
+               'channels.name',
+               'channels.image_url',
+               'channels.description',
+               'channels.type',
+               db.raw(
+                  `json_build_object('id', creator.id, 'name', creator.name, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
+               ),
+               db.raw(
+                  `CASE WHEN COUNT(members.user_id) > 0
           THEN json_agg(json_build_object('id', members.user_id, 'role', members.role, 'name', users.name, 'bio', users.bio, 'image_url', users.image_url))
           ELSE NULL END as members`
-            ),
-            db.raw('count(members.user_id) + 1  as members_count')
-         )
-         .leftJoin('users as creator', 'creator.id', 'channels.creator')
-         .leftJoin(
-            'channel_members as members',
-            'channels.id',
-            'members.channel_id'
-         )
-         .leftJoin('users', 'users.id', 'members.user_id')
-         .andWhere(function () {
-            this.where('channels.type', 'public').orWhere(function () {
-               this.where('channels.type', 'private').andWhere(
-                  'channels.creator',
-                  creatorId
-               )
+               ),
+               db.raw('count(members.user_id) + 1  as members_count')
+            )
+            .leftJoin('users as creator', 'creator.id', 'channels.creator')
+            .leftJoin(
+               'channel_members as members',
+               'channels.id',
+               'members.channel_id'
+            )
+            .leftJoin('users', 'users.id', 'members.user_id')
+            .andWhere(function () {
+               this.where('channels.type', 'public').orWhere(function () {
+                  this.where('channels.type', 'private').andWhere(
+                     'channels.creator',
+                     creatorId
+                  )
+               })
             })
-         })
-         .groupBy('channels.id', 'creator.id')
-
+            .groupBy('channels.id', 'creator.id')
+      }
       return channels
    }
 
@@ -206,7 +205,7 @@ class Channel {
          .update({ ...safeUpdate, updated_at: db.fn.now() })
          .where('id', channelId)
          .andWhere('creator', creatorId)
-         .andWhere('status', 'active')
+         .andWhere('is_active', 'true')
          .returning('*')
 
       return channel[0]

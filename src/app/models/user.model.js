@@ -75,7 +75,7 @@ class User {
          user?.last_password_change_at || 0
       ).getTime()
 
-      if (passwordChangedAt >= tokenIssuedAt) return null
+      if (passwordChangedAt > tokenIssuedAt + 5000) return null
 
       return { ...user, last_password_change_at: undefined }
    }
