@@ -10,14 +10,12 @@ const catchAsync = require('../utils/catchAsync')
  * @param {Express.Response} res
  */
 exports.signup = catchAsync(async (req, res) => {
-   const { name, email, password, image_url, phone_number } = req.body
+   const { name, email, password } = req.body
 
    const user = await User.signup({
       name,
       email,
-      password,
-      image_url,
-      phone_number,
+      password
    })
 
    await signCookieToken(res, user.id, user.tokenizer)
@@ -29,8 +27,8 @@ exports.signup = catchAsync(async (req, res) => {
             id: user.id,
             name: user.name,
             email: user.email,
-            image_url: user.image_url,
-            phone_number: user.phone_number,
+            imageUrl: user.image_url,
+            phoneNumber: user.phone_number,
          },
       },
    })
@@ -57,8 +55,8 @@ exports.login = catchAsync(async (req, res) => {
             id: user.id,
             name: user.name,
             email: user.email,
-            image_url: user.image_url,
-            phone_number: user.phone_number,
+            imageUrl: user.image_url,
+            phoneNumber: user.phone_number,
          },
       },
    })

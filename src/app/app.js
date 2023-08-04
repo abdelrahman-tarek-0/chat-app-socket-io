@@ -28,6 +28,8 @@ app.use((err, _req, res, _next) => {
    res.status(err.statusCode || 500).json({
       status: 'error',
       message: err.message,
+      stack: err.stack.split('\n').map((line) => line.trim()),
+      errObj: err,
    })
 })
 app.use((req, res) => {
