@@ -25,8 +25,6 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
             'TOKEN_ERROR'
          )
 
-      console.log(user)
-
       if (!opts.skipEmailConfirm && !user?.email_verified)
          throw new ErrorBuilder(
             'please confirm the email to start using our api',
