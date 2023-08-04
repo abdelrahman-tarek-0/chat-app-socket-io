@@ -20,3 +20,16 @@ exports.getChannel = catchAsync(async (req, res) => {
       },
    })
 })
+
+exports.getAllChannels = catchAsync(async (req, res) => {
+   const { id: creatorId } = req.user
+
+   const channels = await Channel.getAllChannels(creatorId)
+
+   res.status(200).json({
+      status: 'success',
+      data: {
+         channels,
+      },
+   })
+})

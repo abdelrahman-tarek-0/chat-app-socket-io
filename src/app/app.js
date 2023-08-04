@@ -50,5 +50,7 @@ app.use((req, res) => {
 // add a 'last seen'
 // user have limit to create 5 channels max
 // i am thinking of migrating to ts with mongodb as the database (i am not sure yet)
+// use validation (make sure uuid valid check)
+// users must request to enter a public channel and the owner or the admin of the channel must accept the request
 
 module.exports = app
