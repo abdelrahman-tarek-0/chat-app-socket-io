@@ -2,7 +2,7 @@ const db = require('../../config/database/db')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 
 class User {
-   static async signup({ name, email, password, image_url, phone_number }) {
+   static async signup({ name, email, password }) {
       const tokenizer = Math.random().toString(36).substring(2, 10)
 
       password = await hashPassword(password)
@@ -11,8 +11,6 @@ class User {
             name,
             email,
             password,
-            image_url,
-            phone_number,
             tokenizer,
          })
          .returning('*')

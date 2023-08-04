@@ -31,7 +31,7 @@ exports.users = (knex) => (table) => {
 
    table
       .string('phone_number')
-      .notNullable()
+      .defaultTo('')
       .unique()
       .checkRegex('^[0-9]{1,4}-[0-9]{8,15}$', 'phone_number_invalid_format')
 

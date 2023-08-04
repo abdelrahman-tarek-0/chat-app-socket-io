@@ -23,7 +23,6 @@
       "email_verified": true,
       "password": "$2b$12$/ufYPAKoLeBECbS6XXNeXuj4uapQu0Ld3GWTDeXLNLUh6KeR/9N0y",
       "image_url": "default.png",
-      "phone_number": "9876-54321098",
       "role": "admin",
       "is_active": true,
       "tokenizer": "e5f6g7h8",
