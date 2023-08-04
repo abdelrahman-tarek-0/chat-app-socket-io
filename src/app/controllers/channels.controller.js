@@ -25,7 +25,11 @@ exports.getChannel = catchAsync(async (req, res) => {
 exports.getAllChannels = catchAsync(async (req, res) => {
    const { id: creatorId } = req.user
 
-   const channels = await Channel.getAllChannels(creatorId)
+   const channels = await Channel.getAllChannels(creatorId, {
+      deep: !!req.query.deep,
+      order: req.query.order,
+      pagination: req.query.pagination,
+   })
 
    res.status(200).json({
       status: 'success',
@@ -37,7 +41,6 @@ exports.getAllChannels = catchAsync(async (req, res) => {
 })
 
 exports.createChannel = catchAsync(async (req, res) => {
-   
    const channel = await Channel.createChannel(req.user.id, req.body)
 
    res.status(201).json({
