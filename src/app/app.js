@@ -45,6 +45,8 @@ app.use((req, res) => {
 // response builder
 // add yo user a 'display name' and 'username' fields one for the user to see and the other for the user to use to invite other users to the channels
 // maybe use redis
-// add a 'last seen' 
- 
+// add a 'last seen'
+// user have limit to create 5 channels max
+// i am thinking of migrating to ts with mongodb as the database (i am not sure yet)
+
 module.exports = app

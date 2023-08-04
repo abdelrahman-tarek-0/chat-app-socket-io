@@ -1,17 +1,21 @@
-const { Router } = require("express");
-const authRoutes = require("./APIs/auth.routes");
-const {loggedIn} = require("../middlewares/auth.middleware");
+const { Router } = require('express')
+const authRoutes = require('./APIs/auth.routes')
+const channelsRoutes = require('./APIs/channels.routes')
 
-const router = Router();
-router.get("/", loggedIn(), (req, res) => {
-    res.json({
-        status: "success",
-        data: {
-            user: req.user,
-        },
-    });
-});
+const { loggedIn } = require('../middlewares/auth.middleware')
 
-router.use("/auth", authRoutes);
+const router = Router()
 
-module.exports = router;
+router.get('/', loggedIn(), (req, res) => {
+   res.json({
+      status: 'success',
+      data: {
+         user: req.user,
+      },
+   })
+})
+
+router.use('/auth', authRoutes)
+router.use('/channels', channelsRoutes)
+
+module.exports = router

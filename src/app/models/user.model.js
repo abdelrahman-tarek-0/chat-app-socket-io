@@ -30,6 +30,7 @@ class User {
       return user
    }
 
+   /** NOT SAFE PLEASE VALIDATE BEFORE SEND */ 
    static async getUser(index, type) {
       const user = await db('users')
          .select('*')
