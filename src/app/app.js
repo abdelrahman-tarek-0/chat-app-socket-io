@@ -52,5 +52,7 @@ app.use((req, res) => {
 // i am thinking of migrating to ts with mongodb as the database (i am not sure yet)
 // use validation (make sure uuid valid check)
 // users must request to enter a public channel and the owner or the admin of the channel must accept the request
-
+// channel have a display name and a channel_name
+// is email case sensitive ?
+// who can change the channel info ? (only the owner for now)
 module.exports = app

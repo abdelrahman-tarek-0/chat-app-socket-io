@@ -39,7 +39,7 @@ exports.login = catchAsync(async (req, res) => {
 
    const user = await User.login(email, password)
 
-   if (!user)
+   if (!user?.id)
       throw new ErrorBuilder(
          'Invalid email or password',
          401,

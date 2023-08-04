@@ -23,7 +23,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
          decoded?.iat
       )
 
-      if (!user)
+      if (!user?.id || !user)
          throw new ErrorBuilder(
             'Invalid token, Please login',
             401,

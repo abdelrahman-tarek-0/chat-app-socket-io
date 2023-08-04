@@ -1,5 +1,7 @@
 const db = require('../../config/database/db')
 
+const { safeChannelUpdate } = require('../utils/safeModel')
+
 class Channel {
    static async getChannel(channelId, creatorId) {
       if (!channelId) return null
@@ -74,6 +76,19 @@ class Channel {
          .groupBy('channels.id', 'creator.id')
 
       return channels
+   }
+
+   static async updateChannel(channelId, creatorId, channelData) {
+      const safeUpdate = safeChannelUpdate(channelData)
+
+      const channel = await db('channels')
+         .update(safeUpdate)
+         .where('id', channelId)
+         .andWhere('creator', creatorId)
+         .andWhere('status', 'active')
+         .returning('*')
+
+      return channel[0]
    }
 }
 

@@ -7,6 +7,7 @@ const router = Router()
 
 router.get('/', loggedIn(), controller.getAllChannels)
 router.get('/:id', loggedIn(), controller.getChannel)
+router.patch('/:id', loggedIn(), controller.updateChannel)
 
 
 module.exports = router

@@ -39,6 +39,7 @@ class User {
             'tokenizer'
          )
          .where('email', '=', email)
+         .where('is_active', '=', 'true')
          .first()
 
       if (!user || !(await comparePassword(password, user.password)))
