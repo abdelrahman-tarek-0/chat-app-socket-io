@@ -13,7 +13,7 @@ class User {
             password,
             tokenizer,
          })
-         .returning(['id', 'name', 'email', 'image_url', 'phone_number'])
+         .returning(['id', 'name','bio', 'email', 'image_url', 'phone_number'])
 
       return user[0]
    }
@@ -23,11 +23,11 @@ class User {
          .select(
             'id',
             'name',
+            'bio',
             'email',
             'password',
             'image_url',
-            'phone_number',
-            'tokenizer'
+            'phone_number'
          )
          .where('email', '=', email)
          .first()
@@ -47,6 +47,7 @@ class User {
             'email_verified',
             'image_url',
             'phone_number',
+            'bio',
             'last_password_change_at',
             'role',
             'email_verified',

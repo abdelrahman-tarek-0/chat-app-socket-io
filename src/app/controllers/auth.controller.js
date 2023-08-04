@@ -23,13 +23,7 @@ exports.signup = catchAsync(async (req, res) => {
    return res.status(201).json({
       status: 'success',
       data: {
-         user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            imageUrl: user.image_url,
-            phoneNumber: user.phone_number,
-         },
+         user,
       },
    })
 })
@@ -56,13 +50,7 @@ exports.login = catchAsync(async (req, res) => {
    return res.status(200).json({
       status: 'success',
       data: {
-         user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            imageUrl: user.image_url,
-            phoneNumber: user.phone_number,
-         },
+         user,
       },
    })
 })
