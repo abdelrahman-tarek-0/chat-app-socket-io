@@ -44,7 +44,6 @@ exports.users = (knex) => (table) => {
 
    table
       .string('bio')
-      .defaultTo('')
       .checkLength('<', 255, 'bio_invalid_length_greater_than_255')
 
    table.boolean('is_active').defaultTo(true)
