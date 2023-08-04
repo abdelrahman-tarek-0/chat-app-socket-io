@@ -13,14 +13,22 @@ class User {
             password,
             tokenizer,
          })
-         .returning('id', 'name', 'email', 'image_url', 'phone_number')
+         .returning(['id', 'name', 'email', 'image_url', 'phone_number'])
 
       return user[0]
    }
 
    static async login(email, password) {
       const user = await db('users')
-         .select('id', 'name', 'email', 'password', 'image_url', 'phone_number')
+         .select(
+            'id',
+            'name',
+            'email',
+            'password',
+            'image_url',
+            'phone_number',
+            'tokenizer'
+         )
          .where('email', '=', email)
          .first()
 
@@ -44,12 +52,12 @@ class User {
             'email_verified',
             'created_at'
          )
-         .where({
-            id,
-            tokenizer,
-            is_active: true,
-         })
+         .where('id', '=', id)
+         .andWhere('tokenizer', '=', tokenizer || '')
+         .andWhere('is_active', '=', 'true')
          .first()
+
+      if (!user) return null
 
       const tokenIssuedAt = new Date(tokenIat * 1000 || 0).getTime()
       const passwordChangedAt = new Date(
@@ -61,7 +69,7 @@ class User {
       return { ...user, last_password_change_at: undefined }
    }
 
-   /** NOT SAFE PLEASE VALIDATE BEFORE SEND OR USE getUserSafe */
+   /** NOT SAFE (ADMINS ONLY) */
    static async getUser(index, type) {
       const user = await db('users')
          .select('*')
@@ -71,6 +79,13 @@ class User {
          .first()
 
       return user
+   }
+
+   /** NOT SAFE (ADMINS ONLY) */
+   static async getAllUsers() {
+      const users = await db('users').select('*')
+
+      return users
    }
 }
 

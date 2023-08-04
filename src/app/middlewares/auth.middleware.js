@@ -16,6 +16,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
 
       // verify token
       const decoded = await verifyToken(token)
+      console.log(decoded)
       const user = await User.getUserSafe(
          decoded?.id,
          decoded?.tokenizer,
