@@ -18,13 +18,14 @@ const tableMapping = {
 const tableNames = Object.keys(tableMapping)
 
 const seed = async () => {
-   const promises = []
    for (let i = 0; i < tableNames.length; i += 1) {
       const tableName = tableNames[i]
       const table = tableMapping[tableName]
 
       console.log(`Seeding ${table.length} rows into ${tableName} table...`)
-      promises.push(db(tableName).insert(table))
+
+      /* eslint-disable */
+      await db(tableName).insert(table)
    }
    db.destroy()
 }
