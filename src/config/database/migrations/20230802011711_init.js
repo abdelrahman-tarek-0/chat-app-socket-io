@@ -12,29 +12,28 @@ const tableMapping = {
    channel_invites: channelsInvites,
    channel_members: channelsMembers,
 }
+const tableNames = Object.keys(tableMapping)
 
 /**
  * @param { import("knex").Knex } knex
  * @returns { Promise<void> }
  */
 exports.up = async function (knex) {
-   // install uuid extension
-   console.time('Migration took')
-   await knex.raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+   const promises = []
+   for (let i = 0; i < tableNames.length; i += 1) {
+      const tableName = tableNames[i]
+      const table = tableMapping[tableName]
 
-   for (const name in tableMapping) {
-      const table = tableMapping[name]
-
-      if (!(await knex.schema.hasTable(name))) {
-         await knex.schema.createTable(name, table(knex))
-         console.log(`Table '${name}' created`)
-      } else {
-         console.log(`Table '${name}' already exists`)
-      }
+      const promise = knex.schema.hasTable(tableName).then((exists) => {
+         if (!exists) {
+            console.log(`Table '${tableName}' created`)
+            return knex.schema.createTable(tableName, table(knex))
+         }
+         console.log(`Table '${tableName}' already exists`)
+      })
+      promises.push(promise)
    }
-
-   console.timeEnd('Migration took')
-   return knex
+   await Promise.all(promises)
 }
 
 /**

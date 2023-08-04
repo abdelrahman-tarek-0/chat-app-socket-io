@@ -1,5 +1,4 @@
-const path = require('path')
-const {db} = require('../app.config')
+const { db } = require('../app.config')
 
 /**
  * @type { Object.<string, import("knex").Knex.Config> }
@@ -22,6 +21,5 @@ module.exports = {
       migrations: {
          tableName: 'knex_migrations',
       },
-      
    },
 }

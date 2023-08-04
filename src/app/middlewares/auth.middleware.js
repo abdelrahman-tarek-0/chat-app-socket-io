@@ -6,7 +6,7 @@ const User = require('../models/user.model')
 exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
    catchAsync(async (req, res, next) => {
       // check if token is provided
-      let token = req?.cookies?.token
+      const token = req?.cookies?.token
       if (!token)
          throw new ErrorBuilder(
             'Invalid token, Please login',
@@ -15,8 +15,12 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
          )
 
       // verify token
-      let decoded = await verifyToken(token)
-      let user = await User.getUserSafe(decoded?.id, decoded?.tokenizer,decoded?.iat)
+      const decoded = await verifyToken(token)
+      const user = await User.getUserSafe(
+         decoded?.id,
+         decoded?.tokenizer,
+         decoded?.iat
+      )
 
       if (!user)
          throw new ErrorBuilder(

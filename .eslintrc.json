@@ -7,7 +7,7 @@
   "rules": {
     "prettier/prettier": "error",
     "spaced-comment": "off",
-    "no-console": "warn",
+    "no-console": 0,
     "consistent-return": "off",
     "func-names": "off",
     "object-shorthand": "off",
@@ -17,7 +17,7 @@
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off",
     "prefer-destructuring": ["error", { "object": true, "array": false }],
-    "no-unused-vars": 1,
+    "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
     "no-var": "error",
     "no-unused-expressions": ["error", { "allowTernary": true }]
   }

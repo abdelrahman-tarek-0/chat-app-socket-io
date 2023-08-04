@@ -10,7 +10,7 @@ const localIp =
    os.networkInterfaces().eth0?.filter((ip) => ip.family === 'IPv4')[0].address
 
 module.exports = {
-   env : process.env.NODE_ENV || 'development',
+   env: process.env.NODE_ENV || 'development',
    port: Number(process.env.PORT) || 3000,
    localIp: `http://${localIp}:${this.port || 3000}`,
    localHost: `http://127.0.0.1:${this.port || 3000}`,
@@ -26,11 +26,10 @@ module.exports = {
    security: {
       tokenSecret: process.env.JWT_SECRET,
       tokenExpires: process.env.JWT_EXPIRE,
-      cookieExpires: () => {
-         return new Date(
+      cookieExpires: () =>
+         new Date(
             Date.now() + Number(process.env.COOKIE_EXPIRE_IN_H) * 60 * 60 * 1000
-         )
-      },
+         ),
       bcryptSalt: Number(process.env.BCRYPT_SALT),
    },
 }

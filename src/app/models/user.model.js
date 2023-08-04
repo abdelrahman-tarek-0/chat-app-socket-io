@@ -17,6 +17,7 @@ class User {
 
       return user[0]
    }
+
    static async login(email, password) {
       const user = await db('users')
          .select('id', 'name', 'email', 'password', 'image_url', 'phone_number')
@@ -26,7 +27,7 @@ class User {
       if (!user || !(await comparePassword(password, user.password)))
          return null
 
-      return {...user , password: undefined}
+      return { ...user, password: undefined }
    }
 
    static async getUserSafe(id, tokenizer, tokenIat) {
@@ -60,8 +61,8 @@ class User {
       return { ...user, last_password_change_at: undefined }
    }
 
-     /** NOT SAFE PLEASE VALIDATE BEFORE SEND OR USE getUserSafe */
-     static async getUser(index, type) {
+   /** NOT SAFE PLEASE VALIDATE BEFORE SEND OR USE getUserSafe */
+   static async getUser(index, type) {
       const user = await db('users')
          .select('*')
          .where({

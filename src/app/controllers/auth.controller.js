@@ -15,7 +15,7 @@ exports.signup = catchAsync(async (req, res) => {
    const user = await User.signup({
       name,
       email,
-      password
+      password,
    })
 
    await signCookieToken(res, user.id, user.tokenizer)
@@ -44,7 +44,12 @@ exports.login = catchAsync(async (req, res) => {
 
    const user = await User.login(email, password)
 
-   if (!user) throw new ErrorBuilder('Invalid email or password', 401, 'INVALID_CREDENTIALS')
+   if (!user)
+      throw new ErrorBuilder(
+         'Invalid email or password',
+         401,
+         'INVALID_CREDENTIALS'
+      )
 
    await signCookieToken(res, user.id, user.tokenizer)
 
