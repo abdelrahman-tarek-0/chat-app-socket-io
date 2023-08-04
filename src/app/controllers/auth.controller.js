@@ -3,6 +3,7 @@ const User = require('../models/user.model')
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
+const { safeUser } = require('../utils/safeModel')
 
 /**
  *
@@ -23,7 +24,7 @@ exports.signup = catchAsync(async (req, res) => {
    return res.status(201).json({
       status: 'success',
       data: {
-         user,
+         user: safeUser(user, { email: true }),
       },
    })
 })
@@ -50,7 +51,7 @@ exports.login = catchAsync(async (req, res) => {
    return res.status(200).json({
       status: 'success',
       data: {
-         user,
+         user: safeUser(user, { email: true }),
       },
    })
 })

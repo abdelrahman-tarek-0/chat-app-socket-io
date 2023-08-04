@@ -13,7 +13,7 @@ class User {
             password,
             tokenizer,
          })
-         .returning(['id', 'name','bio', 'email', 'image_url', 'phone_number'])
+         .returning(['id', 'name','bio', 'email', 'image_url', 'phone_number', 'tokenizer'])
 
       return user[0]
    }
@@ -27,7 +27,8 @@ class User {
             'email',
             'password',
             'image_url',
-            'phone_number'
+            'phone_number',
+            'tokenizer',
          )
          .where('email', '=', email)
          .first()
