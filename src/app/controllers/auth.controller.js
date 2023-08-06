@@ -1,4 +1,4 @@
-const User = require('../models/user.model')
+const User = require('../models/users.model')
 
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')

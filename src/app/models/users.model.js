@@ -79,6 +79,36 @@ class User {
 
       return { ...user, last_password_change_at: undefined }
    }
+
+   static async getUserProfile(id) {
+      const user = await db('users as user')
+         .select(
+            'user.id',
+            'user.name',
+            'user.email',
+            'user.image_url',
+            'user.role',
+            'user.bio',
+            'user.created_at',
+            'user.updated_at',
+            db.raw(
+               `JSON_AGG(DISTINCT jsonb_build_object('id', c_own.id, 'name', c_own.name, 'description', c_own.description, 'image', c_own.image_url)) as creatorOf`
+            ),
+            db.raw(
+               `JSON_AGG(DISTINCT jsonb_build_object('id', c_member.id, 'name', c_member.name, 'description', c_member.description, 'image', c_member.image_url, 'role', cm.role)) as memberIn`
+            )
+         )
+         .leftJoin('channels as c_own', 'user.id', 'c_own.creator')
+         .leftJoin('channel_members as cm', 'user.id', 'cm.user_id')
+         .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
+         .where('user.id', id)
+         .groupBy('user.id')
+         .first()
+
+      if (!user) return null
+
+      return user
+   }
 }
 
 module.exports = User

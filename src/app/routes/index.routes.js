@@ -1,6 +1,7 @@
 const { Router } = require('express')
 const authRoutes = require('./APIs/auth.routes')
 const channelsRoutes = require('./APIs/channels.routes')
+const usersRoutes = require('./APIs/users.routes')
 
 const { loggedIn } = require('../middlewares/auth.middleware')
 
@@ -17,5 +18,6 @@ router.get('/', loggedIn(), (req, res) => {
 
 router.use('/auth', authRoutes)
 router.use('/channels', channelsRoutes)
+router.use('/users', usersRoutes)
 
 module.exports = router

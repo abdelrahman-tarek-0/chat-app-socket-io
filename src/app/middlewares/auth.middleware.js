@@ -1,7 +1,7 @@
 const catchAsync = require('../utils/catchAsync')
 const { verifyToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
-const User = require('../models/user.model')
+const User = require('../models/users.model')
 
 exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
    catchAsync(async (req, res, next) => {

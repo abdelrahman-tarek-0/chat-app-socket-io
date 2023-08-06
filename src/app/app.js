@@ -57,4 +57,5 @@ app.use((req, res) => {
 // who can change the channel info ? (only the owner for now)
 // when user send image must check if the image is valid not just the extension (if the image is link or buffer)
 // maybe make the role system like discord
+// search channel by unique name
 module.exports = app
