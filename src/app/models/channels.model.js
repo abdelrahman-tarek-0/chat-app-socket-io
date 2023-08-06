@@ -99,12 +99,18 @@ class Channel {
       opts = optsConstructor.getAll(opts)
       console.log(opts)
 
+      // separate the query one for checking and searching
       const dbChannel = db('channels')
          .orderBy(opts.order.by, opts.order.dir)
          .offset(opts.pagination.skip)
          .limit(opts.pagination.limit)
          .where('channels.is_active', 'true')
+         .andWhere('channels.type', 'public')
+         .andWhereNot(function () {
+            return this.where('members.user_id','=', userId).orWhere('channels.creator','=', userId)
+         })
 
+      // and the other for getting the data
       const channels = await dbChannel
          .select(
             'channels.id',
@@ -120,11 +126,8 @@ class Channel {
             'channels.id',
             'members.channel_id'
          )
-         .andWhere('channels.type', 'public')
-         .andWhereNot(function () {
-            return this.where('members.user_id','=', userId).orWhere('channels.creator','=', userId)
-         })
          .groupBy('channels.id')
+
 
       return [
          {

@@ -1,5 +1,5 @@
 exports.channels = (knex) => (table) => {
-   table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
    table.increments('raw_id').unique().unsigned().notNullable()
 
    table
@@ -35,7 +35,7 @@ exports.channels = (knex) => (table) => {
 }
 
 exports.channelsInvites = (knex) => (table) => {
-   table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
    table.increments('raw_id').unique().unsigned().notNullable()
 
    table
@@ -70,7 +70,7 @@ exports.channelsInvites = (knex) => (table) => {
 }
 
 exports.channelsMembers = (knex) => (table) => {
-   table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
    table.increments('raw_id').unique().unsigned().notNullable()
 
    table

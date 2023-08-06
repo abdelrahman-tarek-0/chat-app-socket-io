@@ -1,5 +1,5 @@
 exports.users = (knex) => (table) => {
-   table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
    table.increments('raw_id').unique().unsigned().notNullable()
 
    table
@@ -57,7 +57,7 @@ exports.users = (knex) => (table) => {
 }
 
 exports.verifications = (knex) => (table) => {
-   table.uuid('id').primary().defaultTo(knex.raw('uuid_generate_v4()'))
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
    table.increments('raw_id').unique().unsigned().notNullable()
    table
       .uuid('user_id')
