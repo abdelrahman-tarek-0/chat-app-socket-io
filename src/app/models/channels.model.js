@@ -182,6 +182,17 @@ class Channel {
 
       return channel[0]
    }
+
+   static async deleteChannel(channelId, creatorId) {
+      const channel = await db('channels')
+         .update({ is_active: false, updated_at: db.fn.now() })
+         .where('id', channelId)
+         .andWhere('creator', creatorId)
+         .andWhere('is_active', 'true')
+         .returning('id')
+
+      return channel[0]
+   }
 }
 
 module.exports = Channel

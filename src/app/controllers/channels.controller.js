@@ -55,7 +55,11 @@ exports.updateChannel = catchAsync(async (req, res) => {
    const channel = await Channel.updateChannel(channelId, creatorId, req.body)
 
    if (!channel?.id) {
-      throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
+      throw new ErrorBuilder(
+         "Channel not found or You don't have access to do this action",
+         404,
+         'NOT_FOUND'
+      )
    }
 
    res.status(200).json({
@@ -66,4 +70,22 @@ exports.updateChannel = catchAsync(async (req, res) => {
          }),
       },
    })
+})
+
+exports.deleteChannel = catchAsync(async (req, res) => {
+   const { id: channelId } = req.params
+   const { id: creatorId } = req.user
+
+   const channel = await Channel.deleteChannel(channelId, creatorId)
+
+
+   if (!channel?.id) {
+      throw new ErrorBuilder(
+         "Channel not found or You don't have access to do this action",
+         404,
+         'NOT_FOUND'
+      )
+   }
+
+   res.status(204).json()
 })
