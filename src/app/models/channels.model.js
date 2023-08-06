@@ -13,7 +13,7 @@ const optsConstructor = {
       if (!opts?.order) opts.order = {}
       if (!opts?.pagination) opts.pagination = {}
 
-      // order: {by:'id',ord:'asc'}
+      // order: {by:'id',dir:'asc'}
       if (!opts?.order?.by || !allowOrderBy.includes(opts.order.by))
          opts.order.by = 'id'
       if (
@@ -21,16 +21,16 @@ const optsConstructor = {
          opts?.order?.by !== 'members_count'
       )
          opts.order.by = `channels.${opts.order.by}`
-      if (!opts?.order?.ord || !opts.order.ord.match(/^(asc|desc)$/i))
-         opts.order.ord = 'asc'
+      if (!opts?.order?.dir || !opts.order.dir.match(/^(asc|desc)$/i))
+         opts.order.dir = 'asc'
 
-      //  pagination: { p: 1, l: 50 }
-      opts.pagination.p *= 1
-      opts.pagination.l *= 1
-      if (opts.pagination.p < 1) opts.pagination.p = 1
-      if (opts.pagination.l < 1 || opts.pagination.l > 50)
-         opts.pagination.l = 50
-      opts.pagination.s = (opts.pagination.p - 1) * opts.pagination.l
+      //  pagination: { page: 1, limit: 50 }
+      opts.pagination.page = opts.pagination.page * 1 || 1
+      opts.pagination.limit = opts.pagination.limit * 1 || 50
+      if (opts.pagination.page < 1) opts.pagination.page = 1
+      if (opts.pagination.limit < 1 || opts.pagination.limit > 50)
+         opts.pagination.limit = 50
+      opts.pagination.skip = (opts.pagination.page - 1) * opts.pagination.limit
 
       return opts
    },
@@ -83,27 +83,26 @@ class Channel {
     * @param { Object } opts
     * @param { Object } opts.order - Array of two elements
     * @param { String } opts.order.by - Column name to order by
-    * @param { String } opts.order.ord - Order direction (asc or desc)
+    * @param { String } opts.order.dir - Order direction (asc or desc)
     * @param { Object } opts.pagination - Array of two elements
-    * @param { Number } opts.pagination.p - the number of the page to return
-    * @param { Number } opts.pagination.l - the limit of channels to return
-    * @param { Number } opts.pagination.s - the offset to start from (generated on the fly)
+    * @param { Number } opts.pagination.page - the number of the page to return
+    * @param { Number } opts.pagination.limit - the limit of channels to return
     * @returns
     */
    static async getAllChannels(
-      creatorId,
+      userId,
       opts = {
-         order: { by: 'id', ord: 'asc' },
-         pagination: { p: 1, l: 50, s: 0 },
+         order: { by: 'id', dir: 'asc' },
+         pagination: { page: 1, limit: 50, skip: 0 },
       }
    ) {
       opts = optsConstructor.getAll(opts)
       console.log(opts)
 
       const dbChannel = db('channels')
-         .orderBy(opts.order.by, opts.order.ord)
-         .offset(opts.pagination.s)
-         .limit(opts.pagination.l)
+         .orderBy(opts.order.by, opts.order.dir)
+         .offset(opts.pagination.skip)
+         .limit(opts.pagination.limit)
          .where('channels.is_active', 'true')
 
       const channels = await dbChannel
@@ -112,7 +111,9 @@ class Channel {
             'channels.name',
             'channels.image_url',
             'channels.description',
-            db.raw('count(members.user_id) + 1  as members_count')
+            db.raw(
+               'CAST(count(members.user_id) + 1 AS INTEGER) as members_count'
+            )
          )
          .leftJoin(
             'channel_members as members',
@@ -120,9 +121,22 @@ class Channel {
             'members.channel_id'
          )
          .andWhere('channels.type', 'public')
+         .andWhereNot(function () {
+            return this.where('members.user_id','=', userId).orWhere('channels.creator','=', userId)
+         })
          .groupBy('channels.id')
 
-      return channels
+      return [
+         {
+            total: channels?.length || 0,
+            pagination: opts?.pagination,
+            order: {
+               by: opts?.order?.by.replace('channels.', ''),
+               dir: opts?.order?.dir,
+            },
+         },
+         channels,
+      ]
    }
 
    static async createChannel(creator, { name, description, image_url, type }) {
