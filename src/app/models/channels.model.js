@@ -12,6 +12,7 @@ const optsConstructor = {
       if (!opts) opts = {}
       if (!opts?.order) opts.order = {}
       if (!opts?.pagination) opts.pagination = {}
+      if (!opts?.search) opts.search = null
 
       // order: {by:'id',dir:'asc'}
       if (!opts?.order?.by || !allowOrderBy.includes(opts.order.by))
@@ -87,6 +88,7 @@ class Channel {
     * @param { Object } opts.pagination - Array of two elements
     * @param { Number } opts.pagination.page - the number of the page to return
     * @param { Number } opts.pagination.limit - the limit of channels to return
+    * @param { String } opts.search - the search string to search for (name, description)
     * @returns
     */
    static async getAllChannels(
@@ -94,6 +96,7 @@ class Channel {
       opts = {
          order: { by: 'id', dir: 'asc' },
          pagination: { page: 1, limit: 50, skip: 0 },
+         search: null,
       }
    ) {
       opts = optsConstructor.getAll(opts)
@@ -106,9 +109,18 @@ class Channel {
          .limit(opts.pagination.limit)
          .where('channels.is_active', 'true')
          .andWhere('channels.type', 'public')
-         .andWhereNot(function () {
-            return this.where('members.user_id','=', userId).orWhere('channels.creator','=', userId)
+         .where(function() {
+            this.whereNotIn('channels.id', function() {
+              this.select('channel_id')
+                .from('channel_members')
+                .where('user_id', userId);
+            }).andWhere('channels.creator', '<>', userId);
+          })   
+         opts?.search && dbChannel.andWhere(function(){
+            this.whereRaw("content_vector @@ websearch_to_tsquery('simple',?)", opts.search)
+            .orWhereRaw("content_vector @@ websearch_to_tsquery('english',?)", opts.search)
          })
+
 
       // and the other for getting the data
       const channels = await dbChannel
@@ -117,6 +129,7 @@ class Channel {
             'channels.name',
             'channels.image_url',
             'channels.description',
+            'channels.content_vector',
             db.raw(
                'CAST(count(members.user_id) + 1 AS INTEGER) as members_count'
             )

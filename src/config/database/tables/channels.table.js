@@ -32,6 +32,16 @@ exports.channels = (knex) => (table) => {
       .checkIn(['public', 'private'], 'type_invalid_value')
 
    table.timestamps(true, true)
+
+   table.specificType(
+      'content_vector',
+      `TSVECTOR GENERATED ALWAYS AS 
+      (setweight(to_tsvector('simple', coalesce("name", '')::text), 'A')
+      || ' ' || 
+       setweight(to_tsvector('simple', coalesce("description", '')::text), 'B'))
+      STORED`
+   )
+   table.index('content_vector', null, 'gin')
 }
 
 exports.channelsInvites = (knex) => (table) => {

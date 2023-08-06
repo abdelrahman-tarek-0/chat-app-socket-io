@@ -29,6 +29,7 @@ exports.getAllChannels = catchAsync(async (req, res) => {
    const [meta, channels] = await Channel.getAllChannels(userId, {
       order: req.query.order,
       pagination: req.query.pagination,
+      search: req.query.search,
    })
 
    res.status(200).json({
