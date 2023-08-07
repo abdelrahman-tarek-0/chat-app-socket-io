@@ -101,7 +101,7 @@ exports.channelsMembers = (knex) => (table) => {
       .string('role')
       .defaultTo('member')
       .checkIn(['member', 'admin'], 'role_invalid_value')
-   
+
    table.unique(['channel_id', 'user_id'])
 
    table.timestamps(true, true)

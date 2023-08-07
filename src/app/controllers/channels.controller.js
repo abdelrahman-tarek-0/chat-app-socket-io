@@ -80,7 +80,6 @@ exports.deleteChannel = catchAsync(async (req, res) => {
 
    const channel = await Channel.deleteChannel(channelId, creatorId)
 
-
    if (!channel?.id) {
       throw new ErrorBuilder(
          "Channel not found or You don't have access to do this action",

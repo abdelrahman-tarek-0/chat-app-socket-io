@@ -109,18 +109,23 @@ class Channel {
          .limit(opts.pagination.limit)
          .where('channels.is_active', 'true')
          .andWhere('channels.type', 'public')
-         .where(function() {
-            this.whereNotIn('channels.id', function() {
-              this.select('channel_id')
-                .from('channel_members')
-                .where('user_id', userId);
-            }).andWhere('channels.creator', '<>', userId);
-          })   
-         opts?.search && dbChannel.andWhere(function(){
-            this.whereRaw("content_vector @@ websearch_to_tsquery('simple',?)", opts.search)
-            .orWhereRaw("content_vector @@ websearch_to_tsquery('english',?)", opts.search)
+         .where(function () {
+            this.whereNotIn('channels.id', function () {
+               this.select('channel_id')
+                  .from('channel_members')
+                  .where('user_id', userId)
+            }).andWhere('channels.creator', '<>', userId)
          })
-
+      if (opts.search)
+         dbChannel.andWhere(function () {
+            this.whereRaw(
+               "content_vector @@ websearch_to_tsquery('simple',?)",
+               opts.search
+            ).orWhereRaw(
+               "content_vector @@ websearch_to_tsquery('english',?)",
+               opts.search
+            )
+         })
 
       // and the other for getting the data
       const channels = await dbChannel
@@ -140,7 +145,6 @@ class Channel {
             'members.channel_id'
          )
          .groupBy('channels.id')
-
 
       return [
          {
