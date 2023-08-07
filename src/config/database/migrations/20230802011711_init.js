@@ -20,6 +20,7 @@ const tableNames = Object.keys(tableMapping)
  */
 exports.up = async function (knex) {
    const promises = []
+
    for (let i = 0; i < tableNames.length; i += 1) {
       const tableName = tableNames[i]
       const table = tableMapping[tableName]
@@ -34,6 +35,27 @@ exports.up = async function (knex) {
       promises.push(promise)
    }
    await Promise.all(promises)
+   await knex.raw(`
+      CREATE OR REPLACE FUNCTION replace_special_characters(input_text TEXT) RETURNS TEXT AS $$
+      BEGIN
+         RETURN replace(replace(replace(replace(input_text, '_', ' '), '-', ' '), '.', ' '), '@', ' ');
+      END;
+      $$ LANGUAGE plpgsql;
+      
+      CREATE OR REPLACE FUNCTION users_insert_trigger() RETURNS TRIGGER AS $$
+      BEGIN
+         IF NEW.display_name IS NULL THEN
+            NEW.display_name = replace_special_characters(NEW.username);
+         END IF;
+         RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+      
+      CREATE TRIGGER users_insert
+      BEFORE INSERT ON users
+      FOR EACH ROW
+      EXECUTE FUNCTION users_insert_trigger();
+`)
 }
 
 /**

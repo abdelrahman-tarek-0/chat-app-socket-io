@@ -1,7 +1,8 @@
 [
    {
       "id": "e597afaa-275d-48b3-a5ce-25fbfe10e50c",
-      "name": "John Doe",
+      "display_name": "John Doe",
+      "username": "johnXdoe",
       "bio":"hello my name is John Doe",
       "email": "john.doe@example.com",
       "email_verified": true,
@@ -17,7 +18,8 @@
    },
    {
       "id": "ab9df44f-376c-47bf-9862-1b4e1bdf1a5d",
-      "name": "Jane Smith",
+      "display_name": "Jane Smith",
+      "username": "Jane_Is_Here",
       "bio":"hello my name is Jane Smith",
       "email": "jane.smith@example.com",
       "email_verified": true,
@@ -32,7 +34,8 @@
    },
    {
       "id": "6cd998d7-867c-4c37-9e66-688394a9f578",
-      "name": "Alice Johnson",
+      "display_name": "Alice Johnson",
+      "username": "Alice_Johnson",
       "bio":"hello my name is Alice Johnson",
       "email": "alice.johnson@example.com",
       "email_verified": false,
@@ -48,7 +51,8 @@
    },
    {
       "id": "d8e8f8d9-8877-6543-9abc-987654321001",
-      "name": "Bob Johnson",
+      "display_name": "Bob Johnson",
+      "username": "Mr.Clean",
       "bio":"hello my name is Bob Johnson",
       "email": "bob.johnson@example.com",
       "email_verified": true,
@@ -64,7 +68,8 @@
    },
    {
       "id": "098a7b6c-5432-1abc-2345-def67890fff0",
-      "name": "Emily Williams",
+      "display_name": "Emily Williams",
+      "username": "Mr.Dirty_",
       "bio":"hello my name is Emily Williams",
       "email": "emily.williams@example.com",
       "email_verified": true,

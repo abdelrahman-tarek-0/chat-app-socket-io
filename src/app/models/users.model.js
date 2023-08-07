@@ -2,20 +2,22 @@ const db = require('../../config/database/db')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 
 class User {
-   static async signup({ name, email, password }) {
+   static async signup({ username, display_name, email, password }) {
       const tokenizer = Math.random().toString(36).substring(2, 10)
 
       password = await hashPassword(password)
       const user = await db('users')
          .insert({
-            name,
+            username,
+            display_name,
             email,
             password,
             tokenizer,
          })
          .returning([
             'id',
-            'name',
+            'display_name',
+            'username',
             'bio',
             'email',
             'image_url',

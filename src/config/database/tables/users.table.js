@@ -2,37 +2,43 @@ exports.users = (knex) => (table) => {
    table.uuid('id').primary().defaultTo(knex.fn.uuid())
    table.increments('raw_id').unique().unsigned().notNullable()
 
+   // this is field have a trigger to set the value if not provided
+   table.string('display_name').notNullable()
+   table.check('LENGTH(display_name) >= 8 and LENGTH(display_name) <= 255')
+
    table
-      .string('name')
+      .string('username')
       .notNullable()
-      .checkLength('<', 255, 'name_invalid_length_greater_than_255')
+      .unique()
+      .checkRegex('^[A-Za-z][A-Za-z0-9_@\\-.]{7,29}$')
+   table.check('LENGTH(username) >= 8 and LENGTH(username) <= 30')
 
    table
       .string('email')
       .notNullable()
       .unique()
-      .checkLength('<', 255, 'email_invalid_length_greater_than_255')
       .checkRegex(
          '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$',
          'email_invalid_format'
       )
+   table.check('LENGTH(email) >= 8 and LENGTH(email) <= 255')
 
    table.boolean('email_verified').defaultTo(false)
 
-   table
-      .string('password')
-      .notNullable()
-      .checkLength('<', 255, 'password_invalid_length_greater_than_255')
+   table.string('password').notNullable()
+   table.check('LENGTH(password) >= 8 and LENGTH(password) <= 255')
 
    table
       .text('image_url')
       .defaultTo('default.png')
       .checkLength('<', 511, 'image_url_invalid_length_greater_than_511')
+   table.check('LENGTH(image_url) <= 512')
 
    table
       .string('phone_number')
       .unique()
       .checkRegex('^[0-9]{1,4}-[0-9]{8,15}$', 'phone_number_invalid_format')
+   table.check('LENGTH(phone_number) <= 20')
 
    table
       .string('role')
@@ -44,10 +50,12 @@ exports.users = (knex) => (table) => {
 
    table
       .string('bio')
-      .checkLength('<', 255, 'bio_invalid_length_greater_than_255')
+      .checkLength('<', 511, 'bio_invalid_length_greater_than_255')
 
    table.boolean('is_active').defaultTo(true)
+
    table.string('tokenizer').defaultTo('')
+   table.check('LENGTH(tokenizer) = 8')
 
    table
       .timestamp('last_password_change_at')

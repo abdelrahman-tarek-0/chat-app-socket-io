@@ -11,10 +11,11 @@ const { safeUser } = require('../utils/safeModel')
  * @param {Express.Response} res
  */
 exports.signup = catchAsync(async (req, res) => {
-   const { name, email, password } = req.body
+   const { username,display_name, email, password } = req.body
 
    const user = await User.signup({
-      name,
+      username,
+      display_name,
       email,
       password,
    })
