@@ -106,9 +106,17 @@ class User {
       const { id } = data
       data = safeUserUpdate(data)
 
-      console.log(data)
       const user = await db('users')
          .update({ ...data, updated_at: db.fn.now() })
+         .where('id', '=', id)
+         .returning('*')
+
+      return safeUser(user[0] || {},{updated_at: true})
+   }
+
+   static async deleteMe({ id }) {
+      const user = await db('users')
+         .update({ is_active: false, updated_at: db.fn.now() })
          .where('id', '=', id)
          .returning('*')
 

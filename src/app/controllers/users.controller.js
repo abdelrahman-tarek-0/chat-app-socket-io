@@ -28,3 +28,13 @@ exports.updateUser = catchAsync(async (req, res) => {
       data: user,
    })
 })
+
+exports.deleteMe = catchAsync(async (req, res) => {
+   const { id } = req.user
+
+   const user = await User.deleteMe({ id })
+
+   if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
+
+   return res.status(204).json()
+})
