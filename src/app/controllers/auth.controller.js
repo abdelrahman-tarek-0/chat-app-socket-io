@@ -3,7 +3,6 @@ const User = require('../models/users.model')
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
-const { safeUser } = require('../utils/safeModel')
 
 /**
  *
