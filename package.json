@@ -9,16 +9,13 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-
     "start-pm2": "pm2 start src/index.js --name chat-app -i max && pm2 ls --watch",
     "start-pm2-dev": "pm2 start src/index.js --name chat-app -i 4  && pm2 ls --watch",
     "reset-pm2": "pm2 delete chat-app && npm run start-pm2-dev",
-
     "migrate:up": " knex migrate:latest --knexfile src/config/database/knexfile.js --env production",
     "migrate:down": "knex migrate:rollback --knexfile src/config/database/knexfile.js --env production",
     "migrate:reset": "npm run migrate:down && npm run migrate:up",
     "seed": "npm run migrate:reset && node src/config/database/seed/seeder.js",
-
     "eslint": "eslint --ext .js,.jsx src/**/*.js --fix",
     "prettier": "prettier --write src/**/*.js",
     "format": "npm run prettier && npm run eslint"
@@ -41,6 +38,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
     "knex": "^2.5.1",
+    "nodemailer": "^6.9.4",
     "objection": "^3.1.1",
     "pg": "^8.11.2",
     "pm2": "^5.3.0"

@@ -32,4 +32,10 @@ module.exports = {
          ),
       bcryptSalt: Number(process.env.BCRYPT_SALT),
    },
+   mailDev: {
+      host: process.env.MAILTRAP_HOST,
+      port: Number(process.env.MAILTRAP_PORT),
+      user: process.env.MAILTRAP_USER,
+      pass: process.env.MAILTRAP_PASSWORD,
+   }
 }
