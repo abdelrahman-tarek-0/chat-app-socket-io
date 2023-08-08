@@ -84,7 +84,7 @@ class Channel {
             })
          })
          .andWhere('creator.is_active', '=', 'true')
-         // .andWhere('members.is_active', '=', 'true')  BUG: this is not working
+         // .andWhere('members.is_active', '=', 'true')  //BUG: this is not working
          .groupBy('channels.id', 'creator.id')
          .first()
 
