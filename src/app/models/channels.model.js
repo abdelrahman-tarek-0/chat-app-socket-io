@@ -150,7 +150,6 @@ class Channel {
             'channels.name',
             'channels.image_url',
             'channels.description',
-            'channels.content_vector',
             db.raw('CAST(count(members.user_id) AS INTEGER) as members_count')
          )
          .leftJoin(
