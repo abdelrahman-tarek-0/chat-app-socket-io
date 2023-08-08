@@ -114,7 +114,7 @@ class User {
       return safeUser(user[0] || {},{updated_at: true})
    }
 
-   static async deleteMe({ id }) {
+   static async disableMe({ id }) {
       const user = await db('users')
          .update({ is_active: false, updated_at: db.fn.now() })
          .where('id', '=', id)

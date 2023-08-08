@@ -59,4 +59,5 @@ app.use((req, res) => {
 // maybe make the role system like discord
 // search channel by unique name
 // end to end encryption
+// request account deletion via email the current version is just disabling the account and not deleting it
 module.exports = app
