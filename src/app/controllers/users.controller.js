@@ -36,5 +36,5 @@ exports.disableMe = catchAsync(async (req, res) => {
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
-   return res.status(204).json()
+    return res.status(204).json()
 })
