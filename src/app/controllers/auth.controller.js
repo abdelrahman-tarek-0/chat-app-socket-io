@@ -19,11 +19,12 @@ exports.signup = catchAsync(async (req, res) => {
          email,
          password,
       },
-      { unsafePass: { email: true } }
+      { unsafePass: { email: true,tokenizer:true } }
    )
    console.log(user)
 
    await signCookieToken(res, user.id, user.tokenizer)
+   user.tokenizer = undefined
 
    return res.status(201).json({
       status: 'success',

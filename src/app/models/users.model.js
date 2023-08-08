@@ -75,6 +75,8 @@ class User {
          .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
          .where('user.id', id)
          .andWhere('user.is_active', '=', 'true')
+         .andWhere('c_own.is_active', '=', 'true')
+         .andWhere('c_member.is_active', '=', 'true')
          .groupBy('user.id')
          .first()
 

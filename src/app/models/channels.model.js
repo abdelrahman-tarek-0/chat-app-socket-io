@@ -1,6 +1,6 @@
 const db = require('../../config/database/db')
 
-const { safeChannelUpdate } = require('../utils/safeModel')
+const { safeChannelUpdate, safeChannel } = require('../utils/safeModel')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 
@@ -41,6 +41,7 @@ class Channel {
    static async getChannel(channelId, creatorId) {
       if (!channelId) return null
 
+      // Fetch channel information
       const channel = await db('channels')
          .select(
             'channels.id',
@@ -49,18 +50,28 @@ class Channel {
             'channels.description',
             'channels.type',
             db.raw(
-               `json_build_object('id', creator.id, 'name', creator.name, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
+               `json_build_object('id', creator.id, 'display_name', creator.display_name,'username', creator.username, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
             ),
             db.raw(
-               `json_agg(json_build_object('id', members.user_id, 'role', members.role, 'name', users.name, 'bio', users.bio, 'image_url', users.image_url)) as members`
+               `json_agg(json_build_object('id', members.user_id, 'role', members.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url)) as members`
             )
          )
-         .leftJoin('users as creator', 'creator.id', 'channels.creator')
-         .leftJoin(
-            'channel_members as members',
-            'channels.id',
-            'members.channel_id'
-         )
+         .leftJoin('users as creator', function () {
+            this.on('creator.id', '=', 'channels.creator').andOn(
+               'creator.is_active',
+               '=',
+               db.raw('true')
+            )
+         })
+         .leftJoin('channel_members as members', function () {
+            this.on('members.channel_id', '=', 'channels.id').andOn(
+               db.raw(
+                  `(select is_active from users where users.id = members.user_id limit 1)`
+               ),
+               '=',
+               db.raw('true')
+            )
+         })
          .leftJoin('users', 'users.id', 'members.user_id')
          .where('channels.id', channelId)
          .andWhere('channels.is_active', 'true')
@@ -72,8 +83,13 @@ class Channel {
                )
             })
          })
+         .andWhere('creator.is_active', '=', 'true')
+         // .andWhere('members.is_active', '=', 'true')  BUG: this is not working
          .groupBy('channels.id', 'creator.id')
          .first()
+
+      if (!channel) return null
+      if (!channel?.members?.at(0)?.id) channel.members = []
 
       return channel
    }
@@ -135,9 +151,7 @@ class Channel {
             'channels.image_url',
             'channels.description',
             'channels.content_vector',
-            db.raw(
-               'CAST(count(members.user_id) + 1 AS INTEGER) as members_count'
-            )
+            db.raw('CAST(count(members.user_id) AS INTEGER) as members_count')
          )
          .leftJoin(
             'channel_members as members',
@@ -187,7 +201,7 @@ class Channel {
          })
          .returning('*')
 
-      return channel[0]
+      return safeChannel(channel[0] || {})
    }
 
    static async updateChannel(channelId, creatorId, channelData) {
@@ -200,7 +214,7 @@ class Channel {
          .andWhere('is_active', 'true')
          .returning('*')
 
-      return channel[0]
+      return safeChannel(channel[0] || {}, { updated_at: true })
    }
 
    static async deleteChannel(channelId, creatorId) {

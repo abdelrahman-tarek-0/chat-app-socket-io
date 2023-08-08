@@ -2,7 +2,6 @@ const Channel = require('../models/channels.model')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
-const { safeChannel } = require('../utils/safeModel')
 
 exports.getChannel = catchAsync(async (req, res) => {
    const { id: channelId } = req.params
@@ -45,7 +44,7 @@ exports.createChannel = catchAsync(async (req, res) => {
    res.status(201).json({
       status: 'success',
       data: {
-         channel: safeChannel(channel),
+         channel,
       },
    })
 })
@@ -67,9 +66,7 @@ exports.updateChannel = catchAsync(async (req, res) => {
    res.status(200).json({
       status: 'success',
       data: {
-         channel: safeChannel(channel, {
-            updated_at: true,
-         }),
+         channel,
       },
    })
 })
