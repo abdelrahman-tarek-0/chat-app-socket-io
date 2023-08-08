@@ -17,10 +17,14 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
       // verify token
       const decoded = await verifyToken(token)
       console.log(decoded)
-      const user = await User.getUserSafe(
-         decoded?.id,
-         decoded?.tokenizer,
-         decoded?.iat
+
+      const user = await User.verifyUser(
+         {
+            id: decoded?.id,
+            tokenizer: decoded?.tokenizer,
+            tokenIat: decoded?.iat,
+         },
+         { unsafePass: { email_verified: true } }
       )
 
       if (!user?.id || !user)

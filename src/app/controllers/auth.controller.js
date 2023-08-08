@@ -11,14 +11,17 @@ const { safeUser } = require('../utils/safeModel')
  * @param {Express.Response} res
  */
 exports.signup = catchAsync(async (req, res) => {
-   const { username,display_name, email, password } = req.body
+   const { username, display_name, email, password } = req.body
 
-   const user = await User.signup({
-      username,
-      display_name,
-      email,
-      password,
-   })
+   const user = await User.signup(
+      {
+         username,
+         display_name,
+         email,
+         password,
+      },
+      { unsafePass: { email: true } }
+   )
    console.log(user)
 
    await signCookieToken(res, user.id, user.tokenizer)
@@ -26,7 +29,7 @@ exports.signup = catchAsync(async (req, res) => {
    return res.status(201).json({
       status: 'success',
       data: {
-         user: safeUser(user, { email: true }),
+         user,
       },
    })
 })
@@ -39,7 +42,10 @@ exports.signup = catchAsync(async (req, res) => {
 exports.login = catchAsync(async (req, res) => {
    const { email, password } = req.body
 
-   const user = await User.login(email, password)
+   const user = await User.login(
+      { email, password },
+      { unsafePass: { email: true, tokenizer: true } }
+   )
 
    if (!user?.id)
       throw new ErrorBuilder(
@@ -49,11 +55,12 @@ exports.login = catchAsync(async (req, res) => {
       )
 
    await signCookieToken(res, user.id, user.tokenizer)
+   user.tokenizer = undefined
 
    return res.status(200).json({
       status: 'success',
       data: {
-         user: safeUser(user, { email: true }),
+         user,
       },
    })
 })

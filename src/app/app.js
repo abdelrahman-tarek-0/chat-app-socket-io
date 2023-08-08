@@ -58,4 +58,5 @@ app.use((req, res) => {
 // when user send image must check if the image is valid not just the extension (if the image is link or buffer)
 // maybe make the role system like discord
 // search channel by unique name
+// end to end encryption
 module.exports = app
