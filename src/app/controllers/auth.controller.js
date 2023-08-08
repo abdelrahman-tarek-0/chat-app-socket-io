@@ -1,4 +1,4 @@
-const User = require('../models/users.model')
+const Auth = require('../models/auth.model')
 
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
@@ -12,7 +12,7 @@ const catchAsync = require('../utils/catchAsync')
 exports.signup = catchAsync(async (req, res) => {
    const { username, display_name, email, password } = req.body
 
-   const user = await User.signup(
+   const user = await Auth.signup(
       {
          username,
          display_name,
@@ -42,7 +42,7 @@ exports.signup = catchAsync(async (req, res) => {
 exports.login = catchAsync(async (req, res) => {
    const { email, password } = req.body
 
-   const user = await User.login(
+   const user = await Auth.login(
       { email, password },
       { unsafePass: { email: true, tokenizer: true } }
    )

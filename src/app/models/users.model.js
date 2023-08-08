@@ -1,40 +1,7 @@
 const db = require('../../config/database/db')
-const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { safeUser, safeUserUpdate } = require('../utils/safeModel')
 
 class User {
-   static async signup(
-      { username, display_name, email, password },
-      opts = { unsafePass: {} }
-   ) {
-      const tokenizer = Math.random().toString(36).substring(2, 10)
-
-      password = await hashPassword(password)
-      const user = await db('users')
-         .insert({
-            username,
-            display_name,
-            email,
-            password,
-            tokenizer,
-         })
-         .returning('*')
-
-      return safeUser(user[0] || {}, opts?.unsafePass || {})
-   }
-
-   static async login({ email, password }, opts = { unsafePass: {} }) {
-      const user = await db('users')
-         .select('*')
-         .where('email', '=', email)
-         .andWhere('is_active', '=', 'true')
-         .first()
-
-      if (!user || !(await comparePassword(password, user.password)))
-         return null
-
-      return safeUser(user || {}, opts?.unsafePass || {})
-   }
 
    static async verifyUser(
       { id, tokenizer, tokenIat },

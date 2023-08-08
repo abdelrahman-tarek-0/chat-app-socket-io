@@ -1,7 +1,7 @@
 const catchAsync = require('../utils/catchAsync')
 const { verifyToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
-const User = require('../models/users.model')
+const Auth = require('../models/auth.model')
 
 exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
    catchAsync(async (req, res, next) => {
@@ -18,7 +18,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
       const decoded = await verifyToken(token)
       console.log(decoded)
 
-      const user = await User.verifyUser(
+      const user = await Auth.verifyUser(
          {
             id: decoded?.id,
             tokenizer: decoded?.tokenizer,
