@@ -6,5 +6,6 @@ const { loggedIn } = require('../../middlewares/auth.middleware')
 const router = Router()
 
 router.get('/me', loggedIn(), controller.getUserProfile)
+router.patch('/', loggedIn(), controller.updateUser)
 
 module.exports = router

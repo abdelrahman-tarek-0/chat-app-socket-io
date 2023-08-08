@@ -15,3 +15,16 @@ exports.getUserProfile = catchAsync(async (req, res) => {
       data: user,
    })
 })
+
+exports.updateUser = catchAsync(async (req, res) => {
+   const { id } = req.user
+
+   const user = await User.updateUser({ id, ...req.body })
+
+   if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
+
+   return res.status(200).json({
+      status: 'success',
+      data: user,
+   })
+})

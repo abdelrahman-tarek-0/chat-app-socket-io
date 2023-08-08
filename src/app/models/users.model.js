@@ -1,6 +1,6 @@
 const db = require('../../config/database/db')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
-const { safeUser } = require('../utils/safeModel')
+const { safeUser, safeUserUpdate } = require('../utils/safeModel')
 
 class User {
    static async signup(
@@ -20,7 +20,7 @@ class User {
          })
          .returning('*')
 
-      return safeUser(user[0] || [], opts?.unsafePass || {})
+      return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 
    static async login({ email, password }, opts = { unsafePass: {} }) {
@@ -33,7 +33,7 @@ class User {
       if (!user || !(await comparePassword(password, user.password)))
          return null
 
-      return safeUser(user || [], opts?.unsafePass || {})
+      return safeUser(user || {}, opts?.unsafePass || {})
    }
 
    static async verifyUser(
@@ -56,7 +56,7 @@ class User {
 
       if (passwordChangedAt > tokenIssuedAt + 5000) return null
 
-      return safeUser(user || [], opts?.unsafePass || {})
+      return safeUser(user || {}, opts?.unsafePass || {})
    }
 
    static async getUserProfile({ id }, opts = { unsafePass: {} }) {
@@ -91,7 +91,7 @@ class User {
          .where('user.id', id)
          .andWhere('user.is_active', '=', 'true')
          // .andWhere('c_own.is_active', '=', 'true') //BUG same bug as in channel.model.js getChannel() but i fixed it in the 2 queries
-         // .andWhere('c_member.is_active', '=', 'true') 
+         // .andWhere('c_member.is_active', '=', 'true')
          .groupBy('user.id')
          .first()
 
@@ -99,7 +99,20 @@ class User {
       if (!user.creatorOf?.at(0)?.id) user.creatorOf = []
       if (!user.memberIn?.at(0)?.id) user.memberIn = []
 
-      return safeUser(user || [], opts?.unsafePass || {})
+      return safeUser(user || {}, opts?.unsafePass || {})
+   }
+
+   static async updateUser(data) {
+      const { id } = data
+      data = safeUserUpdate(data)
+
+      console.log(data)
+      const user = await db('users')
+         .update({ ...data, updated_at: db.fn.now() })
+         .where('id', '=', id)
+         .returning('*')
+
+      return safeUser(user[0] || {},{updated_at: true})
    }
 }
 
