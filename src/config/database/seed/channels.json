@@ -31,5 +31,27 @@
       "type": "public",
       "created_at": "2023-08-07T12:00:00Z",
       "updated_at": "2023-08-07T12:00:00Z"
+   },
+   {
+      "id": "10dc0ca8-ee51-4f36-b8e6-421a57bccccc",
+      "creator": "098a7b6c-5432-1abc-2345-def67890ccc0",
+      "name": "InActive Channel 1",
+      "description": "This is a private channel for invited members only.",
+      "image_url": "private_channel1.png",
+      "is_active": "false",
+      "type": "public",
+      "created_at": "2023-08-07T12:00:00Z",
+      "updated_at": "2023-08-07T12:00:00Z"
+   },
+   {
+      "id": "10dc0ca8-ee51-4f36-b8e6-421a57bccccb",
+      "creator": "d8e8f8d9-8877-6543-9abc-987654320000",
+      "name": "InActive Channel 2",
+      "description": "This is a private channel for invited members only.",
+      "image_url": "private_channel1.png",
+      "is_active": "false",
+      "type": "public",
+      "created_at": "2023-08-07T12:00:00Z",
+      "updated_at": "2023-08-07T12:00:00Z"
    }
 ]

@@ -70,13 +70,28 @@ class User {
                `JSON_AGG(DISTINCT jsonb_build_object('id', c_member.id, 'name', c_member.name, 'description', c_member.description, 'image', c_member.image_url, 'role', cm.role)) as "memberIn"`
             )
          )
-         .leftJoin('channels as c_own', 'user.id', 'c_own.creator')
-         .leftJoin('channel_members as cm', 'user.id', 'cm.user_id')
+         .leftJoin('channels as c_own', function () {
+            this.on('user.id', '=', 'c_own.creator').andOn(
+               'c_own.is_active',
+               '=',
+               db.raw('true')
+            )
+         })
+         .leftJoin('channel_members as cm', function () {
+            this.on('user.id', '=', 'cm.user_id').andOn(
+               db.raw(
+                  '(select is_active from channels where channels.id = cm.channel_id limit 1)'
+               ),
+               '=',
+               db.raw('true')
+            )
+         })
          .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
+
          .where('user.id', id)
          .andWhere('user.is_active', '=', 'true')
-         .andWhere('c_own.is_active', '=', 'true')
-         .andWhere('c_member.is_active', '=', 'true')
+         // .andWhere('c_own.is_active', '=', 'true') //BUG same bug as in channel.model.js getChannel() but i fixed it in the 2 queries
+         // .andWhere('c_member.is_active', '=', 'true') 
          .groupBy('user.id')
          .first()
 
@@ -86,8 +101,6 @@ class User {
 
       return safeUser(user || [], opts?.unsafePass || {})
    }
-
-
 }
 
 module.exports = User
