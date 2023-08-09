@@ -38,3 +38,17 @@ exports.disableMe = catchAsync(async (req, res) => {
 
     return res.status(204).json()
 })
+
+exports.changePassword = catchAsync(async (req, res) => {
+   const { id } = req.user
+   const { oldPassword, newPassword } = req.body
+
+   const user = await User.changePassword({ id, oldPassword, newPassword })
+
+   if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
+
+   return res.status(200).json({
+      status: 'success',
+      data: user,
+   })
+})

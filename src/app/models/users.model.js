@@ -1,8 +1,9 @@
 const db = require('../../config/database/db')
 const { safeUser, safeUserUpdate } = require('../utils/safeModel')
+const ErrorBuilder = require('../utils/ErrorBuilder')
+const { hashPassword, comparePassword } = require('../utils/passwordHash')
 
 class User {
-
    static async verifyUser(
       { id, tokenizer, tokenIat },
       opts = { unsafePass: {} }
@@ -78,7 +79,7 @@ class User {
          .where('id', '=', id)
          .returning('*')
 
-      return safeUser(user[0] || {},{updated_at: true})
+      return safeUser(user[0] || {}, { updated_at: true })
    }
 
    static async disableMe({ id }) {
@@ -87,7 +88,42 @@ class User {
          .where('id', '=', id)
          .returning('*')
 
-      return safeUser(user[0] || {},{updated_at: true})
+      return safeUser(user[0] || {}, { updated_at: true })
+   }
+
+   static async changePassword({ id, oldPassword, newPassword }) {
+      const user = await db('users')
+         .select('*')
+         .where('id', '=', id)
+         .andWhere('is_active', '=', 'true')
+         .first()
+
+      if (!user || !(await comparePassword(oldPassword, user.password)))
+         throw new ErrorBuilder(
+            'Incorrect password',
+            401,
+            'INVALID_CREDENTIALS'
+         )
+      
+      if (oldPassword === newPassword) throw new ErrorBuilder(
+         'New password must be different from old password',
+         400,
+         'BAD_REQUEST'
+      )
+
+      newPassword = await hashPassword(newPassword)
+      const tokenizer = Math.random().toString(36).substring(2, 10)
+
+      const updatedUser = await db('users')
+         .update({
+            password: newPassword,
+            last_password_change_at: new Date(),
+            tokenizer,
+         })
+         .where('id', '=', id)
+         .returning('*')
+
+      return safeUser(updatedUser[0] || {})
    }
 }
 

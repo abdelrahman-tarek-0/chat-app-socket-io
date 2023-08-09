@@ -7,6 +7,7 @@ const router = Router()
 
 router.get('/me', loggedIn(), controller.getUserProfile)
 router.patch('/', loggedIn(), controller.updateUser)
+router.patch('/change-password', loggedIn(), controller.changePassword)
 router.delete('/', loggedIn(), controller.disableMe)
 
 module.exports = router
