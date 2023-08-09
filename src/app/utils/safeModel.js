@@ -10,9 +10,21 @@ exports.userUnsafeFields = [
    'updated_at',
 ]
 
-exports.userSafeFields = ['id','display_name', 'username', 'image_url', 'bio', 'created_at']
+exports.userSafeFields = [
+   'id',
+   'display_name',
+   'username',
+   'image_url',
+   'bio',
+   'created_at',
+]
 
-exports.userAllowedUpdateFields = ['display_name','username', 'image_url', 'bio']
+exports.userAllowedUpdateFields = [
+   'display_name',
+   'username',
+   'image_url',
+   'bio',
+]
 
 exports.safeUser = (user, unsafePass = {}) => {
    const safeUser = { ...user }

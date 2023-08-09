@@ -104,12 +104,13 @@ class User {
             401,
             'INVALID_CREDENTIALS'
          )
-      
-      if (oldPassword === newPassword) throw new ErrorBuilder(
-         'New password must be different from old password',
-         400,
-         'BAD_REQUEST'
-      )
+
+      if (oldPassword === newPassword)
+         throw new ErrorBuilder(
+            'New password must be different from old password',
+            400,
+            'BAD_REQUEST'
+         )
 
       newPassword = await hashPassword(newPassword)
       const tokenizer = Math.random().toString(36).substring(2, 10)

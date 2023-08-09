@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer')
 
-const { mailDev } = require('../../config/app.config.js')
+const { mailDev } = require('../../config/app.config')
 
 const transport = nodemailer.createTransport({
    host: mailDev.host,

@@ -19,7 +19,7 @@ exports.signup = catchAsync(async (req, res) => {
          email,
          password,
       },
-      { unsafePass: { email: true,tokenizer:true } }
+      { unsafePass: { email: true, tokenizer: true } }
    )
    console.log(user)
 
