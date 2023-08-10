@@ -4,6 +4,7 @@ const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 const { sendConfirmEmail } = require('../services/mail.services')
+const { confirmEmailDone } = require('../views/emails.views')
 
 /**
  *
@@ -23,7 +24,7 @@ exports.signup = catchAsync(async (req, res) => {
       },
       { unsafePass: { email: true, tokenizer: true } }
    )
-   
+
    // login the user
    await signCookieToken(res, user.id, user.tokenizer)
    user.tokenizer = undefined
@@ -117,12 +118,9 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
  */
 exports.confirmEmail = catchAsync(async (req, res) => {
    const { token } = req.params
-   const { email } = req.query
+   const { email, username } = req.query
 
    await Auth.confirmEmail({ token, email })
 
-   return res.status(200).json({
-      status: 'success',
-      message: 'Email confirmed',
-   })
+   return res.status(200).send(confirmEmailDone({ username }))
 })
