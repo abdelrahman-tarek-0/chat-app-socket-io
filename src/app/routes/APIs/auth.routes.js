@@ -12,5 +12,6 @@ router.post(
    loggedIn({ skipEmailConfirm: true }),
    controller.sendConfirmEmail
 )
+router.get('/confirmEmail/:token', controller.confirmEmail)
 
 module.exports = router

@@ -13,6 +13,7 @@ const { sendConfirmEmail } = require('../services/mail.services')
 exports.signup = catchAsync(async (req, res) => {
    const { username, display_name, email, password } = req.body
 
+   // create user
    const user = await Auth.signup(
       {
          username,
@@ -22,11 +23,26 @@ exports.signup = catchAsync(async (req, res) => {
       },
       { unsafePass: { email: true, tokenizer: true } }
    )
-   console.log(user)
-
+   
+   // login the user
    await signCookieToken(res, user.id, user.tokenizer)
    user.tokenizer = undefined
 
+   // send confirm email
+   const { verification } = await Auth.createReset({
+      email,
+      type: 'token_link',
+      verificationFor: 'confirm_email',
+   })
+   await sendConfirmEmail({
+      username: user.username,
+      URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
+         verification.reset
+      }?email=${user.email}&username=${user.username}`,
+      email: user.email,
+   })
+
+   // res
    return res.status(201).json({
       status: 'success',
       data: {
@@ -84,12 +100,29 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
          verification.reset
-      }?email=${user.email}`,
+      }?email=${user.email}&username=${user.username}`,
       email: user.email,
    })
 
    return res.status(201).json({
       status: 'success',
       message: 'Email sent',
+   })
+})
+
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
+exports.confirmEmail = catchAsync(async (req, res) => {
+   const { token } = req.params
+   const { email } = req.query
+
+   await Auth.confirmEmail({ token, email })
+
+   return res.status(200).json({
+      status: 'success',
+      message: 'Email confirmed',
    })
 })

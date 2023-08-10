@@ -10,7 +10,6 @@ class User {
       { username, display_name, email, password },
       opts = { unsafePass: {} }
    ) {
-      // inset user
       const tokenizer = randomString(8)
       password = await hashPassword(password)
       const user = await db('users')
@@ -22,20 +21,6 @@ class User {
             tokenizer,
          })
          .returning('*')
-
-      // send confirm email
-      const { verification } = await Auth.createReset({
-         email,
-         type: 'token_link',
-         verificationFor: 'confirm_email',
-      })
-      await sendConfirmEmail({
-         username: user.username,
-         URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
-            verification.reset
-         }?email=${user.email}`,
-         email: user.email,
-      })
 
       return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
@@ -98,6 +83,7 @@ class User {
          })
          .where('user_id', '=', user.id)
          .andWhere('verification_for', '=', verificationFor)
+         .andWhere('status', '=', 'active')
 
       const verification = await db('verifications')
          .insert({
@@ -113,6 +99,60 @@ class User {
 
       // TODO: do NOT forget to handel error differently from any other database error
       return { verification: verification[0], user }
+   }
+
+   static async confirmEmail({ token, email }) {
+      const u = await db('users')
+         .select('id')
+         .where({
+            email,
+            email_verified: false,
+            is_active: true,
+         })
+         .first()
+
+      if (!u?.id)
+         throw new ErrorBuilder(
+            'User not found or email is already confirmed',
+            400,
+            'USER_NOT_FOUND'
+         )
+
+      const verification = await db('verifications')
+         .select('*')
+         .where({
+            user_id: u.id,
+            reset: token,
+            verification_for: 'confirm_email',
+            status: 'active',
+         })
+         .first()
+
+      if (!verification?.id)
+         throw new ErrorBuilder(
+            'Invalid Please Try Again Later',
+            400,
+            'INVALID'
+         )
+
+      if (verification?.expires_at < new Date().getTime())
+         throw new ErrorBuilder('Expired', 400, 'EXPIRED')
+
+      await db('users')
+         .update({
+            email_verified: true,
+            updated_at: db.fn.now(),
+         })
+         .where('id', '=', verification.user_id)
+         .andWhere('email', '=', email)
+         .andWhere('is_active', '=', db.raw('true'))
+
+      await db('verifications')
+         .update({
+            status: 'used',
+            updated_at: db.fn.now(),
+         })
+         .where('id', '=', verification.id)
    }
 }
 
