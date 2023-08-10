@@ -84,17 +84,6 @@ exports.verifications = (knex) => (table) => {
    table
       .string('verification_for')
       .notNullable()
-      .checkIn(
-         [
-            'email_verification',
-            'password_reset',
-            'phone_number_verification',
-            'email_change_verification',
-            'phone_number_change_verification',
-            'other',
-         ],
-         'type_invalid_value'
-      )
 
    table
       .string('status')

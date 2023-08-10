@@ -59,7 +59,35 @@ class User {
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }
+   
+   static async createReset({ email, type, verificationFor }) {
+      const reset = type?.toLowerCase() === 'code' ? randomNumber(6) : randomString(64)
 
+      const user = await db('users')
+         .select('*')
+         .where('email', '=', email)
+         .andWhere('is_active', '=', db.raw('true'))
+         .first()
+
+      if (!user?.id) return null
+
+      await db('verifications')
+         .update({
+            status: 'expired',
+            updated_at: db.fn.now(),
+         })
+         .where('user_id', '=', user.id)
+         .andWhere('verification_for', '=', verificationFor)
+
+      await db('verifications').insert({
+         user_id: user.id,
+         reset,
+         reset_type: type?.toLowerCase() === 'code' ? 'code' : 'token_link',
+         verification_for: verificationFor,
+      })
+
+      return true
+   }
 }
 
 module.exports = User
