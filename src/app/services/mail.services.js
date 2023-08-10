@@ -1,6 +1,8 @@
 const nodemailer = require('nodemailer')
+const { htmlToText } = require('html-to-text')
 
 const { mailDev } = require('../../config/app.config')
+const emailTemplate = require('../views/emails.views')
 
 const transport = nodemailer.createTransport({
    host: mailDev.host,
@@ -24,6 +26,11 @@ const sendMail = async (to, subject, html, text) => {
    return info
 }
 
-module.exports = {
-   sendMail,
+const sendConfirmEmail = async ({ username, URL, email }) => {
+   const html = emailTemplate.confirmEmail({ username, URL })
+   const text = htmlToText(html)
+
+   const info = await sendMail(email, 'Confirm your email', html, text)
+   return info
 }
+module.exports = { sendConfirmEmail }

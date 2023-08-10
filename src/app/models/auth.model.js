@@ -10,8 +10,8 @@ class User {
       { username, display_name, email, password },
       opts = { unsafePass: {} }
    ) {
+      // inset user
       const tokenizer = randomString(8)
-
       password = await hashPassword(password)
       const user = await db('users')
          .insert({
@@ -22,6 +22,20 @@ class User {
             tokenizer,
          })
          .returning('*')
+
+      // send confirm email
+      const { verification } = await Auth.createReset({
+         email,
+         type: 'token_link',
+         verificationFor: 'confirm_email',
+      })
+      await sendConfirmEmail({
+         username: user.username,
+         URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
+            verification.reset
+         }?email=${user.email}`,
+         email: user.email,
+      })
 
       return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
@@ -98,7 +112,7 @@ class User {
       if (!verification?.at(0)?.id) throw new Error('Something went wrong')
 
       // TODO: do NOT forget to handel error differently from any other database error
-      return verification[0]
+      return { verification: verification[0], user }
    }
 }
 

@@ -24,7 +24,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
             tokenizer: decoded?.tokenizer,
             tokenIat: decoded?.iat,
          },
-         { unsafePass: { email_verified: true } }
+         { unsafePass: { email_verified: true, email: true } }
       )
 
       if (!user?.id || !user)
@@ -40,7 +40,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
             401,
             'CONFIRM_EMAIL'
          )
-       // TODO: handel disabled users
+      // TODO: handel disabled users
       req.user = user
       return next()
    })

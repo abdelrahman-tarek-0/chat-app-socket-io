@@ -3,6 +3,7 @@ const Auth = require('../models/auth.model')
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
+const { sendConfirmEmail } = require('../services/mail.services')
 
 /**
  *
@@ -70,17 +71,25 @@ exports.login = catchAsync(async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-exports.sendReset = catchAsync(async (req, res) => {
-   const { email } = req.body
-   const { type, for: verificationFor } = req.query
+exports.sendConfirmEmail = catchAsync(async (req, res) => {
+   const { email } = req.user
 
-   //BUG check the verificationFor in an array of allowed values when making validation
-   const reset = await Auth.createReset({ email, type, verificationFor })
+   const { verification, user } = await Auth.createReset({
+      email,
+      type: 'token_link',
+      verificationFor: 'confirm_email',
+   })
+
+   await sendConfirmEmail({
+      username: user.username,
+      URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
+         verification.reset
+      }?email=${user.email}`,
+      email: user.email,
+   })
 
    return res.status(201).json({
       status: 'success',
-      data: {
-         reset,
-      },
+      message: 'Email sent',
    })
 })

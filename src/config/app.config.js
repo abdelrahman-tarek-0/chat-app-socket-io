@@ -3,6 +3,7 @@ const _path = require('path')
 require('dotenv').config({
    path: _path.join(__dirname, '../../.env'),
 })
+const APP = require('../../package.json')
 
 const localIp =
    os.networkInterfaces().Ethernet?.filter((ip) => ip.family === 'IPv4')[0]
@@ -42,5 +43,10 @@ module.exports = {
       port: Number(process.env.MAILTRAP_PORT),
       user: process.env.MAILTRAP_USER,
       pass: process.env.MAILTRAP_PASSWORD,
+   },
+   APP: {
+      name: APP.name,
+      version: APP.version,
+      description: APP.description,
    },
 }
