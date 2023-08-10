@@ -1,13 +1,14 @@
 const db = require('../../config/database/db')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { safeUser } = require('../utils/safeModel')
+const { randomString,randomNumber } = require('../utils/general.utils')
 
 class User {
    static async signup(
       { username, display_name, email, password },
       opts = { unsafePass: {} }
    ) {
-      const tokenizer = Math.random().toString(36).substring(2, 10)
+      const tokenizer = randomString(8)
 
       password = await hashPassword(password)
       const user = await db('users')
@@ -58,6 +59,7 @@ class User {
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }
+
 }
 
 module.exports = User

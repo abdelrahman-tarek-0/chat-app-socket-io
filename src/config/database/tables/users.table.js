@@ -99,7 +99,7 @@ exports.verifications = (knex) => (table) => {
    table
       .string('status')
       .defaultTo('active')
-      .checkIn(['active', 'used', 'error'], 'status_invalid_value')
+      .checkIn(['active', 'used', 'error', 'expired'], 'status_invalid_value')
 
    table.timestamp('expires_at').notNullable()
    table.timestamps(true, true)
