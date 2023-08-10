@@ -1,7 +1,9 @@
 const db = require('../../config/database/db')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { safeUser } = require('../utils/safeModel')
-const { randomString,randomNumber } = require('../utils/general.utils')
+const { randomString, randomNumber } = require('../utils/general.utils')
+const { security } = require('../../config/app.config')
+const ErrorBuilder = require('../utils/ErrorBuilder')
 
 class User {
    static async signup(
@@ -59,9 +61,12 @@ class User {
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }
-   
+
    static async createReset({ email, type, verificationFor }) {
-      const reset = type?.toLowerCase() === 'code' ? randomNumber(6) : randomString(64)
+      if (type !== 'code' && type !== 'token_link')
+         throw new ErrorBuilder('Invalid type', 400, 'INVALID_TYPE')
+
+      const reset = type === 'code' ? randomNumber(6) : randomString(64)
 
       const user = await db('users')
          .select('*')
@@ -69,7 +74,8 @@ class User {
          .andWhere('is_active', '=', db.raw('true'))
          .first()
 
-      if (!user?.id) return null
+      if (!user?.id)
+         throw new ErrorBuilder('Invalid email', 400, 'INVALID_EMAIL')
 
       await db('verifications')
          .update({
@@ -79,14 +85,20 @@ class User {
          .where('user_id', '=', user.id)
          .andWhere('verification_for', '=', verificationFor)
 
-      await db('verifications').insert({
-         user_id: user.id,
-         reset,
-         reset_type: type?.toLowerCase() === 'code' ? 'code' : 'token_link',
-         verification_for: verificationFor,
-      })
+      const verification = await db('verifications')
+         .insert({
+            user_id: user.id,
+            reset,
+            reset_type: type?.toLowerCase() === 'code' ? 'code' : 'token_link',
+            verification_for: verificationFor,
+            expires_at: security.resetExpires(),
+         })
+         .returning('*')
 
-      return true
+      if (!verification?.at(0)?.id) throw new Error('Something went wrong')
+
+      // TODO: do NOT forget to handel error differently from any other database error
+      return verification[0]
    }
 }
 

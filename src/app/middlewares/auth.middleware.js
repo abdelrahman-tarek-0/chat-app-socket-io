@@ -40,7 +40,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
             401,
             'CONFIRM_EMAIL'
          )
-
+       // TODO: handel disabled users
       req.user = user
       return next()
    })

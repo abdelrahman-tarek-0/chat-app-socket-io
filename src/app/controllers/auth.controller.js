@@ -64,3 +64,23 @@ exports.login = catchAsync(async (req, res) => {
       },
    })
 })
+
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
+exports.sendReset = catchAsync(async (req, res) => {
+   const { email } = req.body
+   const { type, for: verificationFor } = req.query
+
+   //BUG check the verificationFor in an array of allowed values when making validation
+   const reset = await Auth.createReset({ email, type, verificationFor })
+
+   return res.status(201).json({
+      status: 'success',
+      data: {
+         reset,
+      },
+   })
+})
