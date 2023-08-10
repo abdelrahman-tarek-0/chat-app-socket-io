@@ -33,4 +33,12 @@ const sendConfirmEmail = async ({ username, URL, email }) => {
    const info = await sendMail(email, 'Confirm your email', html, text)
    return info
 }
-module.exports = { sendConfirmEmail }
+
+const sendResetPassword = async ({ username, URL, email }) => {
+   const html = emailTemplate.forgetPassword({ username, URL })
+   const text = htmlToText(html)
+
+   const info = await sendMail(email, 'Reset Password', html, text)
+   return info
+}
+module.exports = { sendConfirmEmail,sendResetPassword }

@@ -3,7 +3,10 @@ const Auth = require('../models/auth.model')
 const { signCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
-const { sendConfirmEmail } = require('../services/mail.services')
+const {
+   sendConfirmEmail,
+   sendResetPassword,
+} = require('../services/mail.services')
 const { confirmEmailDone } = require('../views/emails.views')
 
 /**
@@ -123,4 +126,32 @@ exports.confirmEmail = catchAsync(async (req, res) => {
    await Auth.confirmEmail({ token, email })
 
    return res.status(200).send(confirmEmailDone({ username }))
+})
+
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
+exports.forgetPassword = catchAsync(async (req, res) => {
+   const { email } = req.body
+
+   const { verification, user } = await Auth.createReset({
+      email,
+      type: 'token_link',
+      verificationFor: 'reset_password',
+   })
+
+   await sendResetPassword({
+      username: user.username,
+      URL: `${req.protocol}://${req.get('host')}/api/v1/auth/resetPassword/${
+         verification.reset
+      }?email=${user.email}&username=${user.username}`,
+      email: user.email,
+   })
+
+   return res.status(201).json({
+      status: 'success',
+      message: 'Email sent',
+   })
 })
