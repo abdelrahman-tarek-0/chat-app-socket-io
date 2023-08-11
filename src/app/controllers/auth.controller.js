@@ -146,7 +146,7 @@ exports.forgetPassword = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get(
          'host'
-      )}/api/v1/auth/resetPassword?&token=${verification.reset}&id=${
+      )}/api/v1/auth/resetPassword?token=${verification.reset}&id=${
          user.id
       }`,
       email: user.email,
