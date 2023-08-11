@@ -101,27 +101,11 @@ class User {
       return { verification: verification[0], user }
    }
 
-   static async confirmEmail({ token, email }) {
-      const u = await db('users')
-         .select('id')
-         .where({
-            email,
-            email_verified: false,
-            is_active: true,
-         })
-         .first()
-
-      if (!u?.id)
-         throw new ErrorBuilder(
-            'User not found or email is already confirmed',
-            400,
-            'USER_NOT_FOUND'
-         )
-
+   static async confirmEmail({ token, id }) {
       const verification = await db('verifications')
          .select('*')
          .where({
-            user_id: u.id,
+            user_id: id,
             reset: token,
             verification_for: 'confirm_email',
             status: 'active',
@@ -144,7 +128,46 @@ class User {
             updated_at: db.fn.now(),
          })
          .where('id', '=', verification.user_id)
-         .andWhere('email', '=', email)
+         .andWhere('is_active', '=', db.raw('true'))
+
+      await db('verifications')
+         .update({
+            status: 'used',
+            updated_at: db.fn.now(),
+         })
+         .where('id', '=', verification.id)
+   }
+
+   static async resetPassword({ token, id, password }) {
+      const verification = await db('verifications')
+         .select('*')
+         .where({
+            user_id: id,
+            reset: token,
+            verification_for: 'reset_password',
+            status: 'active',
+         })
+         .first()
+
+      if (!verification?.id)
+         throw new ErrorBuilder(
+            'Invalid Please Try Again Later',
+            400,
+            'INVALID'
+         )
+
+      if (verification?.expires_at < new Date().getTime())
+         throw new ErrorBuilder('Expired', 400, 'EXPIRED')
+
+      password = await hashPassword(password)
+
+      await db('users')
+         .update({
+            password,
+            last_password_change_at: db.fn.now(),
+            updated_at: db.fn.now(),
+         })
+         .where('id', '=', verification.user_id)
          .andWhere('is_active', '=', db.raw('true'))
 
       await db('verifications')

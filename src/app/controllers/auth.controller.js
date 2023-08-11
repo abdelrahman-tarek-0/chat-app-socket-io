@@ -42,7 +42,7 @@ exports.signup = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
          verification.reset
-      }?email=${user.email}&username=${user.username}`,
+      }?id=${user.id}&username=${user.username}`,
       email: user.email,
    })
 
@@ -104,7 +104,7 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get('host')}/api/v1/auth/confirmEmail/${
          verification.reset
-      }?email=${user.email}&username=${user.username}`,
+      }?id=${user.id}&username=${user.username}`,
       email: user.email,
    })
 
@@ -121,9 +121,9 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
  */
 exports.confirmEmail = catchAsync(async (req, res) => {
    const { token } = req.params
-   const { email, username } = req.query
+   const { id, username } = req.query
 
-   await Auth.confirmEmail({ token, email })
+   await Auth.confirmEmail({ token, id })
 
    return res.status(200).send(confirmEmailDone({ username }))
 })
@@ -144,14 +144,32 @@ exports.forgetPassword = catchAsync(async (req, res) => {
 
    await sendResetPassword({
       username: user.username,
-      URL: `${req.protocol}://${req.get('host')}/api/v1/auth/resetPassword/${
-         verification.reset
-      }?email=${user.email}&username=${user.username}`,
+      URL: `${req.protocol}://${req.get(
+         'host'
+      )}/api/v1/auth/resetPassword?&token=${verification.reset}&id=${
+         user.id
+      }`,
       email: user.email,
    })
 
    return res.status(201).json({
       status: 'success',
       message: 'Email sent',
+   })
+})
+
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
+exports.resetPassword = catchAsync(async (req, res) => {
+   const { token, id, password } = req.body
+
+   await Auth.resetPassword({ token, id, password })
+
+   return res.status(200).json({
+      status: 'success',
+      message: 'Password reset',
    })
 })
