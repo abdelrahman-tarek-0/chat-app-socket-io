@@ -1,6 +1,6 @@
 const Auth = require('../models/auth.model')
 
-const { signCookieToken } = require('../utils/jwtToken')
+const { signCookieToken,setCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 const {
@@ -85,6 +85,20 @@ exports.login = catchAsync(async (req, res) => {
       data: {
          user,
       },
+   })
+})
+
+/**
+ *
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
+exports.logout = catchAsync(async (req, res) => {
+   setCookieToken(res, '', new Date() )
+
+   return res.status(200).json({
+      status: 'success',
+      message: 'Logged out',
    })
 })
 

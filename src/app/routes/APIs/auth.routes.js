@@ -6,6 +6,8 @@ const { loggedIn } = require('../../middlewares/auth.middleware')
 
 const router = Router()
 
+router.get('/logout', controller.logout)
+
 router
    .get('/views/confirmEmail/:token', controller.confirmEmail)
    .get('/views/resetPassword', (req, res) =>
