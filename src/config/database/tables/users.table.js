@@ -81,9 +81,7 @@ exports.verifications = (knex) => (table) => {
 
    table.string('reset_type').notNullable().checkIn(['code', 'token_link'])
 
-   table
-      .string('verification_for')
-      .notNullable()
+   table.string('verification_for').notNullable()
 
    table
       .string('status')

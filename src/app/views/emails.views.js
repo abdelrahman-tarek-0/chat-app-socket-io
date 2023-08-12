@@ -1,7 +1,6 @@
 const { APP } = require('../../config/app.config')
 
-exports.confirmEmail = ({ username, URL }) => {
-   return `
+exports.confirmEmail = ({ username, URL }) => `
    <!doctype html>
    <html>
       <head>
@@ -385,10 +384,8 @@ exports.confirmEmail = ({ username, URL }) => {
       </body>
    </html>
    `
-}
 
-exports.confirmEmailDone = ({ username }) => {
-   return `<head>
+exports.confirmEmailDone = ({ username }) => `<head>
    <meta charset="UTF-8"/>
    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -423,10 +420,8 @@ exports.confirmEmailDone = ({ username }) => {
    <h6 class="header">your email is confirmed ${username} &#x2714;</h6>
    <div class="message">Please make your self at home <a href="http://localhost:3000/">${APP.name} ${APP.version}</a> &#x1F60A;</div>
  </div>`
-}
 
-exports.forgetPassword = ({ username, URL }) => {
-   return `<!doctype html>
+exports.forgetPassword = ({ username, URL }) => `<!doctype html>
    <html>
       <head>
          <meta name="viewport" content="width=device-width" />
@@ -808,4 +803,3 @@ exports.forgetPassword = ({ username, URL }) => {
          </table>
       </body>
    </html>`
-}

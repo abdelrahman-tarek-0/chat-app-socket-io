@@ -41,4 +41,4 @@ const sendResetPassword = async ({ username, URL, email }) => {
    const info = await sendMail(email, 'Reset Password', html, text)
    return info
 }
-module.exports = { sendConfirmEmail,sendResetPassword }
+module.exports = { sendConfirmEmail, sendResetPassword }
