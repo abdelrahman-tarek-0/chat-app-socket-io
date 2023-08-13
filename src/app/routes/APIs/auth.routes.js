@@ -20,7 +20,7 @@ router.post('/signup', controller.signup)
 router.post('/login', controller.login)
 
 router.post(
-   '/send-confirmEmail',
+   '/send-confirm-email',
    loggedIn({ skipEmailConfirm: true }),
    controller.sendConfirmEmail
 )
