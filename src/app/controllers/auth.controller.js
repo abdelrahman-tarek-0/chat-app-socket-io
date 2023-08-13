@@ -42,7 +42,7 @@ exports.signup = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get(
          'host'
-      )}/api/v1/auth/views/confirmEmail/${verification.reset}?id=${
+      )}/api/v1/auth/views/confirm-email/${verification.reset}?id=${
          user.id
       }&username=${user.username}`,
       email: user.email,

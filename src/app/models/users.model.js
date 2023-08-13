@@ -54,7 +54,9 @@ class User {
 
       const user = await db('users')
          .update({ ...data, updated_at: db.fn.now() })
-         .where('id', '=', id)
+         .where({
+            id,
+         })
          .returning('*')
 
       return safeUser(user[0] || {}, { updated_at: true })
@@ -63,7 +65,9 @@ class User {
    static async disableMe({ id }) {
       const user = await db('users')
          .update({ is_active: false, updated_at: db.fn.now() })
-         .where('id', '=', id)
+         .where({
+            id,
+         })
          .returning('*')
 
       return safeUser(user[0] || {}, { updated_at: true })
@@ -72,7 +76,9 @@ class User {
    static async changePassword({ id, oldPassword, newPassword }) {
       const user = await db('users')
          .select('*')
-         .where('id', '=', id)
+         .where({
+            id,
+         })
          .andWhere('is_active', '=', 'true')
          .first()
 
@@ -99,7 +105,9 @@ class User {
             last_password_change_at: new Date(),
             tokenizer,
          })
-         .where('id', '=', id)
+         .where({
+            id,
+         })
          .returning('*')
 
       return safeUser(updatedUser[0] || {})

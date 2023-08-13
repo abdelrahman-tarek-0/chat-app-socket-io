@@ -28,8 +28,10 @@ class User {
    static async login({ email, password }, opts = { unsafePass: {} }) {
       const user = await db('users')
          .select('*')
-         .where('email', '=', email)
-         .andWhere('is_active', '=', 'true')
+         .where({
+            email,
+            is_active: db.raw('true'),
+         })
          .first()
 
       if (!user || !(await comparePassword(password, user.password)))
@@ -44,9 +46,11 @@ class User {
    ) {
       const user = await db('users')
          .select('*')
-         .where('id', '=', id)
-         .andWhere('tokenizer', '=', tokenizer || '')
-         .andWhere('is_active', '=', 'true')
+         .where({
+            id,
+            tokenizer,
+            is_active: db.raw('true'),
+         })
          .first()
 
       if (!user) return null
@@ -69,8 +73,10 @@ class User {
 
       const user = await db('users')
          .select('*')
-         .where('email', '=', email)
-         .andWhere('is_active', '=', db.raw('true'))
+         .where({
+            email,
+            is_active: db.raw('true'),
+         })
          .first()
 
       if (!user?.id)
@@ -81,9 +87,11 @@ class User {
             status: 'expired',
             updated_at: db.fn.now(),
          })
-         .where('user_id', '=', user.id)
-         .andWhere('verification_for', '=', verificationFor)
-         .andWhere('status', '=', 'active')
+         .where({
+            user_id: user.id,
+            verification_for: verificationFor,
+            status: 'active',
+         })
 
       const verification = await db('verifications')
          .insert({
@@ -127,15 +135,19 @@ class User {
             email_verified: true,
             updated_at: db.fn.now(),
          })
-         .where('id', '=', verification.user_id)
-         .andWhere('is_active', '=', db.raw('true'))
+         .where({
+            id: verification.user_id,
+            is_active: db.raw('true'),
+         })
 
       await db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
          })
-         .where('id', '=', verification.id)
+         .where({
+            id: verification.id,
+         })
    }
 
    static async resetPassword({ token, id, password }) {
@@ -167,15 +179,19 @@ class User {
             last_password_change_at: db.fn.now(),
             updated_at: db.fn.now(),
          })
-         .where('id', '=', verification.user_id)
-         .andWhere('is_active', '=', db.raw('true'))
+         .where({
+            id: verification.user_id,
+            is_active: db.raw('true'),
+         })
 
       await db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
          })
-         .where('id', '=', verification.id)
+         .where({
+            id: verification.id,
+         })
    }
 }
 

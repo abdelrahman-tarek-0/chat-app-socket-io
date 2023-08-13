@@ -208,9 +208,11 @@ class Channel {
 
       const channel = await db('channels')
          .update({ ...safeUpdate, updated_at: db.fn.now() })
-         .where('id', channelId)
-         .andWhere('creator', creatorId)
-         .andWhere('is_active', 'true')
+         .where({
+            id: channelId,
+            creator: creatorId,
+            is_active: db.raw('true'),
+         })
          .returning('*')
 
       return safeChannel(channel[0] || {}, { updated_at: true })
@@ -219,9 +221,11 @@ class Channel {
    static async deleteChannel(channelId, creatorId) {
       const channel = await db('channels')
          .update({ is_active: false, updated_at: db.fn.now() })
-         .where('id', channelId)
-         .andWhere('creator', creatorId)
-         .andWhere('is_active', 'true')
+         .where({
+            id: channelId,
+            creator: creatorId,
+            is_active: db.raw('true'),
+         })
          .returning('id')
 
       return channel[0]
