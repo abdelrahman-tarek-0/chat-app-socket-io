@@ -17,7 +17,7 @@ const signToken = (id, tokenizer) =>
       expiresIn: security.tokenExpires,
    })
 
-const setCookieToken = (res, token,expires) => {
+const setCookieToken = (res, token, expires) => {
    res.cookie('token', token, {
       expires: expires || security.cookieExpires(),
       httpOnly: true,
