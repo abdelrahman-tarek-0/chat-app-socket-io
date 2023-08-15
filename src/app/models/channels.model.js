@@ -230,6 +230,63 @@ class Channel {
 
       return channel[0]
    }
+
+   static async createInvite(channelId, userId, usernameTo = '') {
+      const channel = await db('channels')
+         .select(
+            'channels.id',
+            'channels.name',
+            'channels.image_url',
+            'channels.description',
+            'channels.type',
+            db.raw(
+               `json_build_object('id', creator.id, 'display_name', creator.display_name,'username', creator.username, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
+            ),
+            db.raw(
+               `json_agg(json_build_object('id', members.user_id, 'role', members.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url)) as members`
+            )
+         )
+         .leftJoin('users as creator', function () {
+            this.on('creator.id', '=', 'channels.creator').andOn(
+               'creator.is_active',
+               '=',
+               db.raw('true')
+            )
+         })
+         .leftJoin('channel_members as members', function () {
+            this.on('members.channel_id', '=', 'channels.id')
+               .andOn(
+                  db.raw(
+                     `(select is_active from users where users.id = members.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw('true')
+               )
+               .andOn(function () {
+                  this.on(
+                     db.raw(
+                        `(select id from users where users.id = members.user_id limit 1)`
+                     ),
+                     '=',
+                     db.raw(`?`, userId)
+                  ).orOn(
+                     db.raw(
+                        `(select username from users where users.id = members.user_id limit 1)`
+                     ),
+                     '=',
+                     db.raw(`?`, usernameTo)
+                  )
+               })
+         })
+         .leftJoin('users', 'users.id', 'members.user_id')
+         .where('channels.id', channelId)
+         .andWhere('channels.is_active', 'true')
+         .andWhere('creator.is_active', '=', 'true')
+         .groupBy('channels.id', 'creator.id')
+         .first()
+
+      return channel
+   }
 }
 
 module.exports = Channel

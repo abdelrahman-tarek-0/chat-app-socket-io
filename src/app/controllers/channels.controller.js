@@ -87,3 +87,22 @@ exports.deleteChannel = catchAsync(async (req, res) => {
 
    res.status(204).json()
 })
+
+exports.createInvite = catchAsync(async (req, res) => {
+   const { id } = req.params
+   const { id: creatorId } = req.user
+
+   let to = req?.body?.username || ''
+
+   const invite = await Channel.createInvite(id, creatorId, to)
+
+   res.status(200).json({
+      status: 'success',
+      data: {
+         query: req.query,
+         params: req.params,
+         body: req.body,
+         invite,
+      },
+   })
+})
