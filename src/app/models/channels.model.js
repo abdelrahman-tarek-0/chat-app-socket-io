@@ -232,6 +232,7 @@ class Channel {
    }
 
    static async createInvite(channelId, userId, usernameTo = '') {
+      console.log('userId: ', userId)
       const channel = await db('channels')
          // select channel data and aggregate the members array and the creator object
          .select(
@@ -309,6 +310,32 @@ class Channel {
          .andWhere('creator.is_active', '=', 'true')
          .groupBy('channels.id', 'creator.id')
          .first()
+
+      if (!channel) return null
+      if (!channel?.members?.at(0)?.id) channel.members = []
+      if (!channel?.creator?.id) channel.creator = {}
+
+      const inviter =
+         channel.creator?.id === userId
+            ? channel.creator
+            : channel.members.find((m) => m.id === userId)
+      const invited = channel.members.find((m) => m.username === usernameTo)
+      const isAuth =
+         channel.type === 'public'
+            ? true
+            : inviter?.role === 'admin'
+            ? true
+            : false
+
+      if (invited)
+         throw new ErrorBuilder('User already in channel', 400, 'USER_EXISTS')
+      if (!inviter)
+         throw new ErrorBuilder('User not in channel', 400, 'USER_NOT_EXISTS')
+      if (!isAuth)
+         throw new ErrorBuilder('You are not authorized', 400, 'NOT_AUTHORIZED')
+
+      console.log('inviter: ', inviter)
+      console.log('invited: ', invited)
 
       return channel
    }
