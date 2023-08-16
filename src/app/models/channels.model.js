@@ -321,11 +321,7 @@ class Channel {
             : channel.members.find((m) => m.id === userId)
       const invited = channel.members.find((m) => m.username === usernameTo)
       const isAuth =
-         channel.type === 'public'
-            ? true
-            : inviter?.role === 'admin'
-            ? true
-            : false
+         channel.type === 'public' ? true : inviter?.role === 'admin'
 
       if (invited)
          throw new ErrorBuilder('User already in channel', 400, 'USER_EXISTS')
