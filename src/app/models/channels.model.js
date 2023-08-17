@@ -231,10 +231,9 @@ class Channel {
       return channel[0]
    }
 
-   static async createInvite(channelId, userId) {
+   static async createGeneralInvite(channelId, userId) {
       console.log('userId: ', userId)
       const channel = await db('channels')
-         // select channel data and aggregate the members array and the creator object
          .select(
             'channels.id',
             'channels.name',
@@ -245,7 +244,7 @@ class Channel {
                `json_build_object('id', creator.id, 'display_name', creator.display_name,'username', creator.username, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
             ),
             db.raw(
-               `json_build_object('id', members.user_id, 'role', members.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url) as member`
+               `json_build_object('id', member.user_id, 'role', member.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url) as member`
             )
          )
 
@@ -279,7 +278,16 @@ class Channel {
          .andWhere('channels.is_active', 'true')
 
          .andWhere('creator.is_active', '=', 'true')
-         .groupBy('channels.id', 'creator.id')
+         .groupBy(
+            'channels.id',
+            'creator.id',
+            'member.user_id',
+            'member.role',
+            'users.display_name',
+            'users.username',
+            'users.bio',
+            'users.image_url'
+         )
          .first()
 
       if (!channel) return null
@@ -291,17 +299,19 @@ class Channel {
       const inviter =
          channel.creator?.id === userId
             ? channel.creator
-            : channel.member.find((m) => m.id === userId)
+            : channel.member?.id === userId
+            ? channel.member
+            : null
+
       const isAuth =
          channel.type === 'public' ? true : inviter?.role === 'admin'
 
       if (!inviter)
-         throw new ErrorBuilder('User not in channel', 400, 'USER_NOT_EXISTS')
+         throw new ErrorBuilder(`Inviter is not in the channel '${channel.name}'`, 400, 'USER_NOT_EXISTS')
       if (!isAuth)
          throw new ErrorBuilder('You are not authorized', 400, 'NOT_AUTHORIZED')
 
       console.log('inviter: ', inviter)
-
 
       return channel
    }
