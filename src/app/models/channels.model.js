@@ -231,7 +231,7 @@ class Channel {
       return channel[0]
    }
 
-   static async createInvite(channelId, userId, usernameTo = '') {
+   static async createInvite(channelId, userId) {
       console.log('userId: ', userId)
       const channel = await db('channels')
          // select channel data and aggregate the members array and the creator object
@@ -245,11 +245,10 @@ class Channel {
                `json_build_object('id', creator.id, 'display_name', creator.display_name,'username', creator.username, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
             ),
             db.raw(
-               `json_agg(json_build_object('id', members.user_id, 'role', members.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url)) as members`
+               `json_build_object('id', members.user_id, 'role', members.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url) as member`
             )
          )
 
-         // join the creator data to the aggregated object and make sure the creator is active
          .leftJoin('users as creator', function () {
             this.on('creator.id', '=', 'channels.creator').andOn(
                'creator.is_active',
@@ -257,81 +256,52 @@ class Channel {
                db.raw('true')
             )
          })
-
-         // join the members data to the aggregated array
-         // the users must be active
-         // the array will contain from 0 to 2 elements
-         // the 2 members will be the user who requested the invite
-         // and the user who got the invite if the user is in the channel
-         .leftJoin('channel_members as members', function () {
-            this.on('members.channel_id', '=', 'channels.id')
-               // i learned alot of how the 'on' works
-               // it is basically a loop that will loop on every member
-               // and i can apply conditions on every member
+         .leftJoin('channel_members as member', function () {
+            this.on('member.channel_id', '=', 'channels.id')
                .andOn(
-                  // like this condition
-                  // it will check if the user is active
-                  // but not all users, it will check the user who is in this loop
                   db.raw(
-                     `(select is_active from users where users.id = members.user_id limit 1)`
+                     `(select is_active from users where users.id = member.user_id limit 1)`
                   ),
                   '=',
                   db.raw('true')
                )
-               .andOn(function () {
-                  // same on here i am checking if the user in the current loop
-                  // is with id = userId
-                  this.on(
-                     db.raw(
-                        `(select id from users where users.id = members.user_id limit 1)`
-                     ),
-                     '=',
-                     db.raw(`?`, userId)
-                  )
-                     // and here i am checking if the user in the current loop
-                     // is with username = usernameTo
-                     .orOn(
-                        db.raw(
-                           `(select username from users where users.id = members.user_id limit 1)`
-                        ),
-                        '=',
-                        db.raw(`?`, usernameTo)
-                     )
-               })
+               .andOn(
+                  db.raw(
+                     `(select id from users where users.id = member.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw(`?`, userId)
+               )
          })
-         // join the users data to the members array
-         .leftJoin('users', 'users.id', 'members.user_id')
+         .leftJoin('users', 'users.id', 'member.user_id')
 
-         // here we are filtering the channel by id and active
          .where('channels.id', channelId)
          .andWhere('channels.is_active', 'true')
 
-         // checking if the creator is active
          .andWhere('creator.is_active', '=', 'true')
          .groupBy('channels.id', 'creator.id')
          .first()
 
       if (!channel) return null
-      if (!channel?.members?.at(0)?.id) channel.members = []
+      if (!channel?.member?.id) channel.member = []
       if (!channel?.creator?.id) channel.creator = {}
+
+      console.log('channel: ', channel)
 
       const inviter =
          channel.creator?.id === userId
             ? channel.creator
-            : channel.members.find((m) => m.id === userId)
-      const invited = channel.members.find((m) => m.username === usernameTo)
+            : channel.member.find((m) => m.id === userId)
       const isAuth =
          channel.type === 'public' ? true : inviter?.role === 'admin'
 
-      if (invited)
-         throw new ErrorBuilder('User already in channel', 400, 'USER_EXISTS')
       if (!inviter)
          throw new ErrorBuilder('User not in channel', 400, 'USER_NOT_EXISTS')
       if (!isAuth)
          throw new ErrorBuilder('You are not authorized', 400, 'NOT_AUTHORIZED')
 
       console.log('inviter: ', inviter)
-      console.log('invited: ', invited)
+
 
       return channel
    }

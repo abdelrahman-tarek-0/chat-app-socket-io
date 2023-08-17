@@ -92,9 +92,8 @@ exports.createInvite = catchAsync(async (req, res) => {
    const { id } = req.params
    const { id: creatorId } = req.user
 
-   const to = req?.body?.username || ''
 
-   const invite = await Channel.createInvite(id, creatorId, to)
+   const invite = await Channel.createInvite(id, creatorId)
 
    res.status(200).json({
       status: 'success',
