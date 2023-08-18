@@ -105,3 +105,17 @@ exports.createGeneralInvite = catchAsync(async (req, res) => {
       },
    })
 })
+
+exports.acceptInvite = catchAsync(async (req, res) => {
+   const { inviteId } = req.params
+   const { id: userId } = req.user
+
+   const channel = await Channel.acceptInvite(inviteId, userId)
+
+   res.status(200).json({
+      status: 'success',
+      data: {
+         channel,
+      },
+   })
+})

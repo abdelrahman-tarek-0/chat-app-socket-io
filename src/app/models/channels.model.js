@@ -347,11 +347,54 @@ class Channel {
             creator_id: userId,
             type: 'general',
             expires_at: new Date(Date.now() + 1000 * 60 * 60),
-            alias : randomString(10)
+            alias: randomString(10),
          })
          .returning('*')
 
       return newInvite[0]
+   }
+
+   static async acceptInvite(alias, userId) {
+      const invite = await db('channel_invites')
+         .select('*')
+         .leftJoin('channels', 'channels.id', 'channel_invites.channel_id')
+         .where('channel_invites.alias', alias)
+         .andWhere('channel_invites.expires_at', '>', db.fn.now())
+         .andWhere('channels.is_active', true)
+         .andWhere(function () {
+            this.where('channels.type', 'public').orWhere(
+               'channel_invites.target_id',
+               userId
+            )
+         })
+         .first()
+
+      if (!invite?.id)
+         throw new ErrorBuilder(
+            `Invite expired or not found`,
+            400,
+            'NOT_FOUND'
+         )
+      
+      const isMember = await db('channel_members')
+         .select('*')
+         .where({
+            channel_id: invite.channel_id,
+            user_id: userId,
+         })
+         .first()
+
+      if (isMember?.id || invite?.creator === userId) throw new ErrorBuilder(`You are already a member`, 400, 'ALREADY_MEMBER')
+
+      const member = await db('channel_members')
+         .insert({
+            channel_id: invite.channel_id,
+            user_id: userId,
+         })
+         .returning('*')
+
+
+      return member
    }
 }
 
