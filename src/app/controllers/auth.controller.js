@@ -108,7 +108,9 @@ exports.logout = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.sendConfirmEmail = catchAsync(async (req, res) => {
-   const { email } = req.user
+   const { email,email_verified } = req.user
+
+   if (email_verified) throw new ErrorBuilder('Email already confirmed', 400)
 
    const { verification, user } = await Auth.createReset({
       email,
