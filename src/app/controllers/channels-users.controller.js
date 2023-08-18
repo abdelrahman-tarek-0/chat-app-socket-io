@@ -46,6 +46,18 @@ exports.acceptInvite = catchAsync(async (req, res) => {
    res.redirect('api/v1/channels/' + channel_id)
 })
 
+exports.joinChannel = catchAsync(async (req, res) => {
+   const { id: channelId } = req.params
+   const { id: userId } = req.user
+
+   const channel = await ChannelUser.joinChannel(channelId, userId)
+
+   res.status(201).json({
+      status: 'success',
+      data: channel,
+   })
+})
+
 exports.leaveChannel = catchAsync(async (req, res) => {
    const { id: channelId } = req.params
    const { id: userId } = req.user

@@ -12,6 +12,7 @@ const {
    createGeneralInvite,
    leaveChannel,
    kickUser,
+   joinChannel,
 } = require('../../controllers/channels-users.controller')
 
 const { loggedIn } = require('../../middlewares/auth.middleware')
@@ -23,6 +24,7 @@ router.get('/:id', loggedIn(), getChannel)
 
 router.post('/', loggedIn(), createChannel)
 
+router.post('/join/:id', loggedIn(), joinChannel) 
 router.post('/:id/invite/', loggedIn(), createGeneralInvite)
 router.post('/:id/invite/:targetName', loggedIn(), createDirectInvite)
 

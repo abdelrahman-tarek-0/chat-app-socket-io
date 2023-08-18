@@ -58,4 +58,8 @@ app.use((req, res) => {
 // search channel by unique name
 // end to end encryption
 // request account deletion via email the current version is just disabling the account and not deleting it
+
+// user ca join a public channel without any invitation
+// in case of a private channel the user must have an invitation to join the channel, the invite created by admin or owner
+// i will change the behavior of the public channel after adding a (channel_settings, request_join) tables, in the near future
 module.exports = app

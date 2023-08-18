@@ -311,6 +311,79 @@ class ChannelUser {
       return member[0]
    }
 
+   static async joinChannel(channelId, userId) {
+      const channel = await db('channels')
+         .select(
+            'channels.id',
+            'channels.name',
+            'channels.image_url',
+            'channels.description',
+            'channels.type',
+            db.raw(
+               `json_build_object('id', creator.id, 'display_name', creator.display_name,'username', creator.username, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
+            ),
+            db.raw(
+               `json_build_object('id', member.user_id, 'role', member.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url) as member`
+            )
+         )
+         .leftJoin('users as creator', function () {
+            this.on('creator.id', '=', 'channels.creator').andOn(
+               'creator.is_active',
+               '=',
+               db.raw('true')
+            )
+         })
+         .leftJoin('channel_members as member', function () {
+            this.on('member.channel_id', '=', 'channels.id')
+               .andOn(
+                  db.raw(
+                     `(select is_active from users where users.id = member.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw('true')
+               )
+               .andOn(
+                  db.raw(
+                     `(select id from users where users.id = member.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw(`?`, userId)
+               )
+         })
+         .leftJoin('users', 'users.id', 'member.user_id')
+
+         .where('channels.id', channelId)
+         .andWhere('channels.is_active', 'true')
+
+         .andWhere('creator.is_active', '=', 'true')
+         .groupBy(
+            'channels.id',
+            'creator.id',
+            'member.user_id',
+            'member.role',
+            'users.display_name',
+            'users.username',
+            'users.bio',
+            'users.image_url'
+         )
+         .first()
+
+      if (!channel || channel?.type === 'private')
+         throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
+      if (!channel?.member?.id) channel.member = {}
+      if (!channel?.creator?.id) channel.creator = {}
+
+      if (channel?.member?.id === userId || channel?.creator?.id === userId)
+         return channel
+
+      await db('channel_members').insert({
+         channel_id: channelId,
+         user_id: userId,
+      })
+
+      return channel
+   }
+
    static async leaveChannel(channelId, userId) {
       const channel = await db('channels')
          .select(
