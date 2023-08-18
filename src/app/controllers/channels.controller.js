@@ -1,5 +1,7 @@
 const Channel = require('../models/channels.model')
 
+const { sendInvite } = require('../services/mail.services')
+
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 
@@ -94,10 +96,31 @@ exports.createGeneralInvite = catchAsync(async (req, res) => {
 
    const invite = await Channel.createGeneralInvite(id, creatorId)
 
-   res.status(200).json({
+   res.status(201).json({
       status: 'success',
       data: 'http://localhost:3000/' + invite.alias,
    })
+})
+
+exports.createDirectInvite = catchAsync(async (req, res) => {
+   const { id: channelId, targetName } = req.params
+   const { id: creatorId } = req.user
+
+   const { invite, channel, invited } = await Channel.createDirectInvite(
+      channelId,
+      creatorId,
+      targetName
+   )
+
+   await sendInvite({
+      inviterName: req.user.username,
+      channelName: channel.name,
+      username: invited.username,
+      email: invited.email,
+      URL: 'http://localhost:3000/' + invite.alias,
+   })
+
+   res.status(201).json()
 })
 
 exports.acceptInvite = catchAsync(async (req, res) => {
