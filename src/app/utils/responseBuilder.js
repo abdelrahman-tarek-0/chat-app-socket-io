@@ -6,7 +6,7 @@ module.exports = (
    additionalInfo = {}
 ) => {
    return res.status(status).json({
-      status,
+      status: status < 400 ? 'success' : status < 500 ? 'fail' : 'error',
       message,
       data,
       ...additionalInfo,

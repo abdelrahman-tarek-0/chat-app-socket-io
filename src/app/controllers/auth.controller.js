@@ -1,4 +1,5 @@
 const Auth = require('../models/auth.model')
+const resBuilder = require('../utils/responseBuilder')
 
 const { signCookieToken, setCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
@@ -48,13 +49,7 @@ exports.signup = catchAsync(async (req, res) => {
       email: user.email,
    })
 
-   // res
-   return res.status(201).json({
-      status: 'success',
-      data: {
-         user,
-      },
-   })
+   return resBuilder(res, 201,'User Is created and email send to the user to confirm', user)
 })
 
 /**
@@ -80,12 +75,7 @@ exports.login = catchAsync(async (req, res) => {
    await signCookieToken(res, user.id, user.tokenizer)
    user.tokenizer = undefined
 
-   return res.status(200).json({
-      status: 'success',
-      data: {
-         user,
-      },
-   })
+   return resBuilder(res, 200, 'User is logged in', user)
 })
 
 /**
@@ -96,10 +86,7 @@ exports.login = catchAsync(async (req, res) => {
 exports.logout = catchAsync(async (req, res) => {
    setCookieToken(res, '', new Date())
 
-   return res.status(200).json({
-      status: 'success',
-      message: 'Logged out',
-   })
+   return resBuilder(res, 200, 'Logged out')
 })
 
 /**
@@ -128,10 +115,7 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
       email: user.email,
    })
 
-   return res.status(201).json({
-      status: 'success',
-      message: 'Email sent',
-   })
+   return resBuilder(res, 201, 'Confirmation email sent')
 })
 
 /**
@@ -172,10 +156,7 @@ exports.forgetPassword = catchAsync(async (req, res) => {
       email: user.email,
    })
 
-   return res.status(201).json({
-      status: 'success',
-      message: 'Email sent',
-   })
+   return resBuilder(res, 201, 'Reset password email sent')
 })
 
 /**
@@ -188,8 +169,5 @@ exports.resetPassword = catchAsync(async (req, res) => {
 
    await Auth.resetPassword({ token, id, password })
 
-   return res.status(200).json({
-      status: 'success',
-      message: 'Password reset',
-   })
+   return resBuilder(res, 200, 'Password reset')
 })
