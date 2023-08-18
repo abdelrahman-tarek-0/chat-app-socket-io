@@ -1,4 +1,5 @@
 const User = require('../models/users.model')
+const resBuilder = require('../utils/responseBuilder')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
@@ -10,10 +11,7 @@ exports.getUserProfile = catchAsync(async (req, res) => {
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
-   return res.status(200).json({
-      status: 'success',
-      data: user,
-   })
+   return resBuilder(res, 200, 'User profile found', user)
 })
 
 exports.updateUser = catchAsync(async (req, res) => {
@@ -23,10 +21,7 @@ exports.updateUser = catchAsync(async (req, res) => {
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
-   return res.status(200).json({
-      status: 'success',
-      data: user,
-   })
+   return resBuilder(res, 200, 'User updated', user)
 })
 
 exports.disableMe = catchAsync(async (req, res) => {
@@ -36,7 +31,7 @@ exports.disableMe = catchAsync(async (req, res) => {
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
-   return res.status(204).json()
+   return resBuilder(res, 204, 'User disabled', user)
 })
 
 exports.changePassword = catchAsync(async (req, res) => {
@@ -47,8 +42,5 @@ exports.changePassword = catchAsync(async (req, res) => {
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
-   return res.status(200).json({
-      status: 'success',
-      data: user,
-   })
+   return resBuilder(res, 200, 'Password changed', user)
 })
