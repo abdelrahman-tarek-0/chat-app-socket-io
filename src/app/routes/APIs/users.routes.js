@@ -1,13 +1,18 @@
 const { Router } = require('express')
 
-const controller = require('../../controllers/users.controller')
+const {
+   getUserProfile,
+   updateUser,
+   changePassword,
+   disableMe,
+} = require('../../controllers/users.controller')
 const { loggedIn } = require('../../middlewares/auth.middleware')
 
 const router = Router()
 
-router.get('/me', loggedIn(), controller.getUserProfile)
-router.patch('/', loggedIn(), controller.updateUser)
-router.patch('/change-password', loggedIn(), controller.changePassword)
-router.delete('/', loggedIn(), controller.disableMe)
+router.get('/me', loggedIn(), getUserProfile)
+router.patch('/', loggedIn(), updateUser)
+router.patch('/change-password', loggedIn(), changePassword)
+router.delete('/', loggedIn(), disableMe)
 
 module.exports = router

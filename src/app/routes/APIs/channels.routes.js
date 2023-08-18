@@ -1,21 +1,30 @@
 const { Router } = require('express')
 
-const channelController = require('../../controllers/channels.controller')
-const channelUserController = require('../../controllers/channels-users.controller') 
+const {
+   getAllChannels,
+   getChannel,
+   createChannel,
+   updateChannel,
+   deleteChannel,
+} = require('../../controllers/channels.controller')
+const {
+   createDirectInvite,
+   createGeneralInvite,
+} = require('../../controllers/channels-users.controller')
 
 const { loggedIn } = require('../../middlewares/auth.middleware')
 
 const router = Router()
 
-router.get('/', loggedIn(), channelController.getAllChannels)
-router.get('/:id', loggedIn(), channelController.getChannel)
+router.get('/', loggedIn(), getAllChannels)
+router.get('/:id', loggedIn(), getChannel)
 
-router.post('/', loggedIn(), channelController.createChannel)
+router.post('/', loggedIn(), createChannel)
 
-router.post('/:id/invite/', loggedIn(), channelUserController.createGeneralInvite)
-router.post('/:id/invite/:targetName', loggedIn(), channelUserController.createDirectInvite)
+router.post('/:id/invite/', loggedIn(), createGeneralInvite)
+router.post('/:id/invite/:targetName', loggedIn(), createDirectInvite)
 
-router.patch('/:id', loggedIn(), channelController.updateChannel)
-router.delete('/:id', loggedIn(), channelController.deleteChannel)
+router.patch('/:id', loggedIn(), updateChannel)
+router.delete('/:id', loggedIn(), deleteChannel)
 
 module.exports = router
