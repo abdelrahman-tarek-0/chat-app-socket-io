@@ -90,44 +90,4 @@ exports.deleteChannel = catchAsync(async (req, res) => {
    res.status(204).json()
 })
 
-exports.createGeneralInvite = catchAsync(async (req, res) => {
-   const { id } = req.params
-   const { id: creatorId } = req.user
 
-   const invite = await Channel.createGeneralInvite(id, creatorId)
-
-   res.status(201).json({
-      status: 'success',
-      data: 'http://localhost:3000/' + invite.alias,
-   })
-})
-
-exports.createDirectInvite = catchAsync(async (req, res) => {
-   const { id: channelId, targetName } = req.params
-   const { id: creatorId } = req.user
-
-   const { invite, channel, invited } = await Channel.createDirectInvite(
-      channelId,
-      creatorId,
-      targetName
-   )
-
-   await sendInvite({
-      inviterName: req.user.username,
-      channelName: channel.name,
-      username: invited.username,
-      email: invited.email,
-      URL: 'http://localhost:3000/' + invite.alias,
-   })
-
-   res.status(201).json()
-})
-
-exports.acceptInvite = catchAsync(async (req, res) => {
-   const { inviteId } = req.params
-   const { id: userId } = req.user
-
-   const { channel_id } = await Channel.acceptInvite(inviteId, userId)
-
-   res.redirect('api/v1/channels/' + channel_id)
-})
