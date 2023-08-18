@@ -1,4 +1,5 @@
 const ChannelUser = require('../models/channels-users.model')
+const resBuilder = require('../utils/responseBuilder')
 
 const { sendInvite } = require('../services/mail.services')
 
@@ -10,10 +11,7 @@ exports.createGeneralInvite = catchAsync(async (req, res) => {
 
    const invite = await ChannelUser.createGeneralInvite(id, creatorId)
 
-   res.status(201).json({
-      status: 'success',
-      data: 'http://localhost:3000/' + invite.alias,
-   })
+   return resBuilder(res, 201, 'Invite is created', `http://localhost:3000/${invite.alias}`)
 })
 
 exports.createDirectInvite = catchAsync(async (req, res) => {
@@ -34,7 +32,7 @@ exports.createDirectInvite = catchAsync(async (req, res) => {
       URL: 'http://localhost:3000/' + invite.alias,
    })
 
-   res.status(201).json()
+   return resBuilder(res, 201, `Invite is sent to ${targetName}`)
 })
 
 exports.acceptInvite = catchAsync(async (req, res) => {
@@ -43,7 +41,7 @@ exports.acceptInvite = catchAsync(async (req, res) => {
 
    const { channel_id } = await ChannelUser.acceptInvite(inviteId, userId)
 
-   res.redirect('api/v1/channels/' + channel_id)
+   return res.redirect('api/v1/channels/' + channel_id)
 })
 
 exports.joinChannel = catchAsync(async (req, res) => {
@@ -52,10 +50,11 @@ exports.joinChannel = catchAsync(async (req, res) => {
 
    const channel = await ChannelUser.joinChannel(channelId, userId)
 
-   res.status(201).json({
-      status: 'success',
-      data: channel,
-   })
+   // res.status(201).json({
+   //    status: 'success',
+   //    data: channel,
+   // })
+   return resBuilder(res, 201, `User join '${channel.name}'`, channel)
 })
 
 exports.leaveChannel = catchAsync(async (req, res) => {
@@ -64,7 +63,7 @@ exports.leaveChannel = catchAsync(async (req, res) => {
 
    await ChannelUser.leaveChannel(channelId, userId)
 
-   res.status(204).json()
+   return resBuilder(res, 204, `User left channel`)
 })
 
 exports.kickUser = catchAsync(async (req, res) => {
@@ -73,5 +72,5 @@ exports.kickUser = catchAsync(async (req, res) => {
 
    await ChannelUser.kickUser(channelId, userId, targetId)
 
-   res.status(204).json()
+   return resBuilder(res, 204, `User '${targetId}' is kicked`)
 })
