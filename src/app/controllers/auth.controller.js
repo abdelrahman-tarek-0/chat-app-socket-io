@@ -42,7 +42,7 @@ exports.signup = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get(
          'host'
-      )}/api/v1/auth/views/confirm-email/${verification.reset}?id=${
+      )}/confirm-email/${verification.reset}?id=${
          user.id
       }&username=${user.username}`,
       email: user.email,
@@ -120,7 +120,7 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get(
          'host'
-      )}/api/v1/auth/views/confirm-email/${verification.reset}?id=${
+      )}/confirm-email/${verification.reset}?id=${
          user.id
       }&username=${user.username}`,
       email: user.email,
@@ -164,7 +164,7 @@ exports.forgetPassword = catchAsync(async (req, res) => {
       username: user.username,
       URL: `${req.protocol}://${req.get(
          'host'
-      )}/api/v1/auth/views/reset-password?token=${verification.reset}&id=${
+      )}/reset-password?token=${verification.reset}&id=${
          user.id
       }`,
       email: user.email,

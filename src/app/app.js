@@ -5,7 +5,8 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser')
 const logger = require('./middlewares/logger.middleware')
 
-const router = require('./routes/index.routes')
+const apiRouter = require('./routes/index.routes')
+const viewsRouter = require('./routes/views.routes')
 
 const app = express()
 
@@ -18,11 +19,8 @@ app.use(express.static(_path.join(__dirname, '..', 'public')))
 
 app.use(logger())
 
-app.get('/', (req, res) => {
-   res.sendFile(_path.join(__dirname, '..', 'public', 'pages', 'index.html'))
-})
-
-app.use('/api/v1', router)
+app.use('/api/v1', apiRouter)
+app.use('/', viewsRouter)
 
 app.use((err, _req, res, _next) => {
    res.status(err.statusCode || 500).json({

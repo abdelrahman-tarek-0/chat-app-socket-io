@@ -8,13 +8,7 @@ const router = Router()
 
 router.get('/logout', controller.logout)
 
-router
-   .get('/views/confirm-email/:token', controller.confirmEmail)
-   .get('/views/reset-password', (req, res) =>
-      res.sendFile(
-         _path.join(__dirname, '..', '..', 'views', 'password-reset.html')
-      )
-   )
+
 
 router.post('/signup', controller.signup)
 router.post('/login', controller.login)
