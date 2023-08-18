@@ -4,6 +4,7 @@ const { randomString } = require('../utils/general.utils')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 
+// TODO: this model is very bad, it needs to be refactored and optimized
 class ChannelUser {
    static async createGeneralInvite(channelId, userId) {
       console.log('userId: ', userId)

@@ -16,7 +16,7 @@ class User {
          .insert({
             username,
             display_name,
-            email,
+            email: email.toLowerCase(),
             password,
             tokenizer,
          })
