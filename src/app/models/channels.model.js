@@ -384,7 +384,7 @@ class Channel {
          })
          .first()
 
-      if (isMember?.id || invite?.creator === userId) throw new ErrorBuilder(`You are already a member`, 400, 'ALREADY_MEMBER')
+      if (isMember?.id || invite?.creator === userId) return invite
 
       const member = await db('channel_members')
          .insert({
@@ -394,7 +394,7 @@ class Channel {
          .returning('*')
 
 
-      return member
+      return member[0]
    }
 }
 
