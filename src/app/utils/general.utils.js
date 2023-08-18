@@ -9,10 +9,20 @@ exports.randomNumber = (length) => {
    return random
 }
 
-exports.randomString = (length) => {
+const charsetMapper = {
+   number: '0123456789',
+   lower: 'abcdefghijklmnopqrstuvwxyz',
+   upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+   all: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+   alpha: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+   lowNum : '0123456789abcdefghijklmnopqrstuvwxyz',
+   upNum : '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+}
+
+exports.randomString = (length,charset) => {
    let random = ''
-   const charset =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+   charset = charsetMapper[charset] || charset || charsetMapper.all
 
    for (let i = 0; i < length; i += 1) {
       const randomIndex = Math.floor(Math.random() * charset.length)

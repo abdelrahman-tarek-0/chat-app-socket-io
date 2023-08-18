@@ -1,6 +1,7 @@
 const db = require('../../config/database/db')
 
 const { safeChannelUpdate, safeChannel } = require('../utils/safeModel')
+const { randomString } = require('../utils/general.utils')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 
@@ -346,6 +347,7 @@ class Channel {
             creator_id: userId,
             type: 'general',
             expires_at: new Date(Date.now() + 1000 * 60 * 60),
+            alias : randomString(10)
          })
          .returning('*')
 
