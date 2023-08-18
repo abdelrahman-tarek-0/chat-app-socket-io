@@ -45,3 +45,12 @@ exports.acceptInvite = catchAsync(async (req, res) => {
 
    res.redirect('api/v1/channels/' + channel_id)
 })
+
+exports.leaveChannel = catchAsync(async (req, res) => {
+   const { id: channelId } = req.params
+   const { id: userId } = req.user
+
+   await ChannelUser.leaveChannel(channelId, userId)
+
+   res.status(204).json()
+})
