@@ -291,29 +291,65 @@ class Channel {
          .first()
 
       if (!channel) return null
-      if (!channel?.member?.id) channel.member = []
+      if (!channel?.member?.id) channel.member = {}
       if (!channel?.creator?.id) channel.creator = {}
 
       console.log('channel: ', channel)
 
-      const inviter =
-         channel.creator?.id === userId
-            ? channel.creator
-            : channel.member?.id === userId
-            ? channel.member
-            : null
+      let inviter
+      if (channel.creator?.id === userId) {
+         inviter = channel.creator
+         inviter.role = 'admin'
+      } else if (channel.member?.id === userId) {
+         inviter = channel.member
+      } else {
+         inviter = null
+      }
 
       const isAuth =
-         channel.type === 'public' ? true : inviter?.role === 'admin'
+         channel.type === 'public'
+            ? true
+            : inviter?.role === 'admin'
+            ? true
+            : false
 
       if (!inviter)
-         throw new ErrorBuilder(`Inviter is not in the channel '${channel.name}'`, 400, 'USER_NOT_EXISTS')
+         throw new ErrorBuilder(
+            `Inviter is not in the channel '${channel.name}'`,
+            400,
+            'USER_NOT_EXISTS'
+         )
       if (!isAuth)
-         throw new ErrorBuilder('You are not authorized', 400, 'NOT_AUTHORIZED')
+         throw new ErrorBuilder(
+            'You are not authorized to send invite',
+            400,
+            'NOT_AUTHORIZED'
+         )
 
-      console.log('inviter: ', inviter)
+      const invite = await db('channel_invites')
+         .select('*')
+         .where({
+            channel_id: channelId,
+            creator_id: userId,
+            type: 'general',
+         })
+         .first()
 
-      return channel
+      if (invite?.id && new Date(invite?.expires_at) > new Date()) return invite
+
+      if (invite?.id)
+         await db('channel_invites').delete().where({ id: invite.id })
+
+      const newInvite = await db('channel_invites')
+         .insert({
+            channel_id: channelId,
+            creator_id: userId,
+            type: 'general',
+            expires_at: new Date(Date.now() + 1000 * 60 * 60),
+         })
+         .returning('*')
+
+      return newInvite[0]
    }
 }
 

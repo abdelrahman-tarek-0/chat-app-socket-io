@@ -88,12 +88,12 @@ exports.deleteChannel = catchAsync(async (req, res) => {
    res.status(204).json()
 })
 
-exports.createInvite = catchAsync(async (req, res) => {
+exports.createGeneralInvite = catchAsync(async (req, res) => {
    const { id } = req.params
    const { id: creatorId } = req.user
 
 
-   const invite = await Channel.createInvite(id, creatorId)
+   const invite = await Channel.createGeneralInvite(id, creatorId)
 
    res.status(200).json({
       status: 'success',
