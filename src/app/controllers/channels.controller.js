@@ -1,6 +1,5 @@
 const Channel = require('../models/channels.model')
 
-const { sendInvite } = require('../services/mail.services')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
