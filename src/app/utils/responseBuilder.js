@@ -8,7 +8,7 @@ module.exports = (
    return res.status(status).json({
       status: status < 400 ? 'success' : status < 500 ? 'fail' : 'error',
       message,
-      data,
       ...additionalInfo,
+      data,
    })
 }

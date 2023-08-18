@@ -1,5 +1,5 @@
 const Channel = require('../models/channels.model')
-
+const resBuilder = require('../utils/responseBuilder')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
@@ -14,12 +14,7 @@ exports.getChannel = catchAsync(async (req, res) => {
       throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
    }
 
-   res.status(200).json({
-      status: 'success',
-      data: {
-         channel,
-      },
-   })
+   return resBuilder(res, 200, 'Channel found', channel) 
 })
 
 exports.getAllChannels = catchAsync(async (req, res) => {
@@ -32,22 +27,13 @@ exports.getAllChannels = catchAsync(async (req, res) => {
       search: req.query.search,
    })
 
-   res.status(200).json({
-      status: 'success',
-      ...meta,
-      data: channels,
-   })
+   return resBuilder(res, 200, 'Channels found', channels, meta)
 })
 
 exports.createChannel = catchAsync(async (req, res) => {
    const channel = await Channel.createChannel(req.user.id, req.body)
 
-   res.status(201).json({
-      status: 'success',
-      data: {
-         channel,
-      },
-   })
+   return resBuilder(res, 201, 'Channel created', channel)
 })
 
 exports.updateChannel = catchAsync(async (req, res) => {
@@ -64,12 +50,7 @@ exports.updateChannel = catchAsync(async (req, res) => {
       )
    }
 
-   res.status(200).json({
-      status: 'success',
-      data: {
-         channel,
-      },
-   })
+   return resBuilder(res, 200, 'Channel updated', channel)
 })
 
 exports.deleteChannel = catchAsync(async (req, res) => {
@@ -86,7 +67,7 @@ exports.deleteChannel = catchAsync(async (req, res) => {
       )
    }
 
-   res.status(204).json()
+   return resBuilder(res, 204, 'Channel deleted', channel)
 })
 
 
