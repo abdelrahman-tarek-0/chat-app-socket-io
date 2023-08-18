@@ -54,3 +54,12 @@ exports.leaveChannel = catchAsync(async (req, res) => {
 
    res.status(204).json()
 })
+
+exports.kickUser = catchAsync(async (req, res) => {
+   const { id: channelId, userId: targetId } = req.params
+   const { id: userId } = req.user
+
+   await ChannelUser.kickUser(channelId, userId, targetId)
+
+   res.status(204).json()
+})

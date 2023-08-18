@@ -367,7 +367,8 @@ class ChannelUser {
          )
          .first()
 
-      if (!channel) throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
+      if (!channel)
+         throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
       if (!channel?.member?.id) channel.member = {}
       if (!channel?.creator?.id) channel.creator = {}
 
@@ -377,17 +378,104 @@ class ChannelUser {
             400,
             'NOT_AUTHORIZED'
          )
-      
+
       if (channel.member.id !== userId)
          throw new ErrorBuilder(
             'You are not in this channel',
             400,
             'NOT_AUTHORIZED'
          )
-      
+
       await db('channel_members').delete().where({
          channel_id: channelId,
          user_id: userId,
+      })
+   }
+
+   static async kickUser(channelId, userId, targetId) {
+      const channel = await db('channels')
+         .select(
+            'channels.id',
+            'channels.name',
+            'channels.image_url',
+            'channels.description',
+            'channels.type',
+            db.raw(
+               `json_build_object('id', creator.id, 'display_name', creator.display_name,'username', creator.username, 'bio', creator.bio, 'image_url', creator.image_url) as creator`
+            ),
+            db.raw(
+               `json_agg(json_build_object('id', members.user_id, 'role', members.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url)) as members`
+            )
+         )
+         .leftJoin('users as creator', function () {
+            this.on('creator.id', '=', 'channels.creator').andOn(
+               'creator.is_active',
+               '=',
+               db.raw('true')
+            )
+         })
+         .leftJoin('channel_members as members', function () {
+            this.on('members.channel_id', '=', 'channels.id')
+               .andOn(
+                  db.raw(
+                     `(select is_active from users where users.id = members.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw('true')
+               )
+               .andOn(function () {
+                  this.on(
+                     db.raw(
+                        `(select id from users where users.id = members.user_id limit 1)`
+                     ),
+                     '=',
+                     db.raw(`?`, userId)
+                  ).orOn(
+                     db.raw(
+                        `(select id from users where users.id = members.user_id limit 1)`
+                     ),
+                     '=',
+                     db.raw(`?`, targetId)
+                  )
+               })
+         })
+         .leftJoin('users', 'users.id', 'members.user_id')
+         .where('channels.id', channelId)
+         .andWhere('channels.is_active', 'true')
+         .andWhere('creator.is_active', '=', 'true')
+         .groupBy('channels.id', 'creator.id')
+         .first()
+
+      if (!channel)
+         throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
+      if (!channel?.members?.at(0)?.id) channel.members = []
+      if (!channel?.creator?.id) channel.creator = {}
+
+      let admin = channel?.members?.find((m) => m.id === userId)
+      if (admin) {
+      } else if (channel.creator.id === userId) {
+         admin = channel.creator
+         admin.role = 'admin'
+      } else {
+         admin = null
+      }
+
+      console.log('admin: ', admin)
+      if (admin?.role !== 'admin')
+         throw new ErrorBuilder(
+            'You are not authorized to kick user',
+            400,
+            'NOT_AUTHORIZED'
+         )
+
+      let kickedUser = channel.members.find((m) => m.id === targetId)
+
+      if (!kickedUser)
+         throw new ErrorBuilder('User not in the channel', 404, 'NOT_FOUND')
+
+      await db('channel_members').delete().where({
+         channel_id: channelId,
+         user_id: targetId,
       })
    }
 }
