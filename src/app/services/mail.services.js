@@ -42,12 +42,23 @@ const sendResetPassword = async ({ username, URL, email }) => {
    return info
 }
 
-const sendInvite = async ({ inviterName, channelName, username, URL, email }) => {
-   const html = emailTemplate.acceptInvite({ inviterName, channelName, username, URL })
+const sendInvite = async ({
+   inviterName,
+   channelName,
+   username,
+   URL,
+   email,
+}) => {
+   const html = emailTemplate.acceptInvite({
+      inviterName,
+      channelName,
+      username,
+      URL,
+   })
    const text = htmlToText(html)
 
    const info = await sendMail(email, 'Invitation', html, text)
    return info
 }
 
-module.exports = { sendConfirmEmail, sendResetPassword,sendInvite }
+module.exports = { sendConfirmEmail, sendResetPassword, sendInvite }

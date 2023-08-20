@@ -24,7 +24,7 @@ router.get('/:id', loggedIn(), getChannel)
 
 router.post('/', loggedIn(), createChannel)
 
-router.post('/join/:id', loggedIn(), joinChannel) 
+router.post('/join/:id', loggedIn(), joinChannel)
 router.post('/:id/invite/', loggedIn(), createGeneralInvite)
 router.post('/:id/invite/:targetName', loggedIn(), createDirectInvite)
 

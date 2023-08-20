@@ -14,7 +14,7 @@ exports.getChannel = catchAsync(async (req, res) => {
       throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
    }
 
-   return resBuilder(res, 200, 'Channel found', channel) 
+   return resBuilder(res, 200, 'Channel found', channel)
 })
 
 exports.getAllChannels = catchAsync(async (req, res) => {
@@ -69,5 +69,3 @@ exports.deleteChannel = catchAsync(async (req, res) => {
 
    return resBuilder(res, 204, 'Channel deleted', channel)
 })
-
-

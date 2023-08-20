@@ -66,7 +66,7 @@ exports.channelsInvites = (knex) => (table) => {
       .string('type')
       .defaultTo('general')
       .checkIn(['general', 'directed'], 'type_invalid_value')
-  
+
    table.string('alias').notNullable().unique()
 
    table

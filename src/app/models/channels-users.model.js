@@ -83,11 +83,7 @@ class ChannelUser {
       }
 
       const isAuth =
-         channel.type === 'public'
-            ? true
-            : inviter?.role === 'admin'
-            ? true
-            : false
+         channel.type === 'public' ? true : inviter?.role === 'admin'
 
       if (!inviter)
          throw new ErrorBuilder(
@@ -542,7 +538,7 @@ class ChannelUser {
             'NOT_AUTHORIZED'
          )
 
-      let kickedUser = channel.members.find((m) => m.id === targetId)
+      const kickedUser = channel.members.find((m) => m.id === targetId)
 
       if (!kickedUser)
          throw new ErrorBuilder('User not in the channel', 404, 'NOT_FOUND')

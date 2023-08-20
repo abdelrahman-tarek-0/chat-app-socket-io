@@ -41,15 +41,18 @@ exports.signup = catchAsync(async (req, res) => {
    })
    await sendConfirmEmail({
       username: user.username,
-      URL: `${req.protocol}://${req.get(
-         'host'
-      )}/confirm-email/${verification.reset}?id=${
-         user.id
-      }&username=${user.username}`,
+      URL: `${req.protocol}://${req.get('host')}/confirm-email/${
+         verification.reset
+      }?id=${user.id}&username=${user.username}`,
       email: user.email,
    })
 
-   return resBuilder(res, 201,'User Is created and email send to the user to confirm', user)
+   return resBuilder(
+      res,
+      201,
+      'User Is created and email send to the user to confirm',
+      user
+   )
 })
 
 /**
@@ -95,7 +98,7 @@ exports.logout = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.sendConfirmEmail = catchAsync(async (req, res) => {
-   const { email,email_verified } = req.user
+   const { email, email_verified } = req.user
 
    if (email_verified) throw new ErrorBuilder('Email already confirmed', 400)
 
@@ -107,11 +110,9 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
 
    await sendConfirmEmail({
       username: user.username,
-      URL: `${req.protocol}://${req.get(
-         'host'
-      )}/confirm-email/${verification.reset}?id=${
-         user.id
-      }&username=${user.username}`,
+      URL: `${req.protocol}://${req.get('host')}/confirm-email/${
+         verification.reset
+      }?id=${user.id}&username=${user.username}`,
       email: user.email,
    })
 
@@ -148,11 +149,9 @@ exports.forgetPassword = catchAsync(async (req, res) => {
 
    await sendResetPassword({
       username: user.username,
-      URL: `${req.protocol}://${req.get(
-         'host'
-      )}/reset-password?token=${verification.reset}&id=${
-         user.id
-      }`,
+      URL: `${req.protocol}://${req.get('host')}/reset-password?token=${
+         verification.reset
+      }&id=${user.id}`,
       email: user.email,
    })
 

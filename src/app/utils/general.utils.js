@@ -15,11 +15,11 @@ const charsetMapper = {
    upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
    all: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
    alpha: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-   lowNum : '0123456789abcdefghijklmnopqrstuvwxyz',
-   upNum : '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+   lowNum: '0123456789abcdefghijklmnopqrstuvwxyz',
+   upNum: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ',
 }
 
-exports.randomString = (length,charset) => {
+exports.randomString = (length, charset) => {
    let random = ''
 
    charset = charsetMapper[charset] || charset || charsetMapper.all
