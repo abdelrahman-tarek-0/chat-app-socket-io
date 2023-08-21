@@ -4,7 +4,7 @@ exports.users = (knex) => (table) => {
 
    // this is field have a trigger to set the value if not provided
    table.string('display_name').notNullable()
-   table.check('LENGTH(display_name) >= 8 and LENGTH(display_name) <= 255')
+   table.check('LENGTH(display_name) >= 1 and LENGTH(display_name) <= 255')
 
    table
       .string('username')

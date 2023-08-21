@@ -9,12 +9,13 @@ const {
    resetPassword,
 } = require('../../controllers/auth.controller')
 const { loggedIn } = require('../../middlewares/auth.middleware')
+const validator = require('../../validators/auth.validators')
 
 const router = Router()
 
 router.get('/logout', logout)
 
-router.post('/signup', signup)
+router.post('/signup', validator.signup, signup)
 router.post('/login', login)
 
 router.post(
