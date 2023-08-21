@@ -7,7 +7,7 @@ const ErrorBuilder = require('../utils/ErrorBuilder')
 
 class User {
    static async signup(
-      { username, display_name, email, password },
+      { username, displayName, email, password },
       opts = { unsafePass: {} }
    ) {
       const tokenizer = randomString(8)
@@ -15,7 +15,7 @@ class User {
       const user = await db('users')
          .insert({
             username,
-            display_name,
+            display_name: displayName,
             email: email.toLowerCase(),
             password,
             tokenizer,
