@@ -65,3 +65,23 @@ exports.forgetPassword = [
       .withMessage('Email must be less than 512 characters'),
    handleValidationErrors,
 ]
+
+exports.resetPassword = [
+   body('id')
+      .trim()
+      .isUUID(4)
+      .withMessage('ID is not in valid format')
+      .isLength({ max: 64 })
+      .withMessage('ID must be less than 64 characters'),
+   body('token')
+      .trim()
+      .isLength({ max: 64 })
+      .withMessage('Token must be less than 64 characters'),
+   body('password')
+      .trim()
+      .isLength({ min: 8, max: 255 })
+      .withMessage('Password must be between 8 to 255 characters')
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{0,}$/)
+      .withMessage('Password must contain at least one letter and one number or special character'),
+   handleValidationErrors,
+]

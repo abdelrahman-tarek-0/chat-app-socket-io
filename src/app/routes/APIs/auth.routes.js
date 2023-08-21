@@ -24,6 +24,6 @@ router.post(
    sendConfirmEmail
 )
 router.post('/forget-password',validator.forgetPassword, forgetPassword)
-router.post('/reset-password', resetPassword)
+router.post('/reset-password',validator.resetPassword, resetPassword)
 
 module.exports = router
