@@ -14,10 +14,10 @@ const validator = require('../../validators/channels.validators')
 
 const router = Router()
 
-router.get('/', loggedIn(), validator.getAllChannels, getAllChannels)
-router.get('/:id', loggedIn(), validator.getChannel, getChannel)
-router.post('/', loggedIn(), validator.createChannel, createChannel)
-router.patch('/:id', loggedIn(), validator.updateChannel, updateChannel)
-router.delete('/:id', loggedIn(), validator.deleteChannel, deleteChannel)
+router.get('/', validator.getAllChannels, loggedIn(), getAllChannels)
+router.get('/:id', validator.getChannel, loggedIn(), getChannel)
+router.post('/', validator.createChannel, loggedIn(), createChannel)
+router.patch('/:id', validator.updateChannel, loggedIn(), updateChannel)
+router.delete('/:id', validator.deleteChannel, loggedIn(), deleteChannel)
 
 module.exports = router
