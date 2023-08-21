@@ -44,3 +44,22 @@ exports.getAllChannels = [
 
     handleValidationErrors,
 ]
+
+exports.createChannel = [
+    body('name')
+        .trim()
+        .isLength({ min: 1, max: 255 })
+        .withMessage('Channel name must be between 1 and 255 characters'),
+
+    body('description')
+        .trim()
+        .isLength({ min: 1, max: 1023 })
+        .withMessage('Channel description must be between 1 and 1023 characters'),
+
+    body('type')
+        .trim()
+        .isIn(['public', 'private'])
+        .withMessage('Channel type must be public or private'),
+
+    handleValidationErrors,
+]

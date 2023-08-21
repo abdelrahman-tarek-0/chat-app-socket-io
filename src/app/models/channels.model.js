@@ -179,11 +179,12 @@ class Channel {
                .select(db.raw(`COUNT(*) as count`))
                .from('channels')
                .where('creator', creator)
+               .andWhere('is_active', 'true')
                .first()
          ).count
       )
 
-      if (userChannelsCount >= 5)
+      if (userChannelsCount >= 25)
          throw new ErrorBuilder(
             'User have max channel number',
             400,
