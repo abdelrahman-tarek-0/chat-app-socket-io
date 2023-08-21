@@ -1,4 +1,4 @@
-const { body , param, query} = require('express-validator')
+const { body } = require('express-validator')
 const { handleValidationErrors } = require('./base.validators')
 
 exports.signup = [
@@ -27,12 +27,16 @@ exports.signup = [
       })
       .isLength({ min: 8, max: 512 })
       .withMessage('Email must be between 8 to 512 characters'),
+
    body('password')
       .trim()
       .isLength({ min: 8, max: 255 })
       .withMessage('Password must be between 8 to 255 characters')
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/)
+      .matches(
+         /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/
+      )
       .withMessage('Password must contain at least one letter and one number'),
+
    handleValidationErrors,
 ]
 
@@ -46,10 +50,12 @@ exports.login = [
       })
       .isLength({ max: 512 })
       .withMessage('Email must be less than 512 characters'),
+
    body('password')
       .trim()
       .isLength({ max: 255 })
       .withMessage('Password must be less than 255 characters'),
+
    handleValidationErrors,
 ]
 
@@ -63,6 +69,7 @@ exports.forgetPassword = [
       })
       .isLength({ max: 512 })
       .withMessage('Email must be less than 512 characters'),
+
    handleValidationErrors,
 ]
 
@@ -73,15 +80,22 @@ exports.resetPassword = [
       .withMessage('ID is not in valid format')
       .isLength({ max: 64 })
       .withMessage('ID must be less than 64 characters'),
+
    body('token')
       .trim()
       .isLength({ max: 64 })
       .withMessage('Token must be less than 64 characters'),
+
    body('password')
       .trim()
       .isLength({ min: 8, max: 255 })
       .withMessage('Password must be between 8 to 255 characters')
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/)
-      .withMessage('Password must contain at least one letter and one number or special character'),
+      .matches(
+         /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/
+      )
+      .withMessage(
+         'Password must contain at least one letter and one number or special character'
+      ),
+      
    handleValidationErrors,
 ]
