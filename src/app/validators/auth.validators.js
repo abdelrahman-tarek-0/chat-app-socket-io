@@ -35,3 +35,20 @@ exports.signup = [
       .withMessage('Password must contain at least one letter and one number'),
    handleValidationErrors,
 ]
+
+exports.login = [
+   body('email')
+      .trim()
+      .isEmail()
+      .withMessage('Email must be a valid email')
+      .normalizeEmail({
+         all_lowercase: true,
+      })
+      .isLength({ max: 512 })
+      .withMessage('Email must be less than 512 characters'),
+   body('password')
+      .trim()
+      .isLength({ max: 255 })
+      .withMessage('Password must be less than 255 characters'),
+   handleValidationErrors,
+]

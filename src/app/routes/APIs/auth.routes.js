@@ -16,7 +16,7 @@ const router = Router()
 router.get('/logout', logout)
 
 router.post('/signup', validator.signup, signup)
-router.post('/login', login)
+router.post('/login',validator.login, login)
 
 router.post(
    '/send-confirm-email',
