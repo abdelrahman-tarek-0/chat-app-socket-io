@@ -31,7 +31,7 @@ exports.signup = [
       .trim()
       .isLength({ min: 8, max: 255 })
       .withMessage('Password must be between 8 to 255 characters')
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{0,}$/)
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/)
       .withMessage('Password must contain at least one letter and one number'),
    handleValidationErrors,
 ]
@@ -81,7 +81,7 @@ exports.resetPassword = [
       .trim()
       .isLength({ min: 8, max: 255 })
       .withMessage('Password must be between 8 to 255 characters')
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{0,}$/)
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/)
       .withMessage('Password must contain at least one letter and one number or special character'),
    handleValidationErrors,
 ]
