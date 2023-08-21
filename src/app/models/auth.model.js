@@ -122,7 +122,7 @@ class User {
 
       if (!verification?.id)
          throw new ErrorBuilder(
-            'Invalid or Already Used Please Try Again Later',
+            'Invalid or Already Used Token Please Try Again Later',
             400,
             'INVALID'
          )
@@ -163,7 +163,7 @@ class User {
 
       if (!verification?.id)
          throw new ErrorBuilder(
-            'Invalid or Already Used Please Try Again Later',
+            'Invalid or Already Used token Please Try Again Later',
             400,
             'INVALID'
          )

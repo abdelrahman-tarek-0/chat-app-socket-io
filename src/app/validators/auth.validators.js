@@ -1,4 +1,4 @@
-const { body } = require('express-validator')
+const { body , param, query} = require('express-validator')
 const { handleValidationErrors } = require('./base.validators')
 
 exports.signup = [
@@ -50,5 +50,18 @@ exports.login = [
       .trim()
       .isLength({ max: 255 })
       .withMessage('Password must be less than 255 characters'),
+   handleValidationErrors,
+]
+
+exports.forgetPassword = [
+   body('email')
+      .trim()
+      .isEmail()
+      .withMessage('Email must be a valid email')
+      .normalizeEmail({
+         all_lowercase: true,
+      })
+      .isLength({ max: 512 })
+      .withMessage('Email must be less than 512 characters'),
    handleValidationErrors,
 ]
