@@ -56,7 +56,50 @@ exports.createChannel = [
         .isLength({ min: 1, max: 1023 })
         .withMessage('Channel description must be between 1 and 1023 characters'),
 
+    body('image_url')
+        .optional()
+        .trim()
+        .isURL()
+        .withMessage('Channel image url is not valid')
+        .isLength({max: 512 })
+        .withMessage('Channel image url must be less than 512 characters'),
+
     body('type')
+        .trim()
+        .isIn(['public', 'private'])
+        .withMessage('Channel type must be public or private'),
+
+    handleValidationErrors,
+]
+
+exports.updateChannel = [
+    param('id')
+        .trim()
+        .isUUID(4)
+        .withMessage('Channel id is not valid'),
+
+    body('name')
+        .optional()
+        .trim() 
+        .isLength({ min: 1, max: 255 })
+        .withMessage('Channel name must be between 1 and 255 characters'),
+        
+    body('description') 
+        .optional()
+        .trim() 
+        .isLength({ min: 1, max: 1023 })    
+        .withMessage('Channel description must be between 1 and 1023 characters'),
+
+    body('image_url')
+        .optional()
+        .trim()
+        .isURL()
+        .withMessage('Channel image url is not valid')
+        .isLength({max: 512 })
+        .withMessage('Channel image url must be less than 512 characters'),
+
+    body('type')
+        .optional() 
         .trim()
         .isIn(['public', 'private'])
         .withMessage('Channel type must be public or private'),
