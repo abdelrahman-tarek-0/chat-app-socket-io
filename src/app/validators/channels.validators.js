@@ -106,3 +106,12 @@ exports.updateChannel = [
 
     handleValidationErrors,
 ]
+
+exports.deleteChannel = [
+    param('id')
+        .trim()
+        .isUUID(4)
+        .withMessage('Channel id is not valid'),    
+
+    handleValidationErrors, 
+]

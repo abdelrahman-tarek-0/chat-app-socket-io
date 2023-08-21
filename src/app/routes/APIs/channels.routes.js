@@ -18,6 +18,6 @@ router.get('/', loggedIn(), validator.getAllChannels, getAllChannels)
 router.get('/:id', loggedIn(), validator.getChannel, getChannel)
 router.post('/', loggedIn(), validator.createChannel, createChannel)
 router.patch('/:id', loggedIn(), validator.updateChannel, updateChannel)
-router.delete('/:id', loggedIn(), deleteChannel)
+router.delete('/:id', loggedIn(), validator.deleteChannel, deleteChannel)
 
 module.exports = router
