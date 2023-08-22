@@ -172,7 +172,7 @@ class Channel {
       ]
    }
 
-   static async createChannel(creator, { name, description, image_url, type }) {
+   static async createChannel(creator, data) {
       const userChannelsCount = Number(
          (
             await db
@@ -191,24 +191,14 @@ class Channel {
             'CREATE_CHANNEL'
          )
 
-      const channel = await db('channels')
-         .insert({
-            creator,
-            name,
-            description,
-            image_url,
-            type,
-         })
-         .returning('*')
+      const channel = await db('channels').insert(data).returning('*')
 
       return safeChannel(channel[0] || {})
    }
 
    static async updateChannel(channelId, creatorId, channelData) {
-      const safeUpdate = safeChannelUpdate(channelData)
-
       const channel = await db('channels')
-         .update({ ...safeUpdate, updated_at: db.fn.now() })
+         .update({ ...channelData, updated_at: db.fn.now() })
          .where({
             id: channelId,
             creator: creatorId,

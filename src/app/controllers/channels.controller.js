@@ -21,11 +21,7 @@ exports.getAllChannels = catchAsync(async (req, res) => {
    const { id: userId } = req.user
    console.log('req.query: ', req.query)
 
-   const [meta, channels] = await Channel.getAllChannels(userId, {
-      order: req.query.order,
-      pagination: req.query.pagination,
-      search: req.query.search,
-   })
+   const [meta, channels] = await Channel.getAllChannels(userId, req.query)
 
    return resBuilder(res, 200, 'Channels found', channels, meta)
 })

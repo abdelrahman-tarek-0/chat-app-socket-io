@@ -1,10 +1,11 @@
 const { body, param, query } = require('express-validator')
-const { handleValidationErrors } = require('./base.validators')
+const { handleValidationErrors, strict } = require('./base.validators')
 
 exports.getChannel = [
    param('id').trim().isUUID(4).withMessage('Channel id is not valid'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.getAllChannels = [
@@ -39,6 +40,7 @@ exports.getAllChannels = [
       .withMessage('Search string must be less than 255 characters'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.createChannel = [
@@ -66,6 +68,7 @@ exports.createChannel = [
       .withMessage('Channel type must be public or private'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.updateChannel = [
@@ -98,10 +101,12 @@ exports.updateChannel = [
       .withMessage('Channel type must be public or private'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.deleteChannel = [
    param('id').trim().isUUID(4).withMessage('Channel id is not valid'),
 
    handleValidationErrors,
+   strict,
 ]

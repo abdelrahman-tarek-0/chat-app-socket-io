@@ -16,18 +16,12 @@ const { confirmEmailDone } = require('../views/emails.views')
  * @param {Express.Response} res
  */
 exports.signup = catchAsync(async (req, res) => {
-   const { username, display_name, email, password } = req.body
+   console.log('req.body: ', req.body)
 
    // create user
-   const user = await Auth.signup(
-      {
-         username,
-         display_name,
-         email,
-         password,
-      },
-      { unsafePass: { email: true, tokenizer: true } }
-   )
+   const user = await Auth.signup(req.body, {
+      unsafePass: { email: true, tokenizer: true },
+   })
 
    // login the user
    await signCookieToken(res, user.id, user.tokenizer)
@@ -35,7 +29,7 @@ exports.signup = catchAsync(async (req, res) => {
 
    // send confirm email
    const { verification } = await Auth.createReset({
-      email,
+      email: user.email,
       type: 'token_link',
       verificationFor: 'confirm_email',
    })
@@ -61,12 +55,9 @@ exports.signup = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.login = catchAsync(async (req, res) => {
-   const { email, password } = req.body
-
-   const user = await Auth.login(
-      { email, password },
-      { unsafePass: { email: true, tokenizer: true } }
-   )
+   const user = await Auth.login(req.body, {
+      unsafePass: { email: true, tokenizer: true },
+   })
 
    if (!user?.id)
       throw new ErrorBuilder(
@@ -164,9 +155,9 @@ exports.forgetPassword = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.resetPassword = catchAsync(async (req, res) => {
-   const { token, id, password } = req.body
 
-   await Auth.resetPassword({ token, id, password })
+
+   await Auth.resetPassword(req.body)
 
    return resBuilder(res, 200, 'Password reset')
 })

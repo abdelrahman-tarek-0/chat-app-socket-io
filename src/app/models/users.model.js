@@ -50,8 +50,7 @@ class User {
 
    static async updateUser(data) {
       const { id } = data
-      data = safeUserUpdate(data)
-
+  
       const user = await db('users')
          .update({ ...data, updated_at: db.fn.now() })
          .where({

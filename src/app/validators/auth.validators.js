@@ -1,5 +1,5 @@
 const { body } = require('express-validator')
-const { handleValidationErrors } = require('./base.validators')
+const { handleValidationErrors,strict } = require('./base.validators')
 
 exports.signup = [
    body('username')
@@ -38,6 +38,7 @@ exports.signup = [
       .withMessage('Password must contain at least one letter and one number'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.login = [
@@ -57,6 +58,7 @@ exports.login = [
       .withMessage('Password must be less than 255 characters'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.forgetPassword = [
@@ -71,6 +73,7 @@ exports.forgetPassword = [
       .withMessage('Email must be less than 512 characters'),
 
    handleValidationErrors,
+   strict,
 ]
 
 exports.resetPassword = [
@@ -98,4 +101,5 @@ exports.resetPassword = [
       ),
       
    handleValidationErrors,
+   strict,
 ]

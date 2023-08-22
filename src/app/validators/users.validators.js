@@ -1,5 +1,5 @@
 const { body } = require('express-validator')
-const { handleValidationErrors } = require('./base.validators')
+const { handleValidationErrors,strict } = require('./base.validators')
 
 exports.updateUser = [
     body('display_name')
@@ -27,4 +27,5 @@ exports.updateUser = [
         .withMessage('Phone number must be less than 20 characters'),   
 
     handleValidationErrors,
+    strict
 ]
