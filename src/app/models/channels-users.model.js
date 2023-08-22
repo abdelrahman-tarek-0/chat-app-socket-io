@@ -109,7 +109,7 @@ class ChannelUser {
 
       if (invite?.id && new Date(invite?.expires_at) > new Date()) return invite
 
-      let task;
+      let task
       if (invite?.id)
          task = db('channel_invites').delete().where({ id: invite.id })
 
@@ -122,9 +122,9 @@ class ChannelUser {
             alias: randomString(10),
          })
          .returning('*')
-      
-      if (task) [newInvite] = await Promise.all([newInvite, task]);
-      else newInvite = await newInvite;
+
+      if (task) [newInvite] = await Promise.all([newInvite, task])
+      else newInvite = await newInvite
 
       return newInvite[0]
    }
@@ -240,11 +240,11 @@ class ChannelUser {
             invited,
          }
 
-      let task;
+      let task
       if (invite?.id)
          task = db('channel_invites').delete().where({ id: invite.id })
 
-      let newInvite =  db('channel_invites')
+      let newInvite = db('channel_invites')
          .insert({
             channel_id: channelId,
             creator_id: userId,
@@ -255,9 +255,9 @@ class ChannelUser {
          })
          .returning('*')
 
-      if (task) [newInvite] = await Promise.all([newInvite, task]);
-      else newInvite = await newInvite;
-      
+      if (task) [newInvite] = await Promise.all([newInvite, task])
+      else newInvite = await newInvite
+
       return {
          invite: newInvite[0],
          channel,
@@ -267,8 +267,34 @@ class ChannelUser {
 
    static async acceptInvite(alias, userId) {
       const invite = await db('channel_invites')
-         .select('*', 'channel_invites.type as invType')
+         .select(
+            'channel_invites.id as id',
+            'channel_invites.type as invType',
+            'channels.creator as creator',
+            'channels.id as channel_id',
+            db.raw(
+               `json_build_object('id', member.user_id, 'role', member.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url) as member`
+            )
+         )
          .leftJoin('channels', 'channels.id', 'channel_invites.channel_id')
+         .leftJoin('channel_members as member', function () {
+            this.on('member.channel_id', '=', 'channels.id')
+               .andOn(
+                  db.raw(
+                     `(select id from users where users.id = member.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw(`?`, userId)
+               )
+               .andOn(
+                  db.raw(
+                     `(select is_active from users where users.id = member.user_id limit 1)`
+                  ),
+                  '=',
+                  db.raw('true')
+               )
+         })
+         .leftJoin('users', 'users.id', 'member.user_id')
          .where('channel_invites.alias', alias)
          .andWhere('channel_invites.expires_at', '>', db.fn.now())
          .andWhere('channels.is_active', true)
@@ -279,20 +305,16 @@ class ChannelUser {
             )
          })
          .first()
+    
 
       if (!invite?.id)
          throw new ErrorBuilder(`Invite expired or not found`, 400, 'NOT_FOUND')
 
-      const isMember = await db('channel_members')
-         .select('*')
-         .where({
-            channel_id: invite.channel_id,
-            user_id: userId,
-         })
-         .first()
+      const isMember = invite?.member?.id
 
-      if (isMember?.id || invite?.creator === userId) return invite
+      if (isMember || invite?.creator === userId) return invite
 
+      let task;
       if (invite.invType === 'directed') {
          if (invite.target_id !== userId)
             throw new ErrorBuilder(
@@ -301,15 +323,18 @@ class ChannelUser {
                'NOT_AUTHORIZED'
             )
 
-         await db('channel_invites').delete().where({ id: invite.id })
+         task =  db('channel_invites').delete().where({ id: invite.id })
       }
 
-      const member = await db('channel_members')
+      let member = db('channel_members')
          .insert({
             channel_id: invite.channel_id,
             user_id: userId,
          })
          .returning('*')
+
+      if (task) [member] = await Promise.all([member, task])
+      else member = await member
 
       return member[0]
    }
