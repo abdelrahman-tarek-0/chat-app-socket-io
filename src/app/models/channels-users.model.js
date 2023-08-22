@@ -109,10 +109,11 @@ class ChannelUser {
 
       if (invite?.id && new Date(invite?.expires_at) > new Date()) return invite
 
+      let task;
       if (invite?.id)
-         await db('channel_invites').delete().where({ id: invite.id })
+         task = db('channel_invites').delete().where({ id: invite.id })
 
-      const newInvite = await db('channel_invites')
+      let newInvite = db('channel_invites')
          .insert({
             channel_id: channelId,
             creator_id: userId,
@@ -121,7 +122,10 @@ class ChannelUser {
             alias: randomString(10),
          })
          .returning('*')
-
+      
+      if (task) [newInvite] = await Promise.all([newInvite, task]);
+      else newInvite = await newInvite;
+      
       return newInvite[0]
    }
 
