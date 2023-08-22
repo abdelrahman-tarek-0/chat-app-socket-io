@@ -82,7 +82,7 @@ class User {
          })
 
       // this must have a custom error handler
-      const verification = db('verifications')
+      let verification = db('verifications')
          .insert({
             user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
                email,
@@ -94,15 +94,15 @@ class User {
          })
          .returning('*')
 
-      const [verifications] = await Promise.all([
+      [verification] = await Promise.all([
          verification,
          updateVerifications,
       ])
 
-      if (!verifications?.at(0)?.id) throw new Error('Something went wrong')
+      if (!verification?.at(0)?.id) throw new Error('Something went wrong')
 
       // TODO: do NOT forget to handel error differently from any other database error
-      return verifications[0] 
+      return verification[0] 
    }
 
    static async confirmEmail({ token, id }) {
