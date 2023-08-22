@@ -33,7 +33,8 @@ exports.signup = catchAsync(async (req, res) => {
       type: 'token_link',
       verificationFor: 'confirm_email',
    })
-   await sendConfirmEmail({
+
+   sendConfirmEmail({
       username: user.username,
       URL: `${req.protocol}://${req.get('host')}/confirm-email/${
          verification.reset
@@ -99,7 +100,7 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
       verificationFor: 'confirm_email',
    })
 
-   await sendConfirmEmail({
+   sendConfirmEmail({
       username: req.user.username,
       URL: `${req.protocol}://${req.get('host')}/confirm-email/${
          verification.reset
@@ -132,15 +133,12 @@ exports.confirmEmail = catchAsync(async (req, res) => {
 exports.forgetPassword = catchAsync(async (req, res) => {
    const { email } = req.body
 
-   console.time("forgetPassword")
    const verification  = await Auth.createReset({
       email,
       type: 'token_link',
       verificationFor: 'reset_password',
    })
-   console.timeEnd("forgetPassword")
    
-   // background job
    sendResetPassword({
       URL: `${req.protocol}://${req.get('host')}/reset-password?token=${
          verification.reset
@@ -157,8 +155,6 @@ exports.forgetPassword = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.resetPassword = catchAsync(async (req, res) => {
-
-
    await Auth.resetPassword(req.body)
 
    return resBuilder(res, 200, 'Password reset')
