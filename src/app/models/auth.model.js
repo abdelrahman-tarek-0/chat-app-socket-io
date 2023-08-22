@@ -171,7 +171,7 @@ class User {
 
       password = await hashPassword(password)
 
-      await db('users')
+      const task =  db('users')
          .update({
             password,
             last_password_change_at: db.fn.now(),
@@ -182,7 +182,7 @@ class User {
             is_active: db.raw('true'),
          })
 
-      await db('verifications')
+      const task2 = db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
@@ -190,6 +190,8 @@ class User {
          .where({
             id: verification.id,
          })
+      
+      await Promise.all([task, task2])
    }
 }
 
