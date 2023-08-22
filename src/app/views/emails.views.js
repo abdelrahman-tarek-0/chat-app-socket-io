@@ -719,7 +719,6 @@ exports.forgetPassword = ({ username, URL }) => `<!doctype html>
                                           <tr>
                                              <td>
                                                 <!-- CONTENT-->
-                                                <p>Hi ${username},</p>
                                                 <p>Reset your password</p>
                                                 <p>
                                                    If you didn't create an account

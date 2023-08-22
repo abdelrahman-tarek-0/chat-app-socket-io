@@ -6,10 +6,7 @@ const { security } = require('../../config/app.config')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 
 class User {
-   static async signup(
-      data,
-      opts = { unsafePass: {} }
-   ) {
+   static async signup(data, opts = { unsafePass: {} }) {
       const tokenizer = randomString(8)
       const password = await hashPassword(data.password)
 
@@ -69,32 +66,27 @@ class User {
          throw new ErrorBuilder('Invalid type', 400, 'INVALID_TYPE')
 
       const reset = type === 'code' ? randomNumber(6) : randomString(64)
-
-      const user = await db('users')
-         .select('*')
-         .where({
-            email,
-            is_active: db.raw('true'),
-         })
-         .first()
-
-      if (!user?.id)
-         throw new ErrorBuilder('Invalid email', 400, 'INVALID_EMAIL')
-
-      await db('verifications')
+      
+   
+      const updateVerifications = db('verifications')
          .update({
             status: 'expired',
             updated_at: db.fn.now(),
          })
          .where({
-            user_id: user.id,
+            user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
+               email,
+            ]),
             verification_for: verificationFor,
             status: 'active',
          })
 
-      const verification = await db('verifications')
+      // this must have a custom error handler
+      const verification = db('verifications')
          .insert({
-            user_id: user.id,
+            user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
+               email,
+            ]),
             reset,
             reset_type: type?.toLowerCase() === 'code' ? 'code' : 'token_link',
             verification_for: verificationFor,
@@ -102,10 +94,15 @@ class User {
          })
          .returning('*')
 
-      if (!verification?.at(0)?.id) throw new Error('Something went wrong')
+      const [verifications] = await Promise.all([
+         verification,
+         updateVerifications,
+      ])
+
+      if (!verifications?.at(0)?.id) throw new Error('Something went wrong')
 
       // TODO: do NOT forget to handel error differently from any other database error
-      return { verification: verification[0], user }
+      return verifications[0] 
    }
 
    static async confirmEmail({ token, id }) {

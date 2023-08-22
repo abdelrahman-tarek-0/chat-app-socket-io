@@ -28,7 +28,7 @@ exports.signup = catchAsync(async (req, res) => {
    user.tokenizer = undefined
 
    // send confirm email
-   const { verification } = await Auth.createReset({
+   const verification  = await Auth.createReset({
       email: user.email,
       type: 'token_link',
       verificationFor: 'confirm_email',
@@ -93,18 +93,18 @@ exports.sendConfirmEmail = catchAsync(async (req, res) => {
 
    if (email_verified) throw new ErrorBuilder('Email already confirmed', 400)
 
-   const { verification, user } = await Auth.createReset({
+   const verification  = await Auth.createReset({
       email,
       type: 'token_link',
       verificationFor: 'confirm_email',
    })
 
    await sendConfirmEmail({
-      username: user.username,
+      username: req.user.username,
       URL: `${req.protocol}://${req.get('host')}/confirm-email/${
          verification.reset
-      }?id=${user.id}&username=${user.username}`,
-      email: user.email,
+      }?id=${req.user.id}&username=${req.user.username}`,
+      email,
    })
 
    return resBuilder(res, 201, 'Confirmation email sent')
@@ -132,18 +132,20 @@ exports.confirmEmail = catchAsync(async (req, res) => {
 exports.forgetPassword = catchAsync(async (req, res) => {
    const { email } = req.body
 
-   const { verification, user } = await Auth.createReset({
+   console.time("forgetPassword")
+   const verification  = await Auth.createReset({
       email,
       type: 'token_link',
       verificationFor: 'reset_password',
    })
-
-   await sendResetPassword({
-      username: user.username,
+   console.timeEnd("forgetPassword")
+   
+   // background job
+   sendResetPassword({
       URL: `${req.protocol}://${req.get('host')}/reset-password?token=${
          verification.reset
-      }&id=${user.id}`,
-      email: user.email,
+      }&id=${verification.user_id}`,
+      email,
    })
 
    return resBuilder(res, 201, 'Reset password email sent')
