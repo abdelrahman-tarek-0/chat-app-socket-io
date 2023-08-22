@@ -92,14 +92,9 @@ class User {
             verification_for: verificationFor,
             expires_at: security.resetExpires(),
          })
-         .returning('*')
+         .returning('*');
 
-      [verification] = await Promise.all([
-         verification,
-         updateVerifications,
-      ])
-
-      if (!verification?.at(0)?.id) throw new Error('Something went wrong')
+      [verification] = await Promise.all([verification,updateVerifications])
 
       // TODO: do NOT forget to handel error differently from any other database error
       return verification[0] 

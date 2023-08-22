@@ -4,11 +4,11 @@ const resBuilder = require('../utils/responseBuilder')
 const { signCookieToken, setCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
-const {
-   sendConfirmEmail,
-   sendResetPassword,
-} = require('../services/mail.services')
+
 const { confirmEmailDone } = require('../views/emails.views')
+
+const { createAndSendConfirmEmail,createAndSendResetPassword } = require('../helpers/auth.helpers')
+
 
 /**
  *
@@ -28,19 +28,10 @@ exports.signup = catchAsync(async (req, res) => {
    user.tokenizer = undefined
 
    // send confirm email
-   const verification  = await Auth.createReset({
-      email: user.email,
-      type: 'token_link',
-      verificationFor: 'confirm_email',
-   })
-
-   sendConfirmEmail({
-      username: user.username,
-      URL: `${req.protocol}://${req.get('host')}/confirm-email/${
-         verification.reset
-      }?id=${user.id}&username=${user.username}`,
-      email: user.email,
-   })
+   createAndSendConfirmEmail(user,Auth, {
+      protocol: req.protocol,
+      host: req.get('host'),
+   }).catch(console.error)
 
    return resBuilder(
       res,
@@ -90,23 +81,14 @@ exports.logout = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.sendConfirmEmail = catchAsync(async (req, res) => {
-   const { email, email_verified } = req.user
+   const {  email_verified } = req.user
 
    if (email_verified) throw new ErrorBuilder('Email already confirmed', 400)
 
-   const verification  = await Auth.createReset({
-      email,
-      type: 'token_link',
-      verificationFor: 'confirm_email',
-   })
-
-   sendConfirmEmail({
-      username: req.user.username,
-      URL: `${req.protocol}://${req.get('host')}/confirm-email/${
-         verification.reset
-      }?id=${req.user.id}&username=${req.user.username}`,
-      email,
-   })
+   createAndSendConfirmEmail(req.user,Auth, {
+      protocol: req.protocol,
+      host: req.get('host'),
+   }).catch(console.error)
 
    return resBuilder(res, 201, 'Confirmation email sent')
 })
@@ -131,20 +113,11 @@ exports.confirmEmail = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.forgetPassword = catchAsync(async (req, res) => {
-   const { email } = req.body
 
-   const verification  = await Auth.createReset({
-      email,
-      type: 'token_link',
-      verificationFor: 'reset_password',
-   })
-   
-   sendResetPassword({
-      URL: `${req.protocol}://${req.get('host')}/reset-password?token=${
-         verification.reset
-      }&id=${verification.user_id}`,
-      email,
-   })
+   createAndSendResetPassword(req.body ,Auth, {
+      protocol: req.protocol, 
+      host: req.get('host'),
+   }).catch(console.error)
 
    return resBuilder(res, 201, 'Reset password email sent')
 })
