@@ -16,13 +16,13 @@ const { confirmEmailDone } = require('../views/emails.views')
  * @param {Express.Response} res
  */
 exports.signup = catchAsync(async (req, res) => {
-   const { username, displayName, email, password } = req.body
+   const { username, display_name, email, password } = req.body
 
    // create user
    const user = await Auth.signup(
       {
          username,
-         displayName,
+         display_name,
          email,
          password,
       },
