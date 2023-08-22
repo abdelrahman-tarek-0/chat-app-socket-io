@@ -36,9 +36,8 @@ exports.disableMe = catchAsync(async (req, res) => {
 
 exports.changePassword = catchAsync(async (req, res) => {
    const { id } = req.user
-   const { oldPassword, newPassword } = req.body
 
-   const user = await User.changePassword({ id, oldPassword, newPassword })
+   const user = await User.changePassword({ id, ...req.body })
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 

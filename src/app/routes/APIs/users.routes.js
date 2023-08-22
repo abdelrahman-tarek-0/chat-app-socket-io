@@ -13,7 +13,12 @@ const router = Router()
 
 router.get('/me', loggedIn(), getUserProfile)
 router.patch('/', validator.updateUser, loggedIn(), updateUser)
-router.patch('/change-password', loggedIn(), changePassword)
+router.patch(
+   '/change-password',
+   validator.changePassword,
+   loggedIn(),
+   changePassword
+)
 router.delete('/', loggedIn(), disableMe)
 
 module.exports = router

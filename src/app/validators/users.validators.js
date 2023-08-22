@@ -29,3 +29,22 @@ exports.updateUser = [
     handleValidationErrors,
     strict
 ]
+
+exports.changePassword = [
+    body('oldPassword')
+        .trim()
+        .isLength({max: 255 })
+        .withMessage('Password must be less than 255 characters'),
+
+    body('newPassword')
+        .trim()
+        .isLength({ min: 8, max: 255 })
+        .withMessage('Password must be between 8 to 255 characters')
+        .matches(
+            /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()\-_=+[\]{}|;:'",.<>/?\\]{0,}$/
+        )
+        .withMessage('Password must contain at least one letter and one number'),
+
+    handleValidationErrors,
+    strict
+]

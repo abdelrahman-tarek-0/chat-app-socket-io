@@ -50,7 +50,7 @@ class User {
 
    static async updateUser(data) {
       const { id } = data
-  
+
       const user = await db('users')
          .update({ ...data, updated_at: db.fn.now() })
          .where({
@@ -81,18 +81,13 @@ class User {
          .andWhere('is_active', '=', 'true')
          .first()
 
+      if (oldPassword === newPassword) return safeUser(user || {})
+
       if (!user || !(await comparePassword(oldPassword, user.password)))
          throw new ErrorBuilder(
             'Incorrect password',
             401,
             'INVALID_CREDENTIALS'
-         )
-
-      if (oldPassword === newPassword)
-         throw new ErrorBuilder(
-            'New password must be different from old password',
-            400,
-            'BAD_REQUEST'
          )
 
       newPassword = await hashPassword(newPassword)
