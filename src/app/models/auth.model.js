@@ -68,7 +68,7 @@ class User {
       const reset = type === 'code' ? randomNumber(6) : randomString(64)
       
    
-      const updateVerifications = db('verifications')
+      await db('verifications')
          .update({
             status: 'expired',
             updated_at: db.fn.now(),
@@ -82,7 +82,7 @@ class User {
          })
 
       // this must have a custom error handler
-      let verification = db('verifications')
+      let verification = await db('verifications')
          .insert({
             user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
                email,
@@ -94,7 +94,7 @@ class User {
          })
          .returning('*');
 
-      [verification] = await Promise.all([verification,updateVerifications])
+     
 
       // TODO: do NOT forget to handel error differently from any other database error
       return verification[0] 
