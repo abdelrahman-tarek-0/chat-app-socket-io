@@ -12,7 +12,7 @@ exports.userUnsafeFields = [
 
 exports.userSafeFields = [
    'id',
-   'display_name',
+   'displayName',
    'username',
    'image_url',
    'bio',
@@ -20,10 +20,10 @@ exports.userSafeFields = [
 ]
 
 exports.userAllowedUpdateFields = [
-   'display_name',
-   'username',
+   'displayName',
    'image_url',
    'bio',
+   'phone_number',
 ]
 
 exports.safeUser = (user, unsafePass = {}) => {

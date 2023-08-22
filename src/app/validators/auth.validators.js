@@ -12,7 +12,7 @@ exports.signup = [
       )
       .toLowerCase(),
 
-   body('display_name')
+   body('displayName')
       .optional({ values: 'null' })
       .trim()
       .isLength({ min: 0, max: 255 })
