@@ -29,7 +29,7 @@ exports.createDirectInvite = catchAsync(async (req, res) => {
       targetName
    )
 
-   await sendInvite({
+   sendInvite({
       inviterName: req.user.username,
       channelName: channel.name,
       username: invited.username,
@@ -55,10 +55,6 @@ exports.joinChannel = catchAsync(async (req, res) => {
 
    const channel = await ChannelUser.joinChannel(channelId, userId)
 
-   // res.status(201).json({
-   //    status: 'success',
-   //    data: channel,
-   // })
    return resBuilder(res, 201, `User join '${channel.name}'`, channel)
 })
 
