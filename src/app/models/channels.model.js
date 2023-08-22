@@ -1,6 +1,6 @@
 const db = require('../../config/database/db')
 
-const { safeChannelUpdate, safeChannel } = require('../utils/safeModel')
+const { safeChannel } = require('../utils/safeModel')
 
 const ErrorBuilder = require('../utils/ErrorBuilder')
 

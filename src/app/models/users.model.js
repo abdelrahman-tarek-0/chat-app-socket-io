@@ -1,5 +1,5 @@
 const db = require('../../config/database/db')
-const { safeUser, safeUserUpdate } = require('../utils/safeModel')
+const { safeUser } = require('../utils/safeModel')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { randomString } = require('../utils/general.utils')
@@ -63,7 +63,7 @@ class User {
             verification_for: 'confirm_email',
             status: 'active',
          })
-         
+
       }else if (data.email_verified && data.email){
          throw new ErrorBuilder(
             'Email cannot be changed after verification',

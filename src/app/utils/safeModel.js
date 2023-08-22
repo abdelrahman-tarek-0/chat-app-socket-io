@@ -10,22 +10,6 @@ exports.userUnsafeFields = [
    'updated_at',
 ]
 
-exports.userSafeFields = [
-   'id',
-   'displayName',
-   'username',
-   'image_url',
-   'bio',
-   'created_at',
-]
-
-exports.userAllowedUpdateFields = [
-   'displayName',
-   'image_url',
-   'bio',
-   'phone_number',
-]
-
 exports.safeUser = (user, unsafePass = {}) => {
    const safeUser = { ...user }
 
@@ -37,22 +21,7 @@ exports.safeUser = (user, unsafePass = {}) => {
    return safeUser
 }
 
-/**
- *
- * @param {Object} update the update object to update the user with
- * @returns {Object} the safe update object excluding unsafe fields
- */
-exports.safeUserUpdate = (update) => {
-   const safeUpdate = { ...update }
 
-   Object.keys(update).forEach((field) => {
-      if (!this.userAllowedUpdateFields.includes(field)) {
-         delete safeUpdate[field]
-      }
-   })
-
-   return safeUpdate
-}
 
 exports.channelUnsafeFields = [
    'raw_id',
@@ -60,16 +29,8 @@ exports.channelUnsafeFields = [
    'updated_at',
    'content_vector',
 ]
-exports.channelSafeUpdateFields = ['name', 'description', 'image_url', 'type']
-exports.channelSafeFields = [
-   'id',
-   'name',
-   'description',
-   'image_url',
-   'type',
-   'creator',
-   'created_at',
-]
+
+
 
 exports.safeChannel = (channel, unsafePase = {}) => {
    const safeChannel = { ...channel }
@@ -80,21 +41,4 @@ exports.safeChannel = (channel, unsafePase = {}) => {
    })
 
    return safeChannel
-}
-
-/**
- *
- * @param {Object} update the update object to update the Channel with
- * @returns {Object} the safe update object excluding unsafe fields
- */
-exports.safeChannelUpdate = (update) => {
-   const safeUpdate = { ...update }
-
-   Object.keys(update).forEach((field) => {
-      if (!this.channelSafeUpdateFields.includes(field)) {
-         delete safeUpdate[field]
-      }
-   })
-
-   return safeUpdate
 }
