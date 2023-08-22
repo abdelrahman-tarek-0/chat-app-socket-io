@@ -126,7 +126,7 @@ class User {
       if (verification?.expires_at < new Date().getTime())
          throw new ErrorBuilder('Expired', 400, 'EXPIRED')
 
-      await db('users')
+      const task = db('users')
          .update({
             email_verified: true,
             updated_at: db.fn.now(),
@@ -136,7 +136,7 @@ class User {
             is_active: db.raw('true'),
          })
 
-      await db('verifications')
+      const task2 = db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
@@ -144,6 +144,8 @@ class User {
          .where({
             id: verification.id,
          })
+
+      await Promise.all([task, task2])
    }
 
    static async resetPassword({ token, id, password }) {
