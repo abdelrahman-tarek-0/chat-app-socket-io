@@ -51,6 +51,29 @@ class User {
    static async updateUser(data) {
       const { id } = data
 
+      if (!data.email_verified) {
+         // background job to expire all other email verifications (no need to await)
+         db('verifications')
+         .update({
+            status: 'expired',
+            updated_at: db.fn.now(),
+         })
+         .where({
+            user_id: id,
+            verification_for: 'confirm_email',
+            status: 'active',
+         })
+         
+      }else if (data.email_verified && data.email){
+         throw new ErrorBuilder(
+            'Email cannot be changed after verification',
+            400,  
+            'EMAIL_ALREADY_VERIFIED'
+         )
+      }
+
+      delete data.email_verified;
+
       const user = await db('users')
          .update({ ...data, updated_at: db.fn.now() })
          .where({

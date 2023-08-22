@@ -12,7 +12,16 @@ const validator = require('../../validators/users.validators')
 const router = Router()
 
 router.get('/me', loggedIn(), getUserProfile)
-router.patch('/', validator.updateUser, loggedIn(), updateUser)
+
+router.patch(
+   '/',
+   validator.updateUser,
+   loggedIn({
+      skipEmailConfirm: true,
+   }),
+   updateUser
+)
+
 router.patch(
    '/change-password',
    validator.changePassword,

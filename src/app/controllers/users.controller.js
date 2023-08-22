@@ -15,9 +15,9 @@ exports.getUserProfile = catchAsync(async (req, res) => {
 })
 
 exports.updateUser = catchAsync(async (req, res) => {
-   const { id } = req.user
+   const { id,  email_verified } = req.user
 
-   const user = await User.updateUser({ id, ...req.body })
+   const user = await User.updateUser({ id, email_verified, ...req.body })
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 

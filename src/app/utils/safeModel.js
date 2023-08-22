@@ -1,7 +1,7 @@
 exports.userUnsafeFields = [
    'raw_id',
-   'email',
-   'email_verified',
+   // 'email',
+   // 'email_verified',
    'phone_number',
    'password',
    'tokenizer',
