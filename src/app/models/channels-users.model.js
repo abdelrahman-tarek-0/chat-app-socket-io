@@ -562,7 +562,6 @@ class ChannelUser {
          admin = null
       }
 
-      console.log('admin: ', admin)
       if (admin?.role !== 'admin')
          throw new ErrorBuilder(
             'You are not authorized to kick user',
@@ -570,10 +569,28 @@ class ChannelUser {
             'NOT_AUTHORIZED'
          )
 
-      const kickedUser = channel.members.find((m) => m.id === targetId)
+      let kickedUser = channel.members.find((m) => m.id === targetId)
+         if(kickedUser){
+         }else if(channel.creator.id === targetId){
+            kickedUser = channel.creator
+            kickedUser.role = 'admin'
+         }else{
+            throw new ErrorBuilder('User not in the channel', 404, 'NOT_FOUND')
+         }
 
-      if (!kickedUser)
-         throw new ErrorBuilder('User not in the channel', 404, 'NOT_FOUND')
+      if (kickedUser?.role === 'admin')
+         throw new ErrorBuilder(
+            'You cannot kick an admin',
+            400,
+            'NOT_AUTHORIZED'
+         )
+      
+      if (kickedUser?.id === userId)
+         throw new ErrorBuilder(
+            'You cannot kick yourself',
+            400,
+            'NOT_AUTHORIZED'
+         )
 
       await db('channel_members').delete().where({
          channel_id: channelId,
