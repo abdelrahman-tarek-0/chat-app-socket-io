@@ -1,12 +1,12 @@
 const { Router } = require('express')
 
 const {
-    createDirectInvite,
-    createGeneralInvite,
-    leaveChannel,
-    kickUser,
-    joinChannel,
- } = require('../../controllers/channels-users.controller')
+   createDirectInvite,
+   createGeneralInvite,
+   leaveChannel,
+   kickUser,
+   joinChannel,
+} = require('../../controllers/channels-users.controller')
 
 const { loggedIn } = require('../../middlewares/auth.middleware')
 

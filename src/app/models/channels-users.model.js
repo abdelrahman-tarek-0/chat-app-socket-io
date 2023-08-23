@@ -305,7 +305,6 @@ class ChannelUser {
             )
          })
          .first()
-    
 
       if (!invite?.id)
          throw new ErrorBuilder(`Invite expired or not found`, 400, 'NOT_FOUND')
@@ -314,7 +313,7 @@ class ChannelUser {
 
       if (isMember || invite?.creator === userId) return invite
 
-      let task;
+      let task
       if (invite.invType === 'directed') {
          if (invite.target_id !== userId)
             throw new ErrorBuilder(
@@ -323,7 +322,7 @@ class ChannelUser {
                'NOT_AUTHORIZED'
             )
 
-         task =  db('channel_invites').delete().where({ id: invite.id })
+         task = db('channel_invites').delete().where({ id: invite.id })
       }
 
       let member = db('channel_members')
@@ -570,13 +569,13 @@ class ChannelUser {
          )
 
       let kickedUser = channel.members.find((m) => m.id === targetId)
-         if(kickedUser){
-         }else if(channel.creator.id === targetId){
-            kickedUser = channel.creator
-            kickedUser.role = 'admin'
-         }else{
-            throw new ErrorBuilder('User not in the channel', 404, 'NOT_FOUND')
-         }
+      if (kickedUser) {
+      } else if (channel.creator.id === targetId) {
+         kickedUser = channel.creator
+         kickedUser.role = 'admin'
+      } else {
+         throw new ErrorBuilder('User not in the channel', 404, 'NOT_FOUND')
+      }
 
       if (kickedUser?.role === 'admin')
          throw new ErrorBuilder(
@@ -584,7 +583,7 @@ class ChannelUser {
             400,
             'NOT_AUTHORIZED'
          )
-      
+
       if (kickedUser?.id === userId)
          throw new ErrorBuilder(
             'You cannot kick yourself',

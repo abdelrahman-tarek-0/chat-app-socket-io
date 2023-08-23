@@ -21,16 +21,12 @@ exports.safeUser = (user, unsafePass = {}) => {
    return safeUser
 }
 
-
-
 exports.channelUnsafeFields = [
    'raw_id',
    'is_active',
    'updated_at',
    'content_vector',
 ]
-
-
 
 exports.safeChannel = (channel, unsafePase = {}) => {
    const safeChannel = { ...channel }

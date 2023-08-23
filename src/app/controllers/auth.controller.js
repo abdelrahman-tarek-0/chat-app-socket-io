@@ -7,8 +7,10 @@ const catchAsync = require('../utils/catchAsync')
 
 const { confirmEmailDone } = require('../views/emails.views')
 
-const { createAndSendConfirmEmail,createAndSendResetPassword } = require('../helpers/auth.helpers')
-
+const {
+   createAndSendConfirmEmail,
+   createAndSendResetPassword,
+} = require('../helpers/auth.helpers')
 
 /**
  *
@@ -28,7 +30,7 @@ exports.signup = catchAsync(async (req, res) => {
    user.tokenizer = undefined
 
    // send confirm email
-   createAndSendConfirmEmail(user,Auth, {
+   createAndSendConfirmEmail(user, Auth, {
       protocol: req.protocol,
       host: req.get('host'),
    }).catch(console.error)
@@ -81,11 +83,11 @@ exports.logout = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.sendConfirmEmail = catchAsync(async (req, res) => {
-   const {  email_verified } = req.user
+   const { email_verified } = req.user
 
    if (email_verified) throw new ErrorBuilder('Email already confirmed', 400)
 
-   createAndSendConfirmEmail(req.user,Auth, {
+   createAndSendConfirmEmail(req.user, Auth, {
       protocol: req.protocol,
       host: req.get('host'),
    }).catch(console.error)
@@ -113,9 +115,8 @@ exports.confirmEmail = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.forgetPassword = catchAsync(async (req, res) => {
-
-   createAndSendResetPassword(req.body ,Auth, {
-      protocol: req.protocol, 
+   createAndSendResetPassword(req.body, Auth, {
+      protocol: req.protocol,
       host: req.get('host'),
    }).catch(console.error)
 

@@ -51,29 +51,28 @@ class User {
    static async updateUser(data) {
       const { id } = data
 
-      let task;
+      let task
       if (!data.email_verified) {
          // background job to expire all other email verifications (no need to await)
          task = db('verifications')
-         .update({
-            status: 'expired',
-            updated_at: db.fn.now(),
-         })
-         .where({
-            user_id: id,
-            verification_for: 'confirm_email',
-            status: 'active',
-         })
-
-      }else if (data.email_verified && data.email){
+            .update({
+               status: 'expired',
+               updated_at: db.fn.now(),
+            })
+            .where({
+               user_id: id,
+               verification_for: 'confirm_email',
+               status: 'active',
+            })
+      } else if (data.email_verified && data.email) {
          throw new ErrorBuilder(
             'Email cannot be changed after verification',
-            400,  
+            400,
             'EMAIL_ALREADY_VERIFIED'
          )
       }
 
-      delete data.email_verified;
+      delete data.email_verified
 
       let user = db('users')
          .update({ ...data, updated_at: db.fn.now() })
@@ -82,9 +81,8 @@ class User {
          })
          .returning('*')
 
-      
-      if (task) [user] = await Promise.all([user, task]);
-      else user = await user;
+      if (task) [user] = await Promise.all([user, task])
+      else user = await user
 
       return safeUser(user[0] || {}, { updated_at: true })
    }

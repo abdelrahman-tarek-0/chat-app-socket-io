@@ -191,7 +191,9 @@ class Channel {
             'CREATE_CHANNEL'
          )
 
-      const channel = await db('channels').insert({creator , ...data}).returning('*')
+      const channel = await db('channels')
+         .insert({ creator, ...data })
+         .returning('*')
 
       return safeChannel(channel[0] || {})
    }

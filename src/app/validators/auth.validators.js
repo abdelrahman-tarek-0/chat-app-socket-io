@@ -1,5 +1,5 @@
 const { body } = require('express-validator')
-const { handleValidationErrors,strict } = require('./base.validators')
+const { handleValidationErrors, strict } = require('./base.validators')
 
 exports.signup = [
    body('username')
@@ -99,7 +99,7 @@ exports.resetPassword = [
       .withMessage(
          'Password must contain at least one letter and one number or special character'
       ),
-      
+
    handleValidationErrors,
    strict,
 ]

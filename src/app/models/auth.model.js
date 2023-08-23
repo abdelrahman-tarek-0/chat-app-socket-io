@@ -66,8 +66,7 @@ class User {
          throw new ErrorBuilder('Invalid type', 400, 'INVALID_TYPE')
 
       const reset = type === 'code' ? randomNumber(6) : randomString(64)
-      
-   
+
       await db('verifications')
          .update({
             status: 'expired',
@@ -82,7 +81,7 @@ class User {
          })
 
       // this must have a custom error handler
-      let verification = await db('verifications')
+      const verification = await db('verifications')
          .insert({
             user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
                email,
@@ -92,12 +91,10 @@ class User {
             verification_for: verificationFor,
             expires_at: security.resetExpires(),
          })
-         .returning('*');
-
-     
+         .returning('*')
 
       // TODO: do NOT forget to handel error differently from any other database error
-      return verification[0] 
+      return verification[0]
    }
 
    static async confirmEmail({ token, id }) {
@@ -166,7 +163,7 @@ class User {
 
       password = await hashPassword(password)
 
-      const task =  db('users')
+      const task = db('users')
          .update({
             password,
             last_password_change_at: db.fn.now(),
@@ -185,7 +182,7 @@ class User {
          .where({
             id: verification.id,
          })
-      
+
       await Promise.all([task, task2])
    }
 }

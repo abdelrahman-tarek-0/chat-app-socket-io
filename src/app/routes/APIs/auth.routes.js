@@ -16,14 +16,14 @@ const router = Router()
 router.get('/logout', logout)
 
 router.post('/signup', validator.signup, signup)
-router.post('/login',validator.login, login)
+router.post('/login', validator.login, login)
 
 router.post(
    '/send-confirm-email',
    loggedIn({ skipEmailConfirm: true }),
    sendConfirmEmail
 )
-router.post('/forget-password',validator.forgetPassword, forgetPassword)
-router.post('/reset-password',validator.resetPassword, resetPassword)
+router.post('/forget-password', validator.forgetPassword, forgetPassword)
+router.post('/reset-password', validator.resetPassword, resetPassword)
 
 module.exports = router
