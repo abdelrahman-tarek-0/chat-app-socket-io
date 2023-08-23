@@ -421,7 +421,7 @@ exports.confirmEmailDone = ({ username }) => `<head>
    <div class="message">Please make your self at home <a href="http://localhost:3000/">${APP.name} ${APP.version}</a> &#x1F60A;</div>
  </div>`
 
-exports.forgetPassword = ({ username, URL }) => `<!doctype html>
+exports.forgetPassword = ({ URL }) => `<!doctype html>
    <html>
       <head>
          <meta name="viewport" content="width=device-width" />
