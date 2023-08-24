@@ -10,10 +10,12 @@ const {
 
 const { loggedIn } = require('../../middlewares/auth.middleware')
 
+const validator = require('../../validators/channels-users.validators')
+
 const router = Router()
 
 router.post('/:channelId/join/', loggedIn(), joinChannel)
-router.post('/:channelId/invite/', loggedIn(), createGeneralInvite)
+router.post('/:channelId/invite/',validator.createGeneralInvite, loggedIn(), createGeneralInvite)
 router.post('/:channelId/invite/:targetName', loggedIn(), createDirectInvite)
 
 router.delete('/:channelId/leave/', loggedIn(), leaveChannel)
