@@ -14,7 +14,7 @@ const validator = require('../../validators/channels-users.validators')
 
 const router = Router()
 
-router.post('/:channelId/join/', loggedIn(), joinChannel)
+router.post('/:channelId/join/',validator.joinChannel, loggedIn(), joinChannel)
 router.post('/:channelId/invite/',validator.createGeneralInvite, loggedIn(), createGeneralInvite)
 router.post('/:channelId/invite/:targetName', validator.createDirectInvite, loggedIn(), createDirectInvite)
 
