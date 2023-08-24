@@ -16,7 +16,7 @@ const router = Router()
 
 router.post('/:channelId/join/', loggedIn(), joinChannel)
 router.post('/:channelId/invite/',validator.createGeneralInvite, loggedIn(), createGeneralInvite)
-router.post('/:channelId/invite/:targetName', loggedIn(), createDirectInvite)
+router.post('/:channelId/invite/:targetName', validator.createDirectInvite, loggedIn(), createDirectInvite)
 
 router.delete('/:channelId/leave/', loggedIn(), leaveChannel)
 router.delete('/:channelId/kick/:userId', loggedIn(), kickUser)
