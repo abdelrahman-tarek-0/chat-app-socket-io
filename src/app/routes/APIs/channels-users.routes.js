@@ -19,6 +19,6 @@ router.post('/:channelId/invite/',validator.createGeneralInvite, loggedIn(), cre
 router.post('/:channelId/invite/:targetName', validator.createDirectInvite, loggedIn(), createDirectInvite)
 
 router.delete('/:channelId/leave/',validator.leaveChannel, loggedIn(), leaveChannel)
-router.delete('/:channelId/kick/:userId', loggedIn(), kickUser)
+router.delete('/:channelId/kick/:userId', validator.kickUser, loggedIn(), kickUser)
 
 module.exports = router
