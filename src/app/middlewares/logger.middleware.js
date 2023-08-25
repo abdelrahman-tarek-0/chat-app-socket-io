@@ -46,6 +46,7 @@ const colorMethodMap = {
  * @returns  {function}  the logger function
  */
 const logger = () => (req, res, next) => {
+   console.log('req.body: ', req.body)
    const start = now('millie')
    res.once('finish', () => {
       const finish = now('millie')
