@@ -3,7 +3,12 @@ const { verifyToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const Auth = require('../models/auth.model')
 
-exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
+optsConfig = (opts) => {
+   const defaultOpts = { skipEmailConfirm: false, populateUser: true }
+   return { ...defaultOpts, ...opts }
+}
+
+exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
    catchAsync(async (req, res, next) => {
       // check if token is provided
       const token = req?.cookies?.token
@@ -18,23 +23,24 @@ exports.loggedIn = (opts = { skipEmailConfirm: false }) =>
       const decoded = await verifyToken(token)
       console.log(decoded)
 
-      const user = await Auth.verifyUser(
-         {
-            id: decoded?.id,
-            tokenizer: decoded?.tokenizer,
-            tokenIat: decoded?.iat,
-         },
-         { unsafePass: { email_verified: true, email: true } }
-      )
-
-      if (!user?.id || !user)
+      let user = decoded
+      if (opts.populateUser)
+         user = await Auth.verifyUser(
+            {
+               id: decoded?.id,
+               tokenizer: decoded?.tokenizer,
+               tokenIat: decoded?.iat,
+            },
+            { unsafePass: { email_verified: true, email: true } }
+         )
+      if (!user?.id)
          throw new ErrorBuilder(
             'Invalid token, Please login',
             401,
             'TOKEN_ERROR'
          )
 
-      if (!opts.skipEmailConfirm && !user?.email_verified)
+      if (!opts.skipEmailConfirm && opts.populateUser && !user?.email_verified)
          throw new ErrorBuilder(
             'please confirm the email to start using our api',
             401,

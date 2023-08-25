@@ -7,6 +7,7 @@ const catchAsync = require('../utils/catchAsync')
 exports.getChannel = catchAsync(async (req, res) => {
    const { id: channelId } = req.params
    const { id: creatorId } = req.user
+   console.log(req.user)
 
    const channel = await Channel.getChannel(channelId, creatorId)
 
