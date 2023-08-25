@@ -21,7 +21,6 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
 
       // verify token
       const decoded = await verifyToken(token)
-      console.log(decoded)
 
       let user = decoded
       if (opts.populateUser)
@@ -40,13 +39,14 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
             'TOKEN_ERROR'
          )
 
-      if (!opts.skipEmailConfirm && opts.populateUser && !user?.email_verified)
+      if (!opts.skipEmailConfirm && !user?.email_verified)
          throw new ErrorBuilder(
             'please confirm the email to start using our api',
             401,
             'CONFIRM_EMAIL'
          )
       // TODO: handel disabled users
+      console.log(user)
       req.user = user
       return next()
    })

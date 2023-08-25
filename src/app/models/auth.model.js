@@ -97,7 +97,7 @@ class User {
       return verification[0]
    }
 
-   static async confirmEmail({ token, id }) {
+   static async confirmEmail({ token, id }, opts = { unsafePass: {} }) {
       const verification = await db('verifications')
          .select('*')
          .where({
@@ -118,7 +118,7 @@ class User {
       if (verification?.expires_at < new Date().getTime())
          throw new ErrorBuilder('Expired', 400, 'EXPIRED')
 
-      const task = db('users')
+      let user = db('users')
          .update({
             email_verified: true,
             updated_at: db.fn.now(),
@@ -127,20 +127,22 @@ class User {
             id: verification.user_id,
             is_active: db.raw('true'),
          })
+         .returning('*')
 
-      const task2 = db('verifications')
+         let task = db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
          })
          .where({
             id: verification.id,
-         })
+         });
 
-      await Promise.all([task, task2])
+      [user] = await Promise.all([user, task])
+      return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 
-   static async resetPassword({ token, id, password }) {
+   static async resetPassword({ token, id, password }, opts = { unsafePass: {} }) {
       const verification = await db('verifications')
          .select('*')
          .where({
@@ -163,7 +165,7 @@ class User {
 
       password = await hashPassword(password)
 
-      const task = db('users')
+      let user = db('users')
          .update({
             password,
             last_password_change_at: db.fn.now(),
@@ -174,16 +176,17 @@ class User {
             is_active: db.raw('true'),
          })
 
-      const task2 = db('verifications')
+      let task = db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
          })
          .where({
             id: verification.id,
-         })
+         });
 
-      await Promise.all([task, task2])
+      [user] = await Promise.all([user, task])
+      return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 }
 

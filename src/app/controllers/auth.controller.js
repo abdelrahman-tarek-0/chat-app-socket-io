@@ -22,11 +22,20 @@ exports.signup = catchAsync(async (req, res) => {
 
    // create user
    const user = await Auth.signup(req.body, {
-      unsafePass: { email: true, tokenizer: true },
+      unsafePass: { tokenizer: true },
    })
 
    // login the user
-   await signCookieToken(res, user.id, user.tokenizer)
+   await signCookieToken(
+      res,
+      {
+         id: user.id,
+         email: user.email,
+         email_verified: user.email_verified,
+      },
+      user.tokenizer
+   )
+
    user.tokenizer = undefined
 
    // send confirm email
@@ -50,7 +59,7 @@ exports.signup = catchAsync(async (req, res) => {
  */
 exports.login = catchAsync(async (req, res) => {
    const user = await Auth.login(req.body, {
-      unsafePass: { email: true, tokenizer: true },
+      unsafePass: { tokenizer: true },
    })
 
    if (!user?.id)
@@ -60,7 +69,16 @@ exports.login = catchAsync(async (req, res) => {
          'INVALID_CREDENTIALS'
       )
 
-   await signCookieToken(res, user.id, user.tokenizer)
+   await signCookieToken(
+      res,
+      {
+         id: user.id,
+         email: user.email,
+         email_verified: user.email_verified,
+      },
+      user.tokenizer
+   )
+
    user.tokenizer = undefined
 
    return resBuilder(res, 200, 'User is logged in', user)
@@ -104,7 +122,30 @@ exports.confirmEmail = catchAsync(async (req, res) => {
    const { token } = req.params
    const { id, username } = req.query
 
-   await Auth.confirmEmail({ token, id })
+   const user = await Auth.confirmEmail(
+      { token, id },
+      {
+         unsafePass: { tokenizer: true },
+      }
+   )
+
+   if (!user?.id)
+      throw new ErrorBuilder(
+         'User not found or already confirmed',
+         400,
+         'INVALID'
+      )
+
+   await signCookieToken(
+      res,
+      {
+         id: user.id,
+         email: user.email,
+         email_verified: user.email_verified,
+      },
+      user.tokenizer
+   )
+   user.tokenizer = undefined
 
    return res.status(200).send(confirmEmailDone({ username }))
 })
@@ -129,7 +170,27 @@ exports.forgetPassword = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.resetPassword = catchAsync(async (req, res) => {
-   await Auth.resetPassword(req.body)
+  const user =  await Auth.resetPassword(req.body,{
+      unsafePass: { tokenizer: true },
+  })
+
+   if (!user?.id)
+      throw new ErrorBuilder(
+         'Something went wrong please try again later',
+         500,
+         'INTERNAL_ERROR'
+      )
+
+   await signCookieToken(
+      res,
+      {
+         id: user.id,
+         email: user.email,
+         email_verified: user.email_verified,
+      },
+      user.tokenizer
+   )
+   user.tokenizer = undefined
 
    return resBuilder(res, 200, 'Password reset')
 })

@@ -12,8 +12,8 @@ const verifyCookieToken = async (req) => {
    return await verifyToken(token)
 }
 
-const signToken = (id, tokenizer) =>
-   promisify(jwt.sign)({ id, tokenizer }, security.tokenSecret, {
+const signToken = (data, tokenizer) =>
+   promisify(jwt.sign)({ ...data, tokenizer }, security.tokenSecret, {
       expiresIn: security.tokenExpires,
    })
 
@@ -24,8 +24,9 @@ const setCookieToken = (res, token, expires) => {
       secure: env === 'production',
    })
 }
-const signCookieToken = async (res, id, tokenizer) => {
-   const token = await signToken(id, tokenizer)
+// data: { id, email, email_verified}
+const signCookieToken = async (res, data, tokenizer) => {
+   const token = await signToken(data, tokenizer)
    setCookieToken(res, token)
    return token
 }
