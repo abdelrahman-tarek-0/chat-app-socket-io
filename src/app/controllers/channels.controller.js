@@ -7,7 +7,6 @@ const catchAsync = require('../utils/catchAsync')
 exports.getChannel = catchAsync(async (req, res) => {
    const { id: channelId } = req.params
    const { id: creatorId } = req.user
-   console.log(req.user)
 
    const channel = await Channel.getChannel(channelId, creatorId)
 
@@ -20,7 +19,6 @@ exports.getChannel = catchAsync(async (req, res) => {
 
 exports.getAllChannels = catchAsync(async (req, res) => {
    const { id: userId } = req.user
-   console.log('req.query: ', req.query)
 
    const [meta, channels] = await Channel.getAllChannels(userId, req.query)
 

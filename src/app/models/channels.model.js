@@ -7,7 +7,6 @@ const ErrorBuilder = require('../utils/ErrorBuilder')
 const optsConstructor = {
    getAll: (opts) => {
       const allowOrderBy = ['id', 'name', 'type', 'members_count', 'created_at']
-      console.log('opts raw: ', opts)
 
       if (!opts) opts = {}
       if (!opts?.order) opts.order = {}
@@ -116,7 +115,6 @@ class Channel {
       }
    ) {
       opts = optsConstructor.getAll(opts)
-      console.log(opts)
 
       // separate the query one for checking and searching
       const dbChannel = db('channels')

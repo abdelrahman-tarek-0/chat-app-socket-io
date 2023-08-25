@@ -7,7 +7,6 @@ const ErrorBuilder = require('../utils/ErrorBuilder')
 // TODO: this model is very bad, it needs to be refactored and optimized
 class ChannelUser {
    static async createGeneralInvite(channelId, userId) {
-      console.log('userId: ', userId)
       const channel = await db('channels')
          .select(
             'channels.id',
@@ -69,8 +68,6 @@ class ChannelUser {
          throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
       if (!channel?.member?.id) channel.member = {}
       if (!channel?.creator?.id) channel.creator = {}
-
-      console.log('channel: ', channel)
 
       let inviter
       if (channel.creator?.id === userId) {

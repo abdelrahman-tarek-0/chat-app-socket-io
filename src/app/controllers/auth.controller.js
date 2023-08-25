@@ -18,8 +18,6 @@ const {
  * @param {Express.Response} res
  */
 exports.signup = catchAsync(async (req, res) => {
-   console.log('req.body: ', req.body)
-
    // create user
    const user = await Auth.signup(req.body, {
       unsafePass: { tokenizer: true },

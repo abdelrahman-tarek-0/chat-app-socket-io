@@ -46,7 +46,6 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
             'CONFIRM_EMAIL'
          )
       // TODO: handel disabled users
-      console.log(user)
       req.user = user
       return next()
    })
