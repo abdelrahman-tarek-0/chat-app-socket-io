@@ -168,9 +168,9 @@ exports.forgetPassword = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.resetPassword = catchAsync(async (req, res) => {
-  const user =  await Auth.resetPassword(req.body,{
+   const user = await Auth.resetPassword(req.body, {
       unsafePass: { tokenizer: true },
-  })
+   })
 
    if (!user?.id)
       throw new ErrorBuilder(

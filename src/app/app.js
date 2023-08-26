@@ -14,10 +14,11 @@ app.use((_req, res, next) => {
    res.header('Access-Control-Allow-Credentials', true)
    next()
 })
-app.use(cors({
-   origin: 'http://localhost:5500',
-}))
-
+app.use(
+   cors({
+      origin: 'http://localhost:5500',
+   })
+)
 
 app.use(express.json({ limit: '100kb' }))
 app.use(express.urlencoded({ extended: true, limit: '100kb' }))

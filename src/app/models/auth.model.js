@@ -129,20 +129,23 @@ class User {
          })
          .returning('*')
 
-         let task = db('verifications')
+      const task = db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
          })
          .where({
             id: verification.id,
-         });
+         })
 
-      [user] = await Promise.all([user, task])
+      ;[user] = await Promise.all([user, task])
       return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 
-   static async resetPassword({ token, id, password }, opts = { unsafePass: {} }) {
+   static async resetPassword(
+      { token, id, password },
+      opts = { unsafePass: {} }
+   ) {
       const verification = await db('verifications')
          .select('*')
          .where({
@@ -176,16 +179,16 @@ class User {
             is_active: db.raw('true'),
          })
 
-      let task = db('verifications')
+      const task = db('verifications')
          .update({
             status: 'used',
             updated_at: db.fn.now(),
          })
          .where({
             id: verification.id,
-         });
+         })
 
-      [user] = await Promise.all([user, task])
+      ;[user] = await Promise.all([user, task])
       return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 }
