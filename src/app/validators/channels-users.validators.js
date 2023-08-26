@@ -1,4 +1,4 @@
-const { body, param } = require('express-validator')
+const { param } = require('express-validator')
 const { handleValidationErrors, strict } = require('./base.validators')
 
 exports.createGeneralInvite = [
