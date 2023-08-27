@@ -38,7 +38,7 @@ exports.createAndSendChangeEmail = async (
 
    await sendChangeEmail({
       username: user.username,
-      URL: `${protocol}://${host}/change-email/${verification.reset}?id=${user.id}&username=${user.username}`,
+      URL: `${protocol}://${host}/change-email/${verification.reset}?id=${user.id}&username=${user.username}&newEmail=${newEmail}`,
       email: user.email,
       newEmail,
    })
