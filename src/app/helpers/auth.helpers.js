@@ -24,6 +24,21 @@ exports.createAndSendConfirmEmail = async (
    })
 }
 
+exports.createAndSendChangeEmail = async (
+   user,
+   AuthModel,
+   { protocol, host }
+) => {
+   const verification = await AuthModel.createReset({
+      email: user.email,
+      type: 'token_link',
+      verificationFor: 'change_email',
+   })
+
+   
+}
+   
+
 exports.createAndSendResetPassword = async (
    user,
    AuthModel,
