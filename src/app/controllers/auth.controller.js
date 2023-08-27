@@ -167,6 +167,7 @@ exports.sendChangeEmail = catchAsync(async (req, res) => {
    createAndSendChangeEmail(req.user, Auth, {
       protocol: req.protocol,
       host: req.get('host'),
+      newEmail,
    }).catch(console.error)
 
    return resBuilder(res, 201, 'Your email change request is sent')
