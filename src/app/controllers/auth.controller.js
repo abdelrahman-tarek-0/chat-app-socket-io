@@ -153,6 +153,19 @@ exports.confirmEmail = catchAsync(async (req, res) => {
  * @param {Express.Response} res
  */
 exports.sendChangeEmail = catchAsync(async (req, res) => {
+   const { email, email_verified } = req.user
+   const { email: newEmail } = req.body
+
+   if (!email_verified)
+      throw new ErrorBuilder('Your email is not verified', 400, 'INVALID')
+
+   if (email === newEmail)
+      throw new ErrorBuilder(
+         'Your new email is same as old email',
+         400,
+         'INVALID'
+      )
+
    
 })
 
