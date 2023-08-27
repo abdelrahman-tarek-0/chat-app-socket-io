@@ -149,6 +149,14 @@ exports.confirmEmail = catchAsync(async (req, res) => {
 })
 
 /**
+ * @param {Express.Request} req
+ * @param {Express.Response} res
+ */
+exports.sendChangeEmail = catchAsync(async (req, res) => {
+   
+})
+
+/**
  *
  * @param {Express.Request} req
  * @param {Express.Response} res
