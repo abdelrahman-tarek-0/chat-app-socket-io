@@ -177,6 +177,25 @@ exports.changeEmail = catchAsync(async (req, res) => {
    const { token } = req.params
    const { id, username, newEmail } = req.query
 
+   const user = await Auth.changeEmail(
+      { id, token, newEmail },
+      {
+         unsafePass: { tokenizer: true },
+      }
+   )
+
+   if (!user?.id) throw new ErrorBuilder('User not found', 404, 'NOT_FOUND')
+
+   await signCookieToken(
+      res,
+      {
+         id: user.id,
+         email: user.email,
+         email_verified: user.email_verified,
+      },
+      user.tokenizer
+   )
+
 })
 
 /**
