@@ -840,7 +840,7 @@ exports.changeEmailDone = ({ newEmail }) => `<head>
 </head>
 <div class="container">
 <h6 class="header">your email is changed to '${newEmail}' &#x2714;</h6>
-<div class="message">Please make your self at home <a href="http://localhost:3000/">${APP.name} ${APP.version}</a> &#x1F60A;</div>
+<div class="message">Please confirm your new email to start using ${APP.name} ${APP.version} &#x1F60A;</div>
 </div>`
 
 exports.forgetPassword = ({ URL }) => `<!doctype html>

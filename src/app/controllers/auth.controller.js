@@ -5,7 +5,7 @@ const { signCookieToken, setCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 
-const { confirmEmailDone,changeEmailDone  } = require('../views/emails.views')
+const { confirmEmailDone, changeEmailDone } = require('../views/emails.views')
 
 const {
    createAndSendConfirmEmail,
@@ -202,6 +202,7 @@ exports.changeEmail = catchAsync(async (req, res) => {
       host: req.get('host'),
    }).catch(console.error)
 
+   return res.status(200).send(changeEmailDone({ newEmail }))
 })
 
 /**
