@@ -103,3 +103,18 @@ exports.resetPassword = [
    handleValidationErrors,
    strict,
 ]
+
+exports.sendChangeEmail = [
+   body('email')
+      .trim()  
+      .isEmail()
+      .withMessage('Email must be a valid email')
+      .normalizeEmail({ 
+         all_lowercase: true, 
+      })
+      .isLength({ max: 512 })
+      .withMessage('Email must be less than 512 characters'),
+      
+   handleValidationErrors,
+   strict,
+]

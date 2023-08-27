@@ -28,6 +28,7 @@ router.post('/forget-password', validator.forgetPassword, forgetPassword)
 router.post('/reset-password', validator.resetPassword, resetPassword)
 router.post(
    '/send-change-email',
+   validator.sendChangeEmail,
    loggedIn(),
    sendChangeEmail
 )
