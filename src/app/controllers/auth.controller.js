@@ -195,6 +195,12 @@ exports.changeEmail = catchAsync(async (req, res) => {
       },
       user.tokenizer
    )
+   user.tokenizer = undefined
+
+   createAndSendConfirmEmail(user, Auth, {
+      protocol: req.protocol,
+      host: req.get('host'),
+   }).catch(console.error)
 
 })
 
