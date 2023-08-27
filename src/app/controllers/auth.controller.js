@@ -173,6 +173,12 @@ exports.sendChangeEmail = catchAsync(async (req, res) => {
    return resBuilder(res, 201, 'Your email change request is sent')
 })
 
+exports.changeEmail = catchAsync(async (req, res) => {
+   const { token } = req.params
+   const { id, username, newEmail } = req.query
+
+})
+
 /**
  *
  * @param {Express.Request} req
