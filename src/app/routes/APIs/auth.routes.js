@@ -7,6 +7,7 @@ const {
    sendConfirmEmail,
    forgetPassword,
    resetPassword,
+   sendChangeEmail,
 } = require('../../controllers/auth.controller')
 const { loggedIn } = require('../../middlewares/auth.middleware')
 const validator = require('../../validators/auth.validators')
@@ -25,5 +26,10 @@ router.post(
 )
 router.post('/forget-password', validator.forgetPassword, forgetPassword)
 router.post('/reset-password', validator.resetPassword, resetPassword)
+router.post(
+   '/send-change-email',
+   loggedIn(),
+   sendChangeEmail
+)
 
 module.exports = router
