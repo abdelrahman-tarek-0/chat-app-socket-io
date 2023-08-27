@@ -5,7 +5,7 @@ const { signCookieToken, setCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 
-const { confirmEmailDone } = require('../views/emails.views')
+const { confirmEmailDone,changeEmailDone  } = require('../views/emails.views')
 
 const {
    createAndSendConfirmEmail,

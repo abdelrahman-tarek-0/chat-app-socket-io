@@ -807,6 +807,42 @@ exports.confirmEmailDone = ({ username }) => `<head>
    <div class="message">Please make your self at home <a href="http://localhost:3000/">${APP.name} ${APP.version}</a> &#x1F60A;</div>
  </div>`
 
+exports.changeEmailDone = ({ newEmail }) => `<head>
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+  body {
+  font-family: "Roboto", sans-serif;
+  }
+  .container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(241, 241, 241, 0.5);
+  padding: 3vw;
+  text-align: center;
+  border: 0.3vw solid black;
+  border-radius: 1vw;
+  }
+  .header {
+  margin-top: auto;
+  font-size: 3vw;
+  font-weight: bold;
+  }
+  .message {
+  margin-top: -2vh;
+  font-size: 2vw;
+  }
+</style>
+<title></title>
+</head>
+<div class="container">
+<h6 class="header">your email is changed to '${newEmail}' &#x2714;</h6>
+<div class="message">Please make your self at home <a href="http://localhost:3000/">${APP.name} ${APP.version}</a> &#x1F60A;</div>
+</div>`
+
 exports.forgetPassword = ({ URL }) => `<!doctype html>
    <html>
       <head>
