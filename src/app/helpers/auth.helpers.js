@@ -35,7 +35,6 @@ exports.createAndSendChangeEmail = async (
       verificationFor: 'change_email',
    })
 
-   
 }
    
 
