@@ -7,6 +7,8 @@ const {
 // i am adding the AuthModel as a parameter because i don't want to import it in this file
 // because it will create a circular dependency
 // if i wanted to import this file in the AuthModel file
+
+// controller
 exports.createAndSendConfirmEmail = async (
    user,
    AuthModel,
@@ -61,4 +63,29 @@ exports.createAndSendResetPassword = async (
       URL: `${protocol}://${host}/reset-password?token=${verification.reset}&id=${verification.user_id}`,
       email: user.email,
    })
+}
+
+// model
+exports.getVerification = async (db, { id, token, verificationFor}) => {
+   const verification = await db('verifications')
+         .select('*')
+         .where({
+            user_id: id,
+            reset: token,
+            verification_for: verificationFor,
+            status: 'active',
+         })
+         .first()
+
+      if (!verification?.id)
+         throw new ErrorBuilder(
+            'Invalid or Already Used Token Please Try Again Later',
+            400,
+            'INVALID'
+         )
+
+      if (verification?.expires_at < new Date().getTime())
+         throw new ErrorBuilder('Expired', 400, 'EXPIRED')
+
+      return verification
 }
