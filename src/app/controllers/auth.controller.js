@@ -10,6 +10,7 @@ const { confirmEmailDone } = require('../views/emails.views')
 const {
    createAndSendConfirmEmail,
    createAndSendResetPassword,
+   createAndSendChangeEmail,
 } = require('../helpers/auth.helpers')
 
 /**
@@ -166,7 +167,12 @@ exports.sendChangeEmail = catchAsync(async (req, res) => {
          'INVALID'
       )
 
-   
+   createAndSendChangeEmail(req.user, Auth, {
+      protocol: req.protocol,
+      host: req.get('host'),
+   }).catch(console.error)
+
+   return resBuilder(res, 201, 'Your email change request is sent')
 })
 
 /**
