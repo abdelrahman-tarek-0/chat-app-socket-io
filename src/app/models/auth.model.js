@@ -163,7 +163,30 @@ class User {
       if (verification?.expires_at < new Date().getTime())
          throw new ErrorBuilder('Expired', 400, 'EXPIRED')
             
-   
+
+      let user = db('users')
+         .update({
+            email: newEmail,
+            email_verified: false,
+            updated_at: db.fn.now(),
+         })
+         .where({
+            id: verification.user_id,
+            is_active: db.raw('true'),
+         })
+         .returning('*')
+         
+      const task = db('verifications')
+         .update({
+            status: 'used',
+            updated_at: db.fn.now(),
+         })
+         .where({
+            id: verification.id,
+         })
+
+      ;[user] = await Promise.all([user, task])
+      return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 
    static async resetPassword(
