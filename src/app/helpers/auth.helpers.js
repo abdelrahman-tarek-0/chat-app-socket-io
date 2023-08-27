@@ -1,6 +1,7 @@
 const {
    sendConfirmEmail,
    sendResetPassword,
+   sendChangeEmail,
 } = require('../services/mail.services')
 
 // i am adding the AuthModel as a parameter because i don't want to import it in this file
@@ -33,6 +34,12 @@ exports.createAndSendChangeEmail = async (
       email: user.email,
       type: 'token_link',
       verificationFor: 'change_email',
+   })
+
+   await sendChangeEmail({
+      username: user.username,
+      URL: `${protocol}://${host}/change-email/${verification.reset}?id=${user.id}&username=${user.username}`,
+      email: user.email,
    })
 
 }
