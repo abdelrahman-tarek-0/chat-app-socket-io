@@ -19,6 +19,6 @@ router
    )
    .get('/change-email/:token', authValidator.changeEmail, changeEmail)
 
-router.get('/:inviteId', loggedIn(), acceptInvite)
+router.get('/invite/:inviteId', loggedIn(), acceptInvite)
 
 module.exports = router

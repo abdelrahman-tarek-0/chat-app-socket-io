@@ -15,7 +15,7 @@ exports.createGeneralInvite = catchAsync(async (req, res) => {
       res,
       201,
       'Invite is created',
-      `http://localhost:3000/${invite.alias}`
+      `http://localhost:3000/invite/${invite.alias}`
    )
 })
 
@@ -34,7 +34,7 @@ exports.createDirectInvite = catchAsync(async (req, res) => {
       channelName: channel.name,
       username: invited.username,
       email: invited.email,
-      URL: `http://localhost:3000/${invite.alias}`,
+      URL: `http://localhost:3000/invite/${invite.alias}`,
    })
 
    return resBuilder(res, 201, `Invite is sent to ${targetName}`)
@@ -46,7 +46,7 @@ exports.acceptInvite = catchAsync(async (req, res) => {
 
    const { channel_id } = await ChannelUser.acceptInvite(inviteId, userId)
 
-   return res.redirect(`api/v1/channels/${channel_id}`)
+   return res.redirect(`/api/v1/channels/${channel_id}`)
 })
 
 exports.joinChannel = catchAsync(async (req, res) => {
