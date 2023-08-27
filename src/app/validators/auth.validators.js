@@ -1,4 +1,4 @@
-const { body } = require('express-validator')
+const { body, query, param } = require('express-validator')
 const { handleValidationErrors, strict } = require('./base.validators')
 
 exports.signup = [
@@ -106,15 +106,43 @@ exports.resetPassword = [
 
 exports.sendChangeEmail = [
    body('email')
-      .trim()  
+      .trim()
       .isEmail()
       .withMessage('Email must be a valid email')
-      .normalizeEmail({ 
-         all_lowercase: true, 
+      .normalizeEmail({
+         all_lowercase: true,
       })
       .isLength({ max: 512 })
       .withMessage('Email must be less than 512 characters'),
-      
+
+   handleValidationErrors,
+   strict,
+]
+
+exports.changeEmail = [
+   query('newEmail')
+      .trim()
+      .isEmail()
+      .withMessage('Email must be a valid email')
+      .normalizeEmail({
+         all_lowercase: true,
+      })
+      .isLength({ max: 512 })
+      .withMessage('Email must be less than 512 characters'),
+
+   query('id')
+      .trim()
+      .isUUID(4)
+      .withMessage('ID is not in valid format')
+      .isLength({ max: 64 })
+      .withMessage('ID must be less than 64 characters'),
+
+   param('token')
+      .trim()
+      .isLength({ max: 64 })
+      .withMessage('Token must be less than 64 characters'),
+
+
    handleValidationErrors,
    strict,
 ]

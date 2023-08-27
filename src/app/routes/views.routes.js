@@ -1,8 +1,9 @@
 const _path = require('path')
 const { Router } = require('express')
 const { loggedIn } = require('../middlewares/auth.middleware')
-const { confirmEmail,changeEmail } = require('../controllers/auth.controller')
+const { confirmEmail, changeEmail } = require('../controllers/auth.controller')
 const { acceptInvite } = require('../controllers/channels-users.controller')
+const authValidator = require('../validators/auth.validators')
 
 const router = Router()
 router.get('/', (req, res) => {
@@ -16,7 +17,7 @@ router
    .get('/reset-password', (req, res) =>
       res.sendFile(_path.join(__dirname, '..', 'views', 'password-reset.html'))
    )
-   .get('/change-email/:token', changeEmail)
+   .get('/change-email/:token', authValidator.changeEmail, changeEmail)
 
 router.get('/:inviteId', loggedIn(), acceptInvite)
 
