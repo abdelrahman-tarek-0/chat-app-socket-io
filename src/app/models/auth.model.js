@@ -142,6 +142,30 @@ class User {
       return safeUser(user[0] || {}, opts?.unsafePass || {})
    }
 
+   static async changeEmail({ token, id, newEmail }, opts = { unsafePass: {} }) {
+      const verification = await db('verifications')
+         .select('*')
+         .where({
+            user_id: id,
+            reset: token,
+            verification_for: 'change_email',
+            status: 'active',
+         })
+         .first()
+
+      if (!verification?.id)
+         throw new ErrorBuilder(
+            'Invalid or Already Used Token Please Try Again Later',
+            400,
+            'INVALID'
+         )
+
+      if (verification?.expires_at < new Date().getTime())
+         throw new ErrorBuilder('Expired', 400, 'EXPIRED')
+            
+   
+   }
+
    static async resetPassword(
       { token, id, password },
       opts = { unsafePass: {} }
