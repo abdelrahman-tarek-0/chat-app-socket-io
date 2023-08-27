@@ -175,7 +175,7 @@ exports.sendChangeEmail = catchAsync(async (req, res) => {
 
 exports.changeEmail = catchAsync(async (req, res) => {
    const { token } = req.params
-   const { id, username, newEmail } = req.query
+   const { id, newEmail } = req.query
 
    const user = await Auth.changeEmail(
       { id, token, newEmail },
