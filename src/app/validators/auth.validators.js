@@ -142,7 +142,6 @@ exports.changeEmail = [
       .isLength({ max: 64 })
       .withMessage('Token must be less than 64 characters'),
 
-
    handleValidationErrors,
    strict,
 ]

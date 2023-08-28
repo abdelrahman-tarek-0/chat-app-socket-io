@@ -44,9 +44,7 @@ exports.createAndSendChangeEmail = async (
       email: user.email,
       newEmail,
    })
-
 }
-   
 
 exports.createAndSendResetPassword = async (
    user,
@@ -66,26 +64,26 @@ exports.createAndSendResetPassword = async (
 }
 
 // model
-exports.getVerification = async (db, { id, token, verificationFor}) => {
+exports.getVerification = async (db, { id, token, verificationFor }) => {
    const verification = await db('verifications')
-         .select('*')
-         .where({
-            user_id: id,
-            reset: token,
-            verification_for: verificationFor,
-            status: 'active',
-         })
-         .first()
+      .select('*')
+      .where({
+         user_id: id,
+         reset: token,
+         verification_for: verificationFor,
+         status: 'active',
+      })
+      .first()
 
-      if (!verification?.id)
-         throw new ErrorBuilder(
-            'Invalid or Already Used Token Please Try Again Later',
-            400,
-            'INVALID'
-         )
+   if (!verification?.id)
+      throw new ErrorBuilder(
+         'Invalid or Already Used Token Please Try Again Later',
+         400,
+         'INVALID'
+      )
 
-      if (verification?.expires_at < new Date().getTime())
-         throw new ErrorBuilder('Expired', 400, 'EXPIRED')
+   if (verification?.expires_at < new Date().getTime())
+      throw new ErrorBuilder('Expired', 400, 'EXPIRED')
 
-      return verification
+   return verification
 }

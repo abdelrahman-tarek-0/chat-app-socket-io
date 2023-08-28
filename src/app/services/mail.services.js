@@ -48,7 +48,7 @@ const sendChangeEmail = async ({ URL, username, email, newEmail }) => {
 
    const info = await sendMail(email, 'Change Email', html, text)
    return info
-}   
+}
 
 const sendInvite = async ({
    inviterName,
@@ -69,4 +69,9 @@ const sendInvite = async ({
    return info
 }
 
-module.exports = { sendConfirmEmail, sendResetPassword, sendChangeEmail, sendInvite }
+module.exports = {
+   sendConfirmEmail,
+   sendResetPassword,
+   sendChangeEmail,
+   sendInvite,
+}
