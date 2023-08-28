@@ -3,14 +3,15 @@ const { verifyToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const Auth = require('../models/auth.model')
 
-optsConfig = (opts) => {
+const optsConfig = (opts) => {
    const defaultOpts = { skipEmailConfirm: false, populateUser: true }
    return { ...defaultOpts, ...opts }
 }
 
 exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
    catchAsync(async (req, res, next) => {
-      // check if token is provided
+      opts = optsConfig(opts)
+
       const token = req?.cookies?.token
       if (!token)
          throw new ErrorBuilder(
