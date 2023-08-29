@@ -6,14 +6,16 @@ const { randomString } = require('../utils/general.utils')
 
 class User {
    static async getUserProfile({ id }, opts = { unsafePass: {} }) {
-      const user = await db('users as user')
+
+      let userQuery = db('users as user')
+         .select('user.*')
+         .where('user.id', id)
+         .andWhere('user.is_active', '=', 'true')
+
+      userQuery = userQuery
          .select(
-            'user.*',
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object('id', c_own.id, 'name', c_own.name, 'description', c_own.description, 'image', c_own.image_url)) as "creatorOf"`
-            ),
-            db.raw(
-               `JSON_AGG(DISTINCT jsonb_build_object('id', c_member.id, 'name', c_member.name, 'description', c_member.description, 'image', c_member.image_url, 'role', cm.role)) as "memberIn"`
             )
          )
          .leftJoin('channels as c_own', function () {
@@ -23,6 +25,13 @@ class User {
                db.raw('true')
             )
          })
+
+      userQuery = userQuery
+         .select(
+            db.raw(
+               `JSON_AGG(DISTINCT jsonb_build_object('id', c_member.id, 'name', c_member.name, 'description', c_member.description, 'image', c_member.image_url, 'role', cm.role)) as "memberIn"`
+            )
+         )
          .leftJoin('channel_members as cm', function () {
             this.on('user.id', '=', 'cm.user_id').andOn(
                db.raw(
@@ -34,17 +43,15 @@ class User {
          })
          .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
 
-         .where('user.id', id)
-         .andWhere('user.is_active', '=', 'true')
-         // .andWhere('c_own.is_active', '=', 'true') //BUG same bug as in channel.model.js getChannel() but i fixed it in the 2 queries
-         // .andWhere('c_member.is_active', '=', 'true')
-         .groupBy('user.id')
-         .first()
+  
+
+      const user =await userQuery.groupBy('user.id').first()
 
       if (!user) return null
       if (!user.creatorOf?.at(0)?.id) user.creatorOf = []
       if (!user.memberIn?.at(0)?.id) user.memberIn = []
 
+      
       return safeUser(user || {}, opts?.unsafePass || {})
    }
 
@@ -142,13 +149,13 @@ class User {
       const isBonded = await db('bonds')
          .select('*')
          .where(function () {
-            this.where(function(){
-               this.where("user1_id", requesterId)
-               this.andWhere("user2_id", requesterId)
+            this.where(function () {
+               this.where('user1_id', requesterId)
+               this.andWhere('user2_id', requesterId)
             })
-            this.orWhere(function(){
-               this.where("user1_id", requestedId)
-               this.andWhere("user2_id", requestedId)
+            this.orWhere(function () {
+               this.where('user1_id', requestedId)
+               this.andWhere('user2_id', requestedId)
             })
          })
          .andWhere('status', '=', 'active')
