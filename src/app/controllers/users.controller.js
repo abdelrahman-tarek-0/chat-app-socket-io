@@ -6,8 +6,11 @@ const catchAsync = require('../utils/catchAsync')
 
 exports.getCurrentUserData = catchAsync(async (req, res) => {
    const { id } = req.user
+   let { fields } = req.query
 
-   const user = await User.getCurrentUserData({ id })
+   fields = fields?.split(',') || []
+
+   const user = await User.getCurrentUserData({ id }, { fields })
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 

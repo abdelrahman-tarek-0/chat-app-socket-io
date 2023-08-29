@@ -9,26 +9,15 @@ class User {
       { id },
       opts = { unsafePass: {}, fields: [] }
    ) {
-      let fields = [
-         'creatorOf',
-         'memberIn',
-         'bonds',
-         'bondsRequestsSent',
-         'bondsRequestsReceived',
-         'base'
-      ]
+      let fields = ['base']
 
       if (opts?.fields?.length > 0) fields = opts.fields
-
-
 
       let userQuery = db('users as user')
          .where('user.id', id)
          .andWhere('user.is_active', '=', 'true')
 
-      if (fields.includes('base'))
-         userQuery = userQuery
-            .select('user.*')
+      if (fields.includes('base')) userQuery = userQuery.select('user.*')
 
       if (fields.includes('creatorOf'))
          userQuery = userQuery
