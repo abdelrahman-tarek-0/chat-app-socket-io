@@ -91,3 +91,29 @@ exports.verifications = (knex) => (table) => {
    table.timestamp('expires_at').notNullable()
    table.timestamps(true, true)
 }
+
+exports.bonds = (knex) => (table) => {
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
+   table.increments('raw_id').unique().unsigned().notNullable()
+
+   table
+      .uuid('user1_id')
+      .references('id')
+      .inTable('users')
+      .onDelete('CASCADE')
+      .notNullable()
+
+   table
+      .uuid('user2_id')
+      .references('id')
+      .inTable('users')
+      .onDelete('CASCADE')
+      .notNullable()
+
+   table
+      .string('status')
+      .defaultTo('active')
+      .checkIn(['active', 'inactive', 'blocked'], 'status_invalid_value')
+
+   table.timestamps(true, true)
+}
