@@ -85,6 +85,7 @@ class User {
                   this.orOn('b_u.id', '=', 'b.user2_id')
                })
                this.andOn('b_u.is_active', '=', db.raw('?', ['true']))
+               this.andOn('b_u.id', '!=', 'user.id')
             })
 
       if (fields.includes('bondsRequestsSent'))
