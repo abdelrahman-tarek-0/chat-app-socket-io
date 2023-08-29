@@ -5,7 +5,7 @@ const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { randomString } = require('../utils/general.utils')
 
 class User {
-   static async getUserProfile({ id }, opts = { unsafePass: {} }) {
+   static async getCurrentUserData({ id }, opts = { unsafePass: {} }) {
       let userQuery = db('users as user')
          .select('user.*')
          .where('user.id', id)

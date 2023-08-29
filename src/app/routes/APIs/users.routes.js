@@ -1,7 +1,7 @@
 const { Router } = require('express')
 
 const {
-   getUserProfile,
+   getCurrentUserData,
    updateUser,
    changePassword,
    disableMe,
@@ -12,7 +12,7 @@ const validator = require('../../validators/users.validators')
 
 const router = Router()
 
-router.get('/me', loggedIn(), getUserProfile)
+router.get('/me', loggedIn(), getCurrentUserData)
 
 router.post('/send-bond-request/:userId', loggedIn(), sendBondRequest)
 
