@@ -5,6 +5,7 @@ const {
    updateUser,
    changePassword,
    disableMe,
+   sendBondRequest,
 } = require('../../controllers/users.controller')
 const { loggedIn } = require('../../middlewares/auth.middleware')
 const validator = require('../../validators/users.validators')
@@ -12,6 +13,8 @@ const validator = require('../../validators/users.validators')
 const router = Router()
 
 router.get('/me', loggedIn(), getUserProfile)
+
+router.post('/send-bond-request/:userId', loggedIn(), sendBondRequest)
 
 router.patch(
    '/',
