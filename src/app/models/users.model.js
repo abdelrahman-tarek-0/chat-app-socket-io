@@ -137,6 +137,36 @@ class User {
 
       return safeUser(updatedUser[0] || {})
    }
+
+   static async sendBondRequest({ requesterId, requestedId }) {
+      const isBonded = await db('bonds')
+         .select('*')
+         .where(function () {
+            this.where({
+               user1_id: requesterId,
+               user2_id: requestedId,
+            }).orWhere({
+               user1_id: requestedId,
+               user2_id: requesterId,
+            })
+         })
+         .andWhere('status', '=', 'active')
+         .first()
+
+      if (isBonded)
+         throw new ErrorBuilder('Already bonded', 400, 'ALREADY_BONDED')
+
+      const bondRequest = await db('bonds_requests')
+         .insert({
+            requester_id: requesterId,
+            requested_id: requestedId,
+         })
+         .returning('*')
+         .onConflict()
+         .ignore()
+
+      return bondRequest[0]
+   }
 }
 
 module.exports = User
