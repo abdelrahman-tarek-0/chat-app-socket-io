@@ -5,116 +5,149 @@ const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { randomString } = require('../utils/general.utils')
 
 class User {
-   static async getCurrentUserData({ id }, opts = { unsafePass: {} }) {
+   static async getCurrentUserData(
+      { id },
+      opts = { unsafePass: {}, fields: [] }
+   ) {
+      let fields = [
+         'creatorOf',
+         'memberIn',
+         'bonds',
+         'bondsRequestsSent',
+         'bondsRequestsReceived',
+         'base'
+      ]
+
+      if (opts?.fields?.length > 0) fields = opts.fields
+
+
+
       let userQuery = db('users as user')
-         .select('user.*')
          .where('user.id', id)
          .andWhere('user.is_active', '=', 'true')
 
-      userQuery = userQuery
-         .select(
-            db.raw(
-               `JSON_AGG(DISTINCT jsonb_build_object('id', c_own.id, 'name', c_own.name, 'description', c_own.description, 'image', c_own.image_url)) as "creatorOf"`
-            )
-         )
-         .leftJoin('channels as c_own', function () {
-            this.on('user.id', '=', 'c_own.creator').andOn(
-               'c_own.is_active',
-               '=',
-               db.raw('true')
-            )
-         })
+      if (fields.includes('base'))
+         userQuery = userQuery
+            .select('user.*')
 
-      userQuery = userQuery
-         .select(
-            db.raw(
-               `JSON_AGG(DISTINCT jsonb_build_object('id', c_member.id, 'name', c_member.name, 'description', c_member.description, 'image', c_member.image_url, 'role', cm.role)) as "memberIn"`
-            )
-         )
-         .leftJoin('channel_members as cm', function () {
-            this.on('user.id', '=', 'cm.user_id').andOn(
+      if (fields.includes('creatorOf'))
+         userQuery = userQuery
+            .select(
                db.raw(
-                  '(select is_active from channels where channels.id = cm.channel_id limit 1)'
-               ),
-               '=',
-               db.raw('true')
+                  `JSON_AGG(DISTINCT jsonb_build_object(
+                  'id', c_own.id,
+                  'name', c_own.name,
+                  'description', c_own.description,
+                  'image', c_own.image_url)) as "creatorOf"`
+               )
             )
-         })
-         .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
-
-      userQuery = userQuery
-         .select(
-            db.raw(
-               `JSON_AGG(DISTINCT jsonb_build_object('boundId', b.id,
-                'userId', b_u.id,
-                 'username', b_u.username,
-                 'image' , b_u.image_url
-                 )) as "bonds"`
-            )
-         )
-         .leftJoin('bonds as b', function () {
-            this.on(function () {
-               this.on('user.id', '=', 'b.user1_id')
-               this.orOn('user.id', '=', 'b.user2_id')
+            .leftJoin('channels as c_own', function () {
+               this.on('user.id', '=', 'c_own.creator').andOn(
+                  'c_own.is_active',
+                  '=',
+                  db.raw('true')
+               )
             })
-            this.andOn('b.status', '=', db.raw('?', ['active']))
-         })
-         .leftJoin('users as b_u', function () {
-            this.on(function () {
-               this.on('b_u.id', '=', 'b.user1_id')
-               this.orOn('b_u.id', '=', 'b.user2_id')
+
+      if (fields.includes('memberIn'))
+         userQuery = userQuery
+            .select(
+               db.raw(
+                  `JSON_AGG(DISTINCT jsonb_build_object(
+                  'id', c_member.id,
+                  'name', c_member.name,
+                  'description', c_member.description,
+                  'image', c_member.image_url,
+                  'role', cm.role)) as "memberIn"`
+               )
+            )
+            .leftJoin('channel_members as cm', function () {
+               this.on('user.id', '=', 'cm.user_id').andOn(
+                  db.raw(
+                     '(select is_active from channels where channels.id = cm.channel_id limit 1)'
+                  ),
+                  '=',
+                  db.raw('true')
+               )
             })
-            this.andOn('b_u.is_active', '=', db.raw('?', ['true']))
-         })
+            .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
 
-      userQuery = userQuery
-         .select(
-            db.raw(
-               `JSON_AGG(DISTINCT jsonb_build_object(
-                  'requestId', brs.id,
-                  'userId', brs_u.id,
-                  'username', brs_u.username,
-                  'image' , brs_u.image_url
-                )) as "bondsRequestsSent"`
+      if (fields.includes('bonds'))
+         userQuery = userQuery
+            .select(
+               db.raw(
+                  `JSON_AGG(DISTINCT jsonb_build_object('boundId', b.id,
+                  'userId', b_u.id,
+                  'username', b_u.username,
+                  'image' , b_u.image_url
+                  )) as "bonds"`
+               )
             )
-         )
-         .leftJoin('bonds_requests as brs', function () {
-            this.on('user.id', '=', 'brs.requested_id')
-         })
-         .leftJoin('users as brs_u', function () {
-            this.on('brs_u.id', '=', 'brs.requester_id')
-            this.andOn('brs_u.is_active', '=', db.raw('?', ['true']))
-         })
+            .leftJoin('bonds as b', function () {
+               this.on(function () {
+                  this.on('user.id', '=', 'b.user1_id')
+                  this.orOn('user.id', '=', 'b.user2_id')
+               })
+               this.andOn('b.status', '=', db.raw('?', ['active']))
+            })
+            .leftJoin('users as b_u', function () {
+               this.on(function () {
+                  this.on('b_u.id', '=', 'b.user1_id')
+                  this.orOn('b_u.id', '=', 'b.user2_id')
+               })
+               this.andOn('b_u.is_active', '=', db.raw('?', ['true']))
+            })
 
-      userQuery = userQuery
-         .select(
-            db.raw(
-               `JSON_AGG(DISTINCT jsonb_build_object(
-                  'requestId', brr.id,
-                  'userId', brr_u.id,
-                  'username', brr_u.username,
-                  'image' , brr_u.image_url
-                   )) as "bondsRequestsReceived"`
+      if (fields.includes('bondsRequestsSent'))
+         userQuery = userQuery
+            .select(
+               db.raw(
+                  `JSON_AGG(DISTINCT jsonb_build_object(
+                     'requestId', brs.id,
+                     'userId', brs_u.id,
+                     'username', brs_u.username,
+                     'image' , brs_u.image_url
+                  )) as "bondsRequestsSent"`
+               )
             )
-         )
-         .leftJoin('bonds_requests as brr', function () {
-            this.on('user.id', '=', 'brr.requester_id')
-         })
-         .leftJoin('users as brr_u', function () {
-            this.on('brr_u.id', '=', 'brr.requested_id')
-            this.andOn('brr_u.is_active', '=', db.raw('?', ['true']))
-         })
+            .leftJoin('bonds_requests as brs', function () {
+               this.on('user.id', '=', 'brs.requester_id')
+            })
+            .leftJoin('users as brs_u', function () {
+               this.on('brs_u.id', '=', 'brs.requested_id')
+               this.andOn('brs_u.is_active', '=', db.raw('?', ['true']))
+            })
 
+      if (fields.includes('bondsRequestsReceived'))
+         userQuery = userQuery
+            .select(
+               db.raw(
+                  `JSON_AGG(DISTINCT jsonb_build_object(
+                     'requestId', brr.id,
+                     'userId', brr_u.id,
+                     'username', brr_u.username,
+                     'image' , brr_u.image_url
+                     )) as "bondsRequestsReceived"`
+               )
+            )
+            .leftJoin('bonds_requests as brr', function () {
+               this.on('user.id', '=', 'brr.requested_id')
+            })
+            .leftJoin('users as brr_u', function () {
+               this.on('brr_u.id', '=', 'brr.requester_id')
+               this.andOn('brr_u.is_active', '=', db.raw('?', ['true']))
+            })
 
       const user = await userQuery.groupBy('user.id').first()
 
       if (!user) return null
-      if (!user.creatorOf?.at(0)?.id) user.creatorOf = []
-      if (!user.memberIn?.at(0)?.id) user.memberIn = []
-      if (!user.bonds?.at(0)?.boundId) user.bonds = []
-      if (!user.bondsRequestsSent?.at(0)?.requestId) user.bondsRequestsSent = []
+      if (!user.creatorOf?.at(0)?.id) user.creatorOf = undefined
+      if (!user.memberIn?.at(0)?.id) user.memberIn = undefined
+      if (!user.bonds?.at(0)?.boundId) user.bonds = undefined
+      if (!user.bondsRequestsSent?.at(0)?.requestId)
+         user.bondsRequestsSent = undefined
       if (!user.bondsRequestsReceived?.at(0)?.requestId)
-         user.bondsRequestsReceived = []
+         user.bondsRequestsReceived = undefined
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }
