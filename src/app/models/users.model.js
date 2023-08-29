@@ -43,14 +43,48 @@ class User {
          })
          .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
 
-  
+      userQuery = userQuery
+         .select(
+            db.raw(
+               `JSON_AGG(DISTINCT jsonb_build_object('id', b.id, 'status', b.status)) as "bonds"`
+            )
+         )
+         .leftJoin('bonds as b', function () {
+            this.on('user.id', '=', 'b.user1_id').orOn(
+               'user.id',
+               '=',
+               'b.user2_id'
+            )
+         })
+
+      userQuery = userQuery
+         .select(
+            db.raw(
+               `JSON_AGG(DISTINCT jsonb_build_object('id', brs.id, 'requester_id', brs.requester_id)) as "bondsRequestsSent"`
+            )
+         )
+         .leftJoin('bonds_requests as brs', function () {
+            this.on('user.id', '=', 'brs.requested_id')
+         })
+
+      userQuery = userQuery
+         .select(
+            db.raw(
+               `JSON_AGG(DISTINCT jsonb_build_object('id', br.id, 'requested_id', br.requested_id)) as "bondsRequestsReceived"`
+            )
+         )
+         .leftJoin('bonds_requests as br', function () {
+            this.on('user.id', '=', 'br.requester_id')
+         })
 
       const user =await userQuery.groupBy('user.id').first()
 
       if (!user) return null
       if (!user.creatorOf?.at(0)?.id) user.creatorOf = []
       if (!user.memberIn?.at(0)?.id) user.memberIn = []
-
+      if (!user.bonds?.at(0)?.id) user.bonds = []
+      if (!user.bondsRequestsSent?.at(0)?.id) user.bondsRequestsSent = []
+      if (!user.bondsRequestsReceived?.at(0)?.id) user.bondsRequestsReceived = []
       
       return safeUser(user || {}, opts?.unsafePass || {})
    }
