@@ -46,7 +46,7 @@ exports.changePassword = catchAsync(async (req, res) => {
 
 exports.sendBondRequest = catchAsync(async (req, res) => {
    const { id: requesterId } = req.user
-   const { id: requestedId } = req.body
+   const { userId: requestedId } = req.params
 
    const bondRequest = await User.sendBondRequest({ requesterId, requestedId })
 
