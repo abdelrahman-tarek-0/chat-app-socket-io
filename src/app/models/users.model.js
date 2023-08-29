@@ -142,12 +142,13 @@ class User {
       const isBonded = await db('bonds')
          .select('*')
          .where(function () {
-            this.where({
-               user1_id: requesterId,
-               user2_id: requestedId,
-            }).orWhere({
-               user1_id: requestedId,
-               user2_id: requesterId,
+            this.where(function(){
+               this.where("user1_id", requesterId)
+               this.andWhere("user2_id", requesterId)
+            })
+            this.orWhere(function(){
+               this.where("user1_id", requestedId)
+               this.andWhere("user2_id", requestedId)
             })
          })
          .andWhere('status', '=', 'active')
