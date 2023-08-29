@@ -68,7 +68,8 @@ class User {
                   `JSON_AGG(DISTINCT jsonb_build_object('boundId', b.id,
                   'userId', b_u.id,
                   'username', b_u.username,
-                  'image' , b_u.image_url
+                  'image' , b_u.image_url,
+                  'created_at', b.created_at
                   )) as "bonds"`
                )
             )
@@ -96,7 +97,8 @@ class User {
                      'requestId', brs.id,
                      'userId', brs_u.id,
                      'username', brs_u.username,
-                     'image' , brs_u.image_url
+                     'image' , brs_u.image_url,
+                     'created_at', brs.created_at
                   )) as "bondsRequestsSent"`
                )
             )
@@ -116,7 +118,8 @@ class User {
                      'requestId', brr.id,
                      'userId', brr_u.id,
                      'username', brr_u.username,
-                     'image' , brr_u.image_url
+                     'image' , brr_u.image_url,
+                     'created_at', brr.created_at
                      )) as "bondsRequestsReceived"`
                )
             )
@@ -238,11 +241,11 @@ class User {
          .where(function () {
             this.where(function () {
                this.where('user1_id', requesterId)
-               this.andWhere('user2_id', requesterId)
+               this.andWhere('user2_id', requestedId)
             })
             this.orWhere(function () {
                this.where('user1_id', requestedId)
-               this.andWhere('user2_id', requestedId)
+               this.andWhere('user2_id', requesterId)
             })
          })
          .andWhere('status', '=', 'active')
