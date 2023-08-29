@@ -113,7 +113,36 @@ exports.bonds = (knex) => (table) => {
    table
       .string('status')
       .defaultTo('active')
-      .checkIn(['active', 'inactive', 'blocked'], 'status_invalid_value')
+      .checkIn(['active', 'inactive'], 'status_invalid_value')
+
+   table.unique(['user1_id', 'user2_id'])
+   table.unique(['user2_id', 'user1_id'])
+
+   table.timestamps(true, true)
+}
+
+exports.bondsRequests = (knex) => (table) => {
+   table.uuid('id').primary().defaultTo(knex.fn.uuid())
+   table.increments('raw_id').unique().unsigned().notNullable()
+
+   table
+      .uuid('requester_id')
+      .references('id')
+      .inTable('users')
+      .onDelete('CASCADE')
+      .notNullable()
+
+   table
+      .uuid('requested_id')
+      .references('id')
+      .inTable('users')
+      .onDelete('CASCADE')
+      .notNullable()
+
+   table.unique(['requester_id', 'requested_id'])
+   table.unique(['requested_id', 'requester_id'])
+
+   
 
    table.timestamps(true, true)
 }
