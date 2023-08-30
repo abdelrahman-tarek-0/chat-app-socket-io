@@ -6,6 +6,7 @@ const {
    changePassword,
    disableMe,
    sendBondRequest,
+   acceptBondRequest,
 } = require('../../controllers/users.controller')
 const { loggedIn } = require('../../middlewares/auth.middleware')
 const validator = require('../../validators/users.validators')
