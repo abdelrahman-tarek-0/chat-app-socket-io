@@ -72,4 +72,5 @@ app.use((req, res) => {
 // in case of a private channel the user must have an invitation to join the channel, the invite created by admin or owner
 // i will change the behavior of the public channel after adding a (channel_settings, request_join) tables, in the near future
 // user_settings| channel_settings | roles | friends-inboxes (Bond) | request_join
+// mutual bonds
 module.exports = app

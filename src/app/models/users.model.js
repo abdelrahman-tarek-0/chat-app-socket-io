@@ -265,6 +265,38 @@ class User {
 
       return bondRequest[0]
    }
+
+   static async acceptBondRequest({ bondRequestId, requestedId }) {
+      const bondRequest = await db('bonds_requests')
+         .delete()
+         .where({
+            // get the actual bond request by id
+            id: bondRequestId,
+
+            // check if the current user is the requested user
+            requested_id: requestedId,
+         })
+         .returning('*')
+
+      if (!bondRequest[0])
+         throw new ErrorBuilder('Bond request not found', 404, 'NOT_FOUND')
+
+      const requesterId = bondRequest[0].requester_id
+
+      const bond = await db('bonds')
+         .upsert({
+            user1_id: requesterId,
+            user2_id: requestedId,
+            status: 'active',
+         })
+         .onConflict()
+         .ignore()
+         .returning('*')
+      
+      console.log(bond)
+
+      return bond[0]
+   }
 }
 
 module.exports = User
