@@ -138,11 +138,13 @@ class User {
          token,
          verificationFor: 'change_email',
       })
+      const tokenizer = randomString(8)
 
       let user = db('users')
          .update({
             email: newEmail,
             email_verified: false,
+            tokenizer,
             updated_at: db.fn.now(),
          })
          .where({
@@ -175,11 +177,13 @@ class User {
       })
 
       password = await hashPassword(password)
+      const tokenizer = randomString(8)
 
       let user = db('users')
          .update({
             password,
             last_password_change_at: db.fn.now(),
+            tokenizer,
             updated_at: db.fn.now(),
          })
          .where({
