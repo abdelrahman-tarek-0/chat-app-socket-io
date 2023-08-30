@@ -145,6 +145,43 @@ class User {
       return safeUser(user || {}, opts?.unsafePass || {})
    }
 
+   static async getUserData(
+      { targetName, userId },
+      opts = { unsafePass: {}, fields: [] }
+   ) {
+      let fields = ['mutualChannels']
+      if (opts?.fields?.length > 0) fields = opts.fields
+
+      let mutualChannels
+      let targetId = db.raw('(select id from users where username = ?)', [
+         targetName,
+      ])
+
+      let userQuery = db('users as user')
+         .select(
+            'user.id as id',
+            'user.username as username',
+            'user.image_url as image_url',
+            'user.display_name as display_name',
+            'user.bio as bio',
+            'user.created_at as created_at'
+         )
+         .where('user.username', targetName)
+         .andWhere('user.is_active', '=', 'true')
+
+  
+
+      const [user, mutualChannelsList] = await Promise.all([
+         userQuery.groupBy('user.id').first(),
+         mutualChannels,
+      ])
+
+      return {
+         ...safeUser(user || {}, opts?.unsafePass || {}),
+         mutualChannels: mutualChannelsList,
+      }
+   }
+
    static async updateUser(data) {
       const { id } = data
 
@@ -236,31 +273,37 @@ class User {
    }
 
    static async sendBondRequest({ requesterId, requestedUsername }) {
-
       let isBonded = db('bonds')
          .select('*')
          .where(function () {
             this.where(function () {
                this.where('user1_id', requesterId)
-               this.andWhere('user2_id', db.raw('(select id from users where username = ?)', [requestedUsername]))
+               this.andWhere(
+                  'user2_id',
+                  db.raw('(select id from users where username = ?)', [
+                     requestedUsername,
+                  ])
+               )
             })
             this.orWhere(function () {
-               this.where('user1_id', db.raw('(select id from users where username = ?)', [requestedUsername]))
+               this.where(
+                  'user1_id',
+                  db.raw('(select id from users where username = ?)', [
+                     requestedUsername,
+                  ])
+               )
                this.andWhere('user2_id', requesterId)
             })
          })
          .andWhere('status', '=', 'active')
          .first()
 
-      let user = db('users')
-         .select('*')
-         .where({
-            username: requestedUsername,
-            is_active: true,
-         });
+      let user = db('users').select('*').where({
+         username: requestedUsername,
+         is_active: true,
+      })
 
-      [isBonded, user] = await Promise.all([isBonded, user])
-
+      ;[isBonded, user] = await Promise.all([isBonded, user])
 
       if (isBonded)
          throw new ErrorBuilder('Already bonded', 400, 'ALREADY_BONDED')
@@ -268,8 +311,12 @@ class User {
       if (!user[0])
          throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
-      if(user[0].id === requesterId)
-         throw new ErrorBuilder('Cannot bond with yourself', 400, 'CANNOT_BOND_WITH_SELF')
+      if (user[0].id === requesterId)
+         throw new ErrorBuilder(
+            'Cannot bond with yourself',
+            400,
+            'CANNOT_BOND_WITH_SELF'
+         )
 
       const bondRequest = await db('bonds_requests')
          .insert({
@@ -309,7 +356,7 @@ class User {
          .onConflict(['user1_id', 'user2_id'])
          .merge()
          .returning('*')
-      
+
       console.log(bond)
 
       return bond[0]
@@ -330,8 +377,7 @@ class User {
          })
          .returning('*')
 
-      if (!bond[0])
-         throw new ErrorBuilder('Bond not found', 404, 'NOT_FOUND')
+      if (!bond[0]) throw new ErrorBuilder('Bond not found', 404, 'NOT_FOUND')
 
       return bond[0]
    }

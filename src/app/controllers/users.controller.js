@@ -18,12 +18,14 @@ exports.getCurrentUserData = catchAsync(async (req, res) => {
 })
 
 exports.getUserData = catchAsync(async (req, res) => {
-   const { username } = req.params
+   const { targetName } = req.params
+   const { id: userId } = req.user
+
    let { fields } = req.query
 
    fields = fields?.split(',') || []
 
-   const user = await User.getUserData({ username }, { fields })
+   const user = await User.getUserData({ targetName, userId }, { fields })
 
    if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
 
@@ -64,7 +66,10 @@ exports.sendBondRequest = catchAsync(async (req, res) => {
    const { id: requesterId } = req.user
    const { username: requestedUsername } = req.params
 
-   const bondRequest = await User.sendBondRequest({ requesterId, requestedUsername })
+   const bondRequest = await User.sendBondRequest({
+      requesterId,
+      requestedUsername,
+   })
 
    return resBuilder(res, 200, 'Bond request sent', bondRequest)
 })
