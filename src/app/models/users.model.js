@@ -169,7 +169,35 @@ class User {
          .where('user.username', targetName)
          .andWhere('user.is_active', '=', 'true')
 
-  
+      if (fields.includes('mutualChannels'))
+         mutualChannels = db('channel_members AS c1')
+            .distinct('c.id', 'c.name', 'c.description', 'c.image_url')
+            .innerJoin(
+               'channel_members AS c2',
+               'c1.channel_id',
+               'c2.channel_id'
+            )
+            .innerJoin('channels AS c', 'c.id', 'c1.channel_id')
+            .where(function () {
+               this.where(function () {
+                  this.where('c1.user_id', userId).andWhere(
+                     'c2.user_id',
+                     targetId
+                  ) // Both members
+               })
+                  .orWhere(function () {
+                     this.where('c1.user_id', userId).andWhere(
+                        'c.creator',
+                        targetId
+                     ) // User1 is member, User2 is creator
+                  })
+                  .orWhere(function () {
+                     this.where('c1.user_id', targetId).andWhere(
+                        'c.creator',
+                        userId
+                     ) // User2 is member, User1 is creator
+                  })
+            })
 
       const [user, mutualChannelsList] = await Promise.all([
          userQuery.groupBy('user.id').first(),
