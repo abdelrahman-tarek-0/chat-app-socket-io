@@ -348,8 +348,9 @@ class ChannelUser {
       .andWhere(function () {
          this.where('creator_id', userId).orWhere('target_id', userId)
       })
+      .returning('*')
 
-      if (!invite)
+      if (!invite?.[0].id)
          throw new ErrorBuilder(`Invite not found`, 404, 'NOT_FOUND')
 
       return invite
