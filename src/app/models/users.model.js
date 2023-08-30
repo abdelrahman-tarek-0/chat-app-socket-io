@@ -149,10 +149,11 @@ class User {
       { targetName, userId },
       opts = { unsafePass: {}, fields: [] }
    ) {
-      let fields = ['mutualChannels']
+      let fields = ['mutualChannels', 'mutualBonds']
       if (opts?.fields?.length > 0) fields = opts.fields
 
       let mutualChannels
+      let mutualBonds
       let targetId = db.raw('(select id from users where username = ?)', [
          targetName,
       ])
@@ -199,14 +200,47 @@ class User {
                   })
             })
 
-      const [user, mutualChannelsList] = await Promise.all([
+      if (fields.includes('mutualBonds'))
+         mutualBonds = db('bonds as b')
+            .distinct(
+               'u1.username as user1',
+               'u2.username as user2',
+               'b.created_at as created_at'
+            )
+            .innerJoin('users as u1', 'b.user1_id', 'u1.id')
+            .innerJoin('users as u2', 'b.user2_id', 'u2.id')
+            .where(function () {
+               this.where('b.user1_id', userId).orWhere('b.user2_id', userId)
+            })
+            .andWhere('b.status', '=', 'active')
+            .union(function () {
+               this.distinct(
+                  'u1.username as user1',
+                  'u2.username as user2',
+                  'b.created_at as created_at'
+               )
+                  .from('bonds as b')
+                  .innerJoin('users as u1', 'b.user1_id', 'u1.id')
+                  .innerJoin('users as u2', 'b.user2_id', 'u2.id')
+                  .where(function () {
+                     this.where('b.user1_id', targetId).orWhere(
+                        'b.user2_id',
+                        targetId
+                     )
+                  })
+                  .andWhere('b.status', '=', 'active')
+            })
+
+      const [user, mutualChannelsList, mutualBondsList] = await Promise.all([
          userQuery.groupBy('user.id').first(),
          mutualChannels,
+         mutualBonds,
       ])
 
       return {
          ...safeUser(user || {}, opts?.unsafePass || {}),
          mutualChannels: mutualChannelsList,
+         mutualBonds: mutualBondsList,
       }
    }
 
