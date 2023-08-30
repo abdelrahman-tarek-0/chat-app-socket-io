@@ -253,7 +253,7 @@ class User {
             })
       } else if (data.email_verified && data.email) {
          throw new ErrorBuilder(
-            'Email cannot be changed after verification',
+            'Illegal operation changing email on update , please request a change email instead',
             400,
             'EMAIL_ALREADY_VERIFIED'
          )
