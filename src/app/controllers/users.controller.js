@@ -17,6 +17,19 @@ exports.getCurrentUserData = catchAsync(async (req, res) => {
    return resBuilder(res, 200, 'User profile found', user)
 })
 
+exports.getUserData = catchAsync(async (req, res) => {
+   const { username } = req.params
+   let { fields } = req.query
+
+   fields = fields?.split(',') || []
+
+   const user = await User.getUserData({ username }, { fields })
+
+   if (!user) throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
+
+   return resBuilder(res, 200, 'User profile found', user)
+})
+
 exports.updateUser = catchAsync(async (req, res) => {
    const { id, email_verified } = req.user
 
