@@ -64,3 +64,12 @@ exports.acceptBondRequest = catchAsync(async (req, res) => {
 
    return resBuilder(res, 200, 'Bond accepted', bond)
 })
+
+exports.breakBond = catchAsync(async (req, res) => {
+   const { id: userId } = req.user
+   const { bondId } = req.params
+
+   const bond = await User.breakBond({ bondId, userId })
+
+   return resBuilder(res, 200, 'Bond broken', bond)
+})
