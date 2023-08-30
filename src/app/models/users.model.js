@@ -231,7 +231,7 @@ class User {
       return {
          ...safeUser(user || {}, opts?.unsafePass || {}),
          mutualChannels: mutualChannelsList,
-         mutualBonds: mutualBondsList.rows[0],
+         mutualBonds: mutualBondsList?.rows?.at(0),
       }
    }
 
