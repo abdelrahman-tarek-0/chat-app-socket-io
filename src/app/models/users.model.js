@@ -203,7 +203,7 @@ class User {
       if (fields.includes('mutualBonds')) {
          mutualBonds = db.raw(
             `
-            SELECT UserAFriends.UserId,users.* FROM
+            SELECT UserAFriends.UserId, users.id, users.username, users.display_name, users.image_url FROM
             (
               SELECT user2_id UserId FROM bonds WHERE user1_id = :userId
                 UNION 
