@@ -49,6 +49,15 @@ exports.acceptInvite = catchAsync(async (req, res) => {
    return res.redirect(`/api/v1/channels/${channel_id}`)
 })
 
+exports.deleteInvite = catchAsync(async (req, res) => {
+   const { inviteId } = req.params
+   const { id: userId } = req.user
+
+   await ChannelUser.deleteInvite(inviteId, userId)
+
+   return resBuilder(res, 204, `Invite is deleted`)
+})
+
 exports.joinChannel = catchAsync(async (req, res) => {
    const { channelId } = req.params
    const { id: userId } = req.user
