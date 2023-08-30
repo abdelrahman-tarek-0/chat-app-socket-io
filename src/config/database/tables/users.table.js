@@ -115,6 +115,14 @@ exports.bonds = (knex) => (table) => {
       .defaultTo('active')
       .checkIn(['active', 'inactive'], 'status_invalid_value')
 
+   table.specificType(
+      'unique_bond',
+      `
+      text UNIQUE generated always as 
+      ( LEAST(CAST(user1_id AS TEXT) , CAST(user2_id AS TEXT) ) || ' ' || GREATEST(CAST(user1_id AS TEXT)  , CAST(user2_id AS TEXT)) ) stored
+      `
+   )
+
    table.unique(['user1_id', 'user2_id'])
    table.unique(['user2_id', 'user1_id'])
 
@@ -141,8 +149,6 @@ exports.bondsRequests = (knex) => (table) => {
 
    table.unique(['requester_id', 'requested_id'])
    table.unique(['requested_id', 'requester_id'])
-
-   
 
    table.timestamps(true, true)
 }
