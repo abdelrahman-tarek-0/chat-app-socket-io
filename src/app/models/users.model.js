@@ -236,6 +236,9 @@ class User {
    }
 
    static async sendBondRequest({ requesterId, requestedId }) {
+
+      if (requesterId === requestedId) throw new ErrorBuilder('Cannot bond with yourself', 400, 'CANNOT_BOND_WITH_SELF')
+
       const isBonded = await db('bonds')
          .select('*')
          .where(function () {
@@ -284,13 +287,13 @@ class User {
       const requesterId = bondRequest[0].requester_id
 
       const bond = await db('bonds')
-         .upsert({
+         .insert({
             user1_id: requesterId,
             user2_id: requestedId,
             status: 'active',
          })
-         .onConflict()
-         .ignore()
+         .onConflict(['user1_id', 'user2_id'])
+         .merge()
          .returning('*')
       
       console.log(bond)
