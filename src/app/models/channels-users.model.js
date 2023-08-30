@@ -180,7 +180,7 @@ class ChannelUser {
          .groupBy('channels.id', 'creator.id')
          .first()
 
-      if (!channel)
+      if (!channel?.id)
          throw new ErrorBuilder('Channel not found', 404, 'NOT_FOUND')
       if (!channel?.members?.at(0)?.id) channel.members = []
       if (!channel?.creator?.id) channel.creator = {}
@@ -216,7 +216,7 @@ class ChannelUser {
          .select('*')
          .where('username', targetUsername)
          .first()
-
+      
       if (!invited?.id)
          throw new ErrorBuilder('Invited user not found', 404, 'NOT_FOUND')
 
@@ -339,6 +339,20 @@ class ChannelUser {
       else member = await member
 
       return member[0]
+   }
+
+   static async deleteInvite(id, userId) {
+      const invite = await db('channel_invites')
+      .delete()
+      .where('id', id)
+      .andWhere(function () {
+         this.where('creator_id', userId).orWhere('target_id', userId)
+      })
+
+      if (!invite)
+         throw new ErrorBuilder(`Invite not found`, 404, 'NOT_FOUND')
+
+      return invite
    }
 
    static async joinChannel(channelId, userId) {
