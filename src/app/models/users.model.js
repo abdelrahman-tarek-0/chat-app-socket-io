@@ -236,7 +236,7 @@ class User {
    }
 
    static async sendBondRequest({ requesterId, requestedUsername }) {
-      console.log(requesterId, requestedUsername)
+
       let isBonded = db('bonds')
          .select('*')
          .where(function () {
@@ -311,6 +311,27 @@ class User {
          .returning('*')
       
       console.log(bond)
+
+      return bond[0]
+   }
+
+   static async breakBond({ bondId, userId }) {
+      const bond = await db('bonds')
+         .update({
+            status: 'inactive',
+         })
+         .where({
+            id: bondId,
+            status: 'active',
+         })
+         .andWhere(function () {
+            this.where('user1_id', userId)
+            this.orWhere('user2_id', userId)
+         })
+         .returning('*')
+
+      if (!bond[0])
+         throw new ErrorBuilder('Bond not found', 404, 'NOT_FOUND')
 
       return bond[0]
    }
