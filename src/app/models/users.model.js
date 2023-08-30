@@ -274,7 +274,7 @@ class User {
       const bondRequest = await db('bonds_requests')
          .insert({
             requester_id: requesterId,
-            requested_id: requestedId,
+            requested_id: user[0].id,
          })
          .returning('*')
          .onConflict()
