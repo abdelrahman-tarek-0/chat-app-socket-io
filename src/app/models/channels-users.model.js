@@ -269,6 +269,7 @@ class ChannelUser {
             'channel_invites.type as invType',
             'channels.creator as creator',
             'channels.id as channel_id',
+            'target_id',
             db.raw(
                `json_build_object('id', member.user_id, 'role', member.role, 'display_name', users.display_name, 'username', users.username, 'bio', users.bio, 'image_url', users.image_url) as member`
             )

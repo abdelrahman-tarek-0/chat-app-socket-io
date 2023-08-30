@@ -131,6 +131,36 @@ class User {
                this.andOn('brr_u.is_active', '=', db.raw('?', ['true']))
             })
 
+      if (fields.includes('inviteSent')) 
+         userQuery = userQuery
+            .select(
+               db.raw(
+                  `JSON_AGG(DISTINCT jsonb_build_object(
+                     'id', i.id,
+                     'channelId', i_c.id,
+                     'channelName', i_c.name,
+                     'channelImage' , i_c.image_url,
+                     'targetId', i_t.id,
+                     'targetUsername', i_t.username,
+                     'targetImage' , i_t.image_url,
+                     'createdAt', i.created_at
+                     )) as "inviteSent"`
+               )
+            )
+            .leftJoin('channel_invites as i', function () {
+               this.on('user.id', '=', 'i.creator_id')
+               this.andOn('i.type', '=', db.raw('?', ['directed']))
+            })
+            .leftJoin('channels as i_c', function () {
+               this.on('i_c.id', '=', 'i.channel_id')
+               this.andOn('i_c.is_active', '=', db.raw('?', ['true']))
+            })
+            .leftJoin('users as i_t', function () {
+               this.on('i_t.id', '=', 'i.target_id')
+               this.andOn('i_t.is_active', '=', db.raw('?', ['true']))
+            })
+
+
       const user = await userQuery.groupBy('user.id').first()
 
       if (!user) return null
@@ -141,6 +171,7 @@ class User {
          user.bondsRequestsSent = undefined
       if (!user.bondsRequestsReceived?.at(0)?.requestId)
          user.bondsRequestsReceived = undefined
+      if (!user.inviteSent?.at(0)?.id) user.inviteSent = undefined
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }

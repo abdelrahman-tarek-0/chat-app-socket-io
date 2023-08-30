@@ -35,7 +35,7 @@ exports.createDirectInvite = catchAsync(async (req, res) => {
       username: invited.username,
       email: invited.email,
       URL: `http://localhost:3000/invite/${invite.alias}`,
-   })
+   }).catch((err) => console.error(err))
 
    return resBuilder(res, 201, `Invite is sent to ${targetName}`)
 })

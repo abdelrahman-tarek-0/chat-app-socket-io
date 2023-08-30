@@ -190,6 +190,7 @@ class User {
             id: verification.user_id,
             is_active: db.raw('true'),
          })
+         .returning('*')
 
       const task = db('verifications')
          .update({
