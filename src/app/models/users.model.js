@@ -150,6 +150,7 @@ class User {
             .leftJoin('channel_invites as i', function () {
                this.on('user.id', '=', 'i.creator_id')
                this.andOn('i.type', '=', db.raw('?', ['directed']))
+               this.andOn('i.expires_at', '>', db.fn.now())
             })
             .leftJoin('channels as i_c', function () {
                this.on('i_c.id', '=', 'i.channel_id')
@@ -160,6 +161,37 @@ class User {
                this.andOn('i_t.is_active', '=', db.raw('?', ['true']))
             })
 
+         if (fields.includes('inviteReceived'))
+            userQuery = userQuery
+            .select(
+               db.raw(
+                  `JSON_AGG(DISTINCT jsonb_build_object(
+                     'id', i2.id,
+                     'channelId', i2_c.id,
+                     'channelName', i2_c.name,
+                     'channelImage' , i2_c.image_url,
+                     'senderId', i_s.id,
+                     'senderUsername', i_s.username,
+                     'senderImage' , i_s.image_url,
+                     'alias', i2.alias,
+                     'createdAt', i2.created_at
+                     )) as "inviteReceived"`
+               )
+            )
+            .leftJoin('channel_invites as i2', function () {
+               this.on('user.id', '=', 'i2.target_id')
+               this.andOn('i2.type', '=', db.raw('?', ['directed']))
+               this.andOn('i2.expires_at', '>', db.fn.now())
+            })
+            .leftJoin('channels as i2_c', function () {
+               this.on('i2_c.id', '=', 'i2.channel_id')
+               this.andOn('i2_c.is_active', '=', db.raw('?', ['true']))
+            })
+            .leftJoin('users as i_s', function () {
+               this.on('i_s.id', '=', 'i2.creator_id') 
+               this.andOn('i_s.is_active', '=', db.raw('?', ['true']))
+            })
+            
 
       const user = await userQuery.groupBy('user.id').first()
 

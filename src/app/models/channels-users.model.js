@@ -309,7 +309,12 @@ class ChannelUser {
 
       const isMember = invite?.member?.id
 
-      if (isMember || invite?.creator === userId) return invite
+      if (isMember || invite?.creator === userId) {
+         if (invite.invType === 'directed' && invite.target_id === userId)
+            await db('channel_invites').delete().where({ id: invite.id })
+
+         return invite
+      }
 
       let task
       if (invite.invType === 'directed') {
