@@ -156,7 +156,7 @@ class User {
                this.andOn('i_c.is_active', '=', db.raw('?', ['true']))
             })
             .leftJoin('users as i_t', function () {
-               this.on('i_t.id', '=', 'i.target_id')
+               this.on('i_t.id', '=', 'i.target_id') 
                this.andOn('i_t.is_active', '=', db.raw('?', ['true']))
             })
 
