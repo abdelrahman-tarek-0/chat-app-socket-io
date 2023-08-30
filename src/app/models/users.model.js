@@ -204,6 +204,7 @@ class User {
       if (!user.bondsRequestsReceived?.at(0)?.requestId)
          user.bondsRequestsReceived = undefined
       if (!user.inviteSent?.at(0)?.id) user.inviteSent = undefined
+      if (!user.inviteReceived?.at(0)?.id) user.inviteReceived = undefined
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }
