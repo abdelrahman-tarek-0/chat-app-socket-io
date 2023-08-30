@@ -235,27 +235,41 @@ class User {
       return safeUser(updatedUser[0] || {})
    }
 
-   static async sendBondRequest({ requesterId, requestedId }) {
-
-      if (requesterId === requestedId) throw new ErrorBuilder('Cannot bond with yourself', 400, 'CANNOT_BOND_WITH_SELF')
-
-      const isBonded = await db('bonds')
+   static async sendBondRequest({ requesterId, requestedUsername }) {
+      console.log(requesterId, requestedUsername)
+      let isBonded = db('bonds')
          .select('*')
          .where(function () {
             this.where(function () {
                this.where('user1_id', requesterId)
-               this.andWhere('user2_id', requestedId)
+               this.andWhere('user2_id', db.raw('(select id from users where username = ?)', [requestedUsername]))
             })
             this.orWhere(function () {
-               this.where('user1_id', requestedId)
+               this.where('user1_id', db.raw('(select id from users where username = ?)', [requestedUsername]))
                this.andWhere('user2_id', requesterId)
             })
          })
          .andWhere('status', '=', 'active')
          .first()
 
+      let user = db('users')
+         .select('*')
+         .where({
+            username: requestedUsername,
+            is_active: true,
+         });
+
+      [isBonded, user] = await Promise.all([isBonded, user])
+
+
       if (isBonded)
          throw new ErrorBuilder('Already bonded', 400, 'ALREADY_BONDED')
+
+      if (!user[0])
+         throw new ErrorBuilder('User not found', 404, 'USER_NOT_FOUND')
+
+      if(user[0].id === requesterId)
+         throw new ErrorBuilder('Cannot bond with yourself', 400, 'CANNOT_BOND_WITH_SELF')
 
       const bondRequest = await db('bonds_requests')
          .insert({

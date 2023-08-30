@@ -15,7 +15,7 @@ const router = Router()
 
 router.get('/', loggedIn(), getCurrentUserData)
 
-router.post('/send-bond-request/:userId', loggedIn(), sendBondRequest)
+router.post('/send-bond-request/:username', loggedIn(), sendBondRequest)
 router.post('/accept-bond-request/:bondRequestId', loggedIn(), acceptBondRequest)
 
 router.patch(

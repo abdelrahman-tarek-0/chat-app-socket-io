@@ -49,12 +49,11 @@ exports.changePassword = catchAsync(async (req, res) => {
 
 exports.sendBondRequest = catchAsync(async (req, res) => {
    const { id: requesterId } = req.user
-   const { userId: requestedId } = req.params
+   const { username: requestedUsername } = req.params
 
-   const bondRequest = await User.sendBondRequest({ requesterId, requestedId })
+   const bondRequest = await User.sendBondRequest({ requesterId, requestedUsername })
 
    return resBuilder(res, 200, 'Bond request sent', bondRequest)
-
 })
 
 exports.acceptBondRequest = catchAsync(async (req, res) => {
