@@ -23,6 +23,7 @@ module.exports = {
       database: process.env.DB_NAME,
       poolMin: Number(process.env.DB_POOL_MIN) || 2,
       poolMax: Number(process.env.DB_POOL_MAX) || 10,
+      ssl: process.env.DB_SSL === 'true',
    },
    security: {
       tokenSecret: process.env.JWT_SECRET,

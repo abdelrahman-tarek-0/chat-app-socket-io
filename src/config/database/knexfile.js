@@ -12,7 +12,7 @@ module.exports = {
          user: db.user,
          database: db.database,
          password: db.password,
-         ssl: true,
+         ssl: db.ssl,
       },
       pool: {
          min: Number(db.poolMin) || 2,
