@@ -9,9 +9,9 @@ class User {
       { id },
       opts = { unsafePass: {}, fields: [] }
    ) {
-      let fields = ['base']
+      let { fields } = opts
 
-      if (opts?.fields?.length > 0) fields = opts.fields
+      if (!opts?.fields?.length) fields = ['base']
 
       let userQuery = db('users as user')
          .where('user.id', id)
@@ -212,16 +212,17 @@ class User {
       { targetName, userId },
       opts = { unsafePass: {}, fields: [] }
    ) {
-      let fields = ['mutualChannels', 'mutualBonds']
-      if (opts?.fields?.length > 0) fields = opts.fields
+      let { fields } = opts
+
+      if (!opts?.fields?.length) fields = ['base']
 
       let mutualChannels
       let mutualBonds
-      let targetId = db.raw('(select id from users where username = ?)', [
+      const targetId = db.raw('(select id from users where username = ?)', [
          targetName,
       ])
 
-      let userQuery = db('users as user')
+      const userQuery = db('users as user')
          .select(
             'user.id as id',
             'user.username as username',

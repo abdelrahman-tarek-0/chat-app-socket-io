@@ -8,7 +8,7 @@ process.on('uncaughtException', (err) => {
 
 const app = require('./app/app')
 
-const server = app.listen(port, () => {
+app.listen(port, () => {
    const locally = `locally on ${localHost}`
    const onNetwork = `the network on ${localIp}`
    console.log(`server is running \n${locally}\n${onNetwork}`)
