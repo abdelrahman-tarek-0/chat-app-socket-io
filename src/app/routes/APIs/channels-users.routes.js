@@ -6,7 +6,7 @@ const {
    leaveChannel,
    kickUser,
    joinChannel,
-   deleteInvite
+   deleteInvite,
 } = require('../../controllers/channels-users.controller')
 
 const { loggedIn } = require('../../middlewares/auth.middleware')
@@ -29,11 +29,7 @@ router.post(
    createDirectInvite
 )
 
-router.delete(
-   '/invite/:inviteId',
-   loggedIn(),
-   deleteInvite
-)
+router.delete('/invite/:inviteId', loggedIn(), deleteInvite)
 
 router.delete(
    '/:channelId/leave/',

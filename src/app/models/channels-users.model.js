@@ -216,7 +216,7 @@ class ChannelUser {
          .select('*')
          .where('username', targetUsername)
          .first()
-      
+
       if (!invited?.id)
          throw new ErrorBuilder('Invited user not found', 404, 'NOT_FOUND')
 
@@ -343,12 +343,12 @@ class ChannelUser {
 
    static async deleteInvite(id, userId) {
       const invite = await db('channel_invites')
-      .delete()
-      .where('id', id)
-      .andWhere(function () {
-         this.where('creator_id', userId).orWhere('target_id', userId)
-      })
-      .returning('*')
+         .delete()
+         .where('id', id)
+         .andWhere(function () {
+            this.where('creator_id', userId).orWhere('target_id', userId)
+         })
+         .returning('*')
 
       if (!invite?.[0].id)
          throw new ErrorBuilder(`Invite not found`, 404, 'NOT_FOUND')

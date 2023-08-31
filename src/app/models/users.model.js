@@ -131,7 +131,7 @@ class User {
                this.andOn('brr_u.is_active', '=', db.raw('?', ['true']))
             })
 
-      if (fields.includes('inviteSent')) 
+      if (fields.includes('inviteSent'))
          userQuery = userQuery
             .select(
                db.raw(
@@ -157,12 +157,12 @@ class User {
                this.andOn('i_c.is_active', '=', db.raw('?', ['true']))
             })
             .leftJoin('users as i_t', function () {
-               this.on('i_t.id', '=', 'i.target_id') 
+               this.on('i_t.id', '=', 'i.target_id')
                this.andOn('i_t.is_active', '=', db.raw('?', ['true']))
             })
 
-         if (fields.includes('inviteReceived'))
-            userQuery = userQuery
+      if (fields.includes('inviteReceived'))
+         userQuery = userQuery
             .select(
                db.raw(
                   `JSON_AGG(DISTINCT jsonb_build_object(
@@ -188,10 +188,9 @@ class User {
                this.andOn('i2_c.is_active', '=', db.raw('?', ['true']))
             })
             .leftJoin('users as i_s', function () {
-               this.on('i_s.id', '=', 'i2.creator_id') 
+               this.on('i_s.id', '=', 'i2.creator_id')
                this.andOn('i_s.is_active', '=', db.raw('?', ['true']))
             })
-            
 
       const user = await userQuery.groupBy('user.id').first()
 

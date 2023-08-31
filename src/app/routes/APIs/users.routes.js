@@ -8,7 +8,7 @@ const {
    sendBondRequest,
    acceptBondRequest,
    breakBond,
-   getUserData
+   getUserData,
 } = require('../../controllers/users.controller')
 const { loggedIn } = require('../../middlewares/auth.middleware')
 const validator = require('../../validators/users.validators')
@@ -18,9 +18,12 @@ const router = Router()
 router.get('/', loggedIn(), getCurrentUserData)
 router.get('/:targetName', loggedIn(), getUserData)
 
-
 router.post('/send-bond-request/:username', loggedIn(), sendBondRequest)
-router.post('/accept-bond-request/:bondRequestId', loggedIn(), acceptBondRequest)
+router.post(
+   '/accept-bond-request/:bondRequestId',
+   loggedIn(),
+   acceptBondRequest
+)
 router.delete('/break-bond/:bondId', loggedIn(), breakBond)
 
 router.patch(
