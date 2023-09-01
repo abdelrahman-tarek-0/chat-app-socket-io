@@ -187,5 +187,74 @@ exports.buildGetCurrentUserQuery = {
    },
 }
 
+exports.buildGetUserQuery = {
+   build: (username) => {
+      return db('users as user')
+         .where('user.username', username)
+         .andWhere('user.is_active', '=', 'true')
+   },
+   base: (query) => {
+      return query.select(
+         'user.id as id',
+         'user.username as username',
+         'user.image_url as image_url',
+         'user.display_name as display_name',
+         'user.bio as bio',
+         'user.created_at as created_at'
+      )
+   },
 
-exportrs
+   mutualChannels: (userId, targetName) => {
+    const targetId = db.raw('(select id from users where username = ?)', [
+        targetName,
+     ])
+
+      return db('channel_members AS c1')
+         .distinct('c.id', 'c.name', 'c.description', 'c.image_url')
+         .innerJoin('channel_members AS c2', 'c1.channel_id', 'c2.channel_id')
+         .innerJoin('channels AS c', 'c.id', 'c1.channel_id')
+         .where(function () {
+            this.where(function () {
+               this.where('c1.user_id', userId).andWhere('c2.user_id', targetId) // Both members
+            })
+               .orWhere(function () {
+                  this.where('c1.user_id', userId).andWhere(
+                     'c.creator',
+                     targetId
+                  ) // User1 is member, User2 is creator
+               })
+               .orWhere(function () {
+                  this.where('c1.user_id', targetId).andWhere(
+                     'c.creator',
+                     userId
+                  ) // User2 is member, User1 is creator
+               })
+         })
+   },
+
+   mutualBonds: (userId, targetName) => {
+    const targetId = db.raw('(select id from users where username = ?)', [
+        targetName,
+     ])
+
+      return db.raw(
+         `
+            SELECT UserAFriends.UserId, users.id, users.username, users.display_name, users.image_url FROM
+            (
+              SELECT user2_id UserId FROM bonds WHERE user1_id = :userId
+                UNION 
+              SELECT user1_id UserId FROM bonds WHERE user2_id = :userId
+            ) AS UserAFriends
+            JOIN  
+            (
+              SELECT user2_id UserId FROM bonds WHERE user1_id = :targetId
+                UNION 
+              SELECT user1_id UserId FROM bonds WHERE user2_id = :targetId
+            ) AS UserBFriends 
+            ON  UserAFriends.UserId = UserBFriends.UserId
+            left join users on users.id = UserAFriends.UserId
+         `,
+         { userId, targetId }
+      )
+   },
+}

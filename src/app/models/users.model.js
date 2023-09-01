@@ -4,7 +4,7 @@ const ErrorBuilder = require('../utils/ErrorBuilder')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { randomString } = require('../utils/general.utils')
 
-const { buildGetCurrentUserQuery } = require('./query-builders/users.query-builders')
+const { buildGetCurrentUserQuery, buildGetUserQuery } = require('./query-builders/users.query-builders')
 
 class User {
    static async getCurrentUserData(
@@ -23,9 +23,8 @@ class User {
       
       const user = await userQuery.groupBy('user.id').first()
 
-      if (!user) return null
-      
       // sanitize
+      if (!user) return null
       if (!user.creatorOf?.at(0)?.id) user.creatorOf = undefined
       if (!user.memberIn?.at(0)?.id) user.memberIn = undefined
       if (!user.bonds?.at(0)?.boundId) user.bonds = undefined
@@ -48,81 +47,26 @@ class User {
 
       if (!opts?.fields?.length) fields = ['base']
 
-      let mutualChannels
-      let mutualBonds
-      const targetId = db.raw('(select id from users where username = ?)', [
-         targetName,
-      ])
+      let mutualChannels;
+      let mutualBonds;
+     
+      let userQuery = buildGetUserQuery.build(targetName)
 
-      const userQuery = db('users as user')
-         .select(
-            'user.id as id',
-            'user.username as username',
-            'user.image_url as image_url',
-            'user.display_name as display_name',
-            'user.bio as bio',
-            'user.created_at as created_at'
-         )
-         .where('user.username', targetName)
-         .andWhere('user.is_active', '=', 'true')
-
+      if (fields.includes('base'))
+         userQuery = buildGetUserQuery.base(userQuery)
+         
       if (fields.includes('mutualChannels'))
-         mutualChannels = db('channel_members AS c1')
-            .distinct('c.id', 'c.name', 'c.description', 'c.image_url')
-            .innerJoin(
-               'channel_members AS c2',
-               'c1.channel_id',
-               'c2.channel_id'
-            )
-            .innerJoin('channels AS c', 'c.id', 'c1.channel_id')
-            .where(function () {
-               this.where(function () {
-                  this.where('c1.user_id', userId).andWhere(
-                     'c2.user_id',
-                     targetId
-                  ) // Both members
-               })
-                  .orWhere(function () {
-                     this.where('c1.user_id', userId).andWhere(
-                        'c.creator',
-                        targetId
-                     ) // User1 is member, User2 is creator
-                  })
-                  .orWhere(function () {
-                     this.where('c1.user_id', targetId).andWhere(
-                        'c.creator',
-                        userId
-                     ) // User2 is member, User1 is creator
-                  })
-            })
+         mutualChannels = buildGetUserQuery.mutualChannels(userId, targetName)
 
-      if (fields.includes('mutualBonds')) {
-         mutualBonds = db.raw(
-            `
-            SELECT UserAFriends.UserId, users.id, users.username, users.display_name, users.image_url FROM
-            (
-              SELECT user2_id UserId FROM bonds WHERE user1_id = :userId
-                UNION 
-              SELECT user1_id UserId FROM bonds WHERE user2_id = :userId
-            ) AS UserAFriends
-            JOIN  
-            (
-              SELECT user2_id UserId FROM bonds WHERE user1_id = :targetId
-                UNION 
-              SELECT user1_id UserId FROM bonds WHERE user2_id = :targetId
-            ) AS UserBFriends 
-            ON  UserAFriends.UserId = UserBFriends.UserId
-            left join users on users.id = UserAFriends.UserId
-         `,
-            { userId, targetId }
-         )
-      }
+      if (fields.includes('mutualBonds')) 
+         mutualBonds = buildGetUserQuery.mutualBonds(userId, targetName)
 
       const [user, mutualChannelsList, mutualBondsList] = await Promise.all([
          userQuery.groupBy('user.id').first(),
          mutualChannels,
          mutualBonds,
       ])
+
 
       return {
          ...safeUser(user || {}, opts?.unsafePass || {}),
