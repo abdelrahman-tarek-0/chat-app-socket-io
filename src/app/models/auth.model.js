@@ -63,10 +63,15 @@ class User {
    }
 
    static async createReset({ email, type, verificationFor }) {
+      type = type?.toLowerCase()
+
       if (type !== 'code' && type !== 'token_link')
          throw new ErrorBuilder('Invalid type', 400, 'INVALID_TYPE')
 
       const reset = type === 'code' ? randomNumber(6) : randomString(64)
+      const userId = db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
+         email,
+      ])
 
       await db('verifications')
          .update({
@@ -74,9 +79,7 @@ class User {
             updated_at: db.fn.now(),
          })
          .where({
-            user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
-               email,
-            ]),
+            user_id: userId,
             verification_for: verificationFor,
             status: 'active',
          })
@@ -84,11 +87,9 @@ class User {
       // this must have a custom error handler
       const verification = await db('verifications')
          .insert({
-            user_id: db.raw('(SELECT id FROM users WHERE email = ? LIMIT 1)', [
-               email,
-            ]),
+            user_id: userId,
             reset,
-            reset_type: type?.toLowerCase() === 'code' ? 'code' : 'token_link',
+            reset_type: type,
             verification_for: verificationFor,
             expires_at: security.resetExpires(),
          })
