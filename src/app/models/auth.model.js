@@ -4,7 +4,6 @@ const { safeUser } = require('../utils/safeModel')
 const { randomString, randomNumber } = require('../utils/general.utils')
 const { security } = require('../../config/app.config')
 const ErrorBuilder = require('../utils/ErrorBuilder')
-const { getVerification } = require('../helpers/auth.helpers')
 
 class User {
    static async signup(data, opts = { unsafePass: {} }) {
@@ -98,9 +97,32 @@ class User {
       // TODO: do NOT forget to handel error differently from any other database error
       return verification[0]
    }
+   static async #getVerification({ id, token, verificationFor }) {
+      const verification = await db('verifications')
+         .select('*')
+         .where({
+            user_id: id,
+            reset: token,
+            verification_for: verificationFor,
+            status: 'active',
+         })
+         .first()
+
+      if (!verification?.id)
+         throw new ErrorBuilder(
+            'Invalid or Already Used Token Please Try Again Later',
+            400,
+            'INVALID'
+         )
+
+      if (verification?.expires_at < new Date().getTime())
+         throw new ErrorBuilder('Expired', 400, 'EXPIRED')
+
+      return verification
+   }
 
    static async confirmEmail({ token, id }, opts = { unsafePass: {} }) {
-      const verification = await getVerification(db, {
+      const verification = await this.#getVerification({
          id,
          token,
          verificationFor: 'confirm_email',
@@ -134,7 +156,7 @@ class User {
       { token, id, newEmail },
       opts = { unsafePass: {} }
    ) {
-      const verification = await getVerification(db, {
+      const verification = await this.#getVerification({
          id,
          token,
          verificationFor: 'change_email',
@@ -171,7 +193,7 @@ class User {
       { token, id, password },
       opts = { unsafePass: {} }
    ) {
-      const verification = await getVerification(db, {
+      const verification =  this.#getVerification({
          id,
          token,
          verificationFor: 'reset_password',
