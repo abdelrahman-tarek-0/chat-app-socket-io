@@ -1,6 +1,6 @@
 const db = require('../../../config/database/db')
 
-exports.buildGetUserQuery = {
+exports.buildGetCurrentUserQuery = {
    build: (userId) => {
       return db('users as user')
          .where('user.id', userId)
@@ -186,3 +186,6 @@ exports.buildGetUserQuery = {
          })
    },
 }
+
+
+exportrs

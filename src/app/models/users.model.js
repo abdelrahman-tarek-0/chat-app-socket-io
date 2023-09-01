@@ -4,7 +4,7 @@ const ErrorBuilder = require('../utils/ErrorBuilder')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { randomString } = require('../utils/general.utils')
 
-const { buildGetUserQuery } = require('./query-builders/users.query-builders')
+const { buildGetCurrentUserQuery } = require('./query-builders/users.query-builders')
 
 class User {
    static async getCurrentUserData(
@@ -15,10 +15,10 @@ class User {
 
       if (!opts?.fields?.length) fields = ['base']
 
-      let userQuery = buildGetUserQuery.build(id)
+      let userQuery = buildGetCurrentUserQuery.build(id)
 
       fields.forEach((field) => {
-         userQuery = buildGetUserQuery[field](userQuery)
+         userQuery = buildGetCurrentUserQuery[field](userQuery)
       })
       
       const user = await userQuery.groupBy('user.id').first()
