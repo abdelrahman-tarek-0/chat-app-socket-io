@@ -4,22 +4,36 @@ const jwt = require('jsonwebtoken')
 const { security, env } = require('../../config/app.config')
 
 const verifyToken = (token) =>
-   promisify(jwt.verify)(token, security.tokenSecret)
+   promisify(jwt.verify)(token, security.tokenSecret, {
+      ignoreExpiration: true,
+   })
 
-const verifyCookieToken = async (req) => {
-   const token = req?.cookies?.token
-   if (!token) return null
-   return await verifyToken(token)
-}
+const verifyRefreshToken = (token) =>
+   promisify(jwt.verify)(token, security.refReshTokenSecret, {
+      ignoreExpiration: true,
+   })
 
 const signToken = (data, tokenizer) =>
    promisify(jwt.sign)({ ...data, tokenizer }, security.tokenSecret, {
       expiresIn: security.tokenExpires,
    })
 
+const signRefreshToken = (data, tokenizer) =>
+   promisify(jwt.sign)({ ...data, tokenizer }, security.refReshTokenSecret, {
+      expiresIn: security.refReshTokenExpires,
+   })
+
 const setCookieToken = (res, token, expires) => {
    res.cookie('token', token, {
-      expires: expires || security.cookieExpires(),
+      expires: expires || security.cookieTokenExpires(),
+      httpOnly: true,
+      secure: env === 'production',
+   })
+}
+
+const setCookieRefreshToken = (res, token, expires) => {
+   res.cookie('refreshToken', token, {
+      expires: expires || security.cookieRefreshTokenExpires(),
       httpOnly: true,
       secure: env === 'production',
    })
@@ -31,10 +45,19 @@ const signCookieToken = async (res, data, tokenizer) => {
    return token
 }
 
+const signCookieRefreshToken = async (res, data, tokenizer) => {
+   const token = await signRefreshToken(data, tokenizer)
+   setCookieRefreshToken(res, token)
+   return token
+}
+
 module.exports = {
-   signToken,
    verifyToken,
+   verifyRefreshToken,
+   
    setCookieToken,
-   verifyCookieToken,
+   setCookieRefreshToken,
+
    signCookieToken,
+   signCookieRefreshToken,
 }

@@ -23,6 +23,7 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
       // verify token
       const decoded = await verifyToken(token)
       console.log(decoded)
+      console.log(Date.now() / 1000) 
 
       let user = decoded
       if (opts.populateUser)
