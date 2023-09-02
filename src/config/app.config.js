@@ -26,12 +26,20 @@ module.exports = {
       ssl: process.env.DB_SSL === 'true',
    },
    security: {
-      tokenSecret: process.env.JWT_SECRET,
-      tokenExpires: process.env.JWT_EXPIRE,
-      cookieExpires: () =>
+      tokenSecret: process.env.TOKEN_SECRET,
+      tokenExpires: process.env.TOKEN_EXPIRE,
+      refReshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+      refReshTokenExpires: process.env.REFRESH_TOKEN_EXPIRE,
+      cookieTokenExpires: () =>
          new Date(
             Date.now() + Number(process.env.COOKIE_EXPIRE_IN_H) * 60 * 60 * 1000
          ),
+      cookieRefreshTokenExpires: () =>
+         new Date(
+            Date.now() +
+               Number(process.env.REFRESH_COOKIE_EXPIRE_IN_D) * 24 * 60 * 60 * 1000
+         ),
+      
       bcryptSalt: Number(process.env.BCRYPT_SALT),
       resetExpires: () =>
          new Date(
