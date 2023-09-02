@@ -1,5 +1,9 @@
 const catchAsync = require('../utils/catchAsync')
-const { verifyToken } = require('../utils/jwtToken')
+const {
+   verifyToken,
+   verifyRefreshToken,
+   signCookie,
+} = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const Auth = require('../models/auth.model')
 
@@ -13,20 +17,33 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
       opts = optsConfig(opts)
 
       const token = req?.cookies?.token
-      if (!token)
-         throw new ErrorBuilder(
-            'Invalid token, Please login',
-            401,
-            'TOKEN_ERROR'
-         )
 
       // verify token
-      const decoded = await verifyToken(token)
-      console.log(decoded)
-      console.log(Date.now() / 1000) 
+      let decoded = token ? await verifyToken(token):{}
+      let user
+      let requireRefresh = false
 
-      let user = decoded
-      if (opts.populateUser)
+      if (decoded?.exp < Math.random(Date.now() / 1000)) {
+         const refreshToken = req?.cookies?.refreshToken
+         if (!refreshToken)
+            throw new ErrorBuilder(
+               'Invalid token, Please login',
+               401,
+               'TOKEN_ERROR'
+            )
+
+         decoded = await verifyRefreshToken(refreshToken)
+
+         user = Auth.verifyUser(
+            {
+               id: decoded?.id,
+               tokenizer: decoded?.tokenizer,
+               tokenIat: decoded?.iat,
+            },
+            { unsafePass: { email_verified: true, email: true } }
+         )
+         requireRefresh = true
+      } else if (opts.populateUser) {
          user = await Auth.verifyUser(
             {
                id: decoded?.id,
@@ -35,6 +52,10 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
             },
             { unsafePass: { email_verified: true, email: true } }
          )
+      } else {
+         user = decoded
+      }
+
       if (!user?.id)
          throw new ErrorBuilder(
             'Invalid token, Please login',
@@ -48,6 +69,18 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
             401,
             'CONFIRM_EMAIL'
          )
+
+      if (requireRefresh)
+         await signCookie(
+            res,
+            {
+               id: user.id,
+               email: user.email,
+               email_verified: user.email_verified,
+            },
+            user.tokenizer
+         )
+
       // TODO: handel disabled users
       req.user = user
       return next()

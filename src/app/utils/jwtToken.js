@@ -9,9 +9,7 @@ const verifyToken = (token) =>
    })
 
 const verifyRefreshToken = (token) =>
-   promisify(jwt.verify)(token, security.refReshTokenSecret, {
-      ignoreExpiration: true,
-   })
+   promisify(jwt.verify)(token, security.refReshTokenSecret)
 
 const signToken = (data, tokenizer) =>
    promisify(jwt.sign)({ ...data, tokenizer }, security.tokenSecret, {
@@ -51,13 +49,23 @@ const signCookieRefreshToken = async (res, data, tokenizer) => {
    return token
 }
 
+const signCookie = async (res, data, tokenizer) => {
+   const token = await signToken(data, tokenizer)
+   const refreshToken = await signRefreshToken(data, tokenizer)
+
+   setCookieToken(res, token)
+   setCookieRefreshToken(res, refreshToken)
+}
+
 module.exports = {
    verifyToken,
    verifyRefreshToken,
-   
+
    setCookieToken,
    setCookieRefreshToken,
 
    signCookieToken,
    signCookieRefreshToken,
+
+   signCookie,
 }

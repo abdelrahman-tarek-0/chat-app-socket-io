@@ -1,7 +1,7 @@
 const Auth = require('../models/auth.model')
 const resBuilder = require('../utils/responseBuilder')
 
-const { signCookieToken, setCookieToken } = require('../utils/jwtToken')
+const { signCookie, setCookieToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 
@@ -25,7 +25,7 @@ exports.signup = catchAsync(async (req, res) => {
    })
 
    // login the user
-   await signCookieToken(
+   await signCookie(
       res,
       {
          id: user.id,
