@@ -1,7 +1,7 @@
 const Auth = require('../models/auth.model')
 const resBuilder = require('../utils/responseBuilder')
 
-const { signCookie, setCookieToken } = require('../utils/jwtToken')
+const { signCookie, setCookieToken,setCookieRefreshToken } = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 
@@ -68,7 +68,7 @@ exports.login = catchAsync(async (req, res) => {
          'INVALID_CREDENTIALS'
       )
 
-   await signCookieToken(
+   await signCookie(
       res,
       {
          id: user.id,
@@ -90,6 +90,7 @@ exports.login = catchAsync(async (req, res) => {
  */
 exports.logout = catchAsync(async (req, res) => {
    setCookieToken(res, '', new Date())
+   setCookieRefreshToken(res, '', new Date())
 
    return resBuilder(res, 200, 'Logged out')
 })
@@ -135,7 +136,7 @@ exports.confirmEmail = catchAsync(async (req, res) => {
          'INVALID'
       )
 
-   await signCookieToken(
+   await signCookie(
       res,
       {
          id: user.id,
@@ -186,7 +187,7 @@ exports.changeEmail = catchAsync(async (req, res) => {
 
    if (!user?.id) throw new ErrorBuilder('User not found', 404, 'NOT_FOUND')
 
-   await signCookieToken(
+   await signCookie(
       res,
       {
          id: user.id,
@@ -236,7 +237,7 @@ exports.resetPassword = catchAsync(async (req, res) => {
          'INTERNAL_ERROR'
       )
 
-   await signCookieToken(
+   await signCookie(
       res,
       {
          id: user.id,
