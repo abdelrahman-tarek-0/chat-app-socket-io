@@ -205,9 +205,9 @@ exports.buildGetUserQuery = {
    },
 
    mutualChannels: (userId, targetName) => {
-    const targetId = db.raw('(select id from users where username = ?)', [
-        targetName,
-     ])
+      const targetId = db.raw('(select id from users where username = ?)', [
+         targetName,
+      ])
 
       return db('channel_members AS c1')
          .distinct('c.id', 'c.name', 'c.description', 'c.image_url')
@@ -233,9 +233,9 @@ exports.buildGetUserQuery = {
    },
 
    mutualBonds: (userId, targetName) => {
-    const targetId = db.raw('(select id from users where username = ?)', [
-        targetName,
-     ])
+      const targetId = db.raw('(select id from users where username = ?)', [
+         targetName,
+      ])
 
       return db.raw(
          `

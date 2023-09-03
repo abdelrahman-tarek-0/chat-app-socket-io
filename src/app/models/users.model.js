@@ -4,7 +4,10 @@ const ErrorBuilder = require('../utils/ErrorBuilder')
 const { hashPassword, comparePassword } = require('../utils/passwordHash')
 const { randomString } = require('../utils/general.utils')
 
-const { buildGetCurrentUserQuery, buildGetUserQuery } = require('./query-builders/users.query-builders')
+const {
+   buildGetCurrentUserQuery,
+   buildGetUserQuery,
+} = require('./query-builders/users.query-builders')
 
 class User {
    static async getCurrentUserData(
@@ -20,7 +23,7 @@ class User {
       fields.forEach((field) => {
          userQuery = buildGetCurrentUserQuery[field](userQuery)
       })
-      
+
       const user = await userQuery.groupBy('user.id').first()
 
       // sanitize
@@ -34,7 +37,6 @@ class User {
          user.bondsRequestsReceived = undefined
       if (!user.inviteSent?.at(0)?.id) user.inviteSent = undefined
       if (!user.inviteReceived?.at(0)?.id) user.inviteReceived = undefined
-     
 
       return safeUser(user || {}, opts?.unsafePass || {})
    }
@@ -47,18 +49,17 @@ class User {
 
       if (!opts?.fields?.length) fields = ['base']
 
-      let mutualChannels;
-      let mutualBonds;
-     
+      let mutualChannels
+      let mutualBonds
+
       let userQuery = buildGetUserQuery.build(targetName)
 
-      if (fields.includes('base'))
-         userQuery = buildGetUserQuery.base(userQuery)
-         
+      if (fields.includes('base')) userQuery = buildGetUserQuery.base(userQuery)
+
       if (fields.includes('mutualChannels'))
          mutualChannels = buildGetUserQuery.mutualChannels(userId, targetName)
 
-      if (fields.includes('mutualBonds')) 
+      if (fields.includes('mutualBonds'))
          mutualBonds = buildGetUserQuery.mutualBonds(userId, targetName)
 
       const [user, mutualChannelsList, mutualBondsList] = await Promise.all([
@@ -66,7 +67,6 @@ class User {
          mutualChannels,
          mutualBonds,
       ])
-
 
       return {
          ...safeUser(user || {}, opts?.unsafePass || {}),

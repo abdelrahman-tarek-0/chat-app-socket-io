@@ -1,7 +1,11 @@
 const Auth = require('../models/auth.model')
 const resBuilder = require('../utils/responseBuilder')
 
-const { signCookie, setCookieToken,setCookieRefreshToken } = require('../utils/jwtToken')
+const {
+   signCookie,
+   setCookieToken,
+   setCookieRefreshToken,
+} = require('../utils/jwtToken')
 const ErrorBuilder = require('../utils/ErrorBuilder')
 const catchAsync = require('../utils/catchAsync')
 

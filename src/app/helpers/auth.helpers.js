@@ -64,4 +64,3 @@ exports.createAndSendResetPassword = async (
       email: user.email,
    })
 }
-

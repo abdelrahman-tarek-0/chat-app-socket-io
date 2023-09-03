@@ -37,9 +37,13 @@ module.exports = {
       cookieRefreshTokenExpires: () =>
          new Date(
             Date.now() +
-               Number(process.env.REFRESH_COOKIE_EXPIRE_IN_D) * 24 * 60 * 60 * 1000
+               Number(process.env.REFRESH_COOKIE_EXPIRE_IN_D) *
+                  24 *
+                  60 *
+                  60 *
+                  1000
          ),
-      
+
       bcryptSalt: Number(process.env.BCRYPT_SALT),
       resetExpires: () =>
          new Date(

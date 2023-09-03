@@ -193,7 +193,7 @@ class User {
       { token, id, password },
       opts = { unsafePass: {} }
    ) {
-      const verification =  this.#getVerification({
+      const verification = this.#getVerification({
          id,
          token,
          verificationFor: 'reset_password',

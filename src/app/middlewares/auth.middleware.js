@@ -64,7 +64,13 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
                tokenizer: decoded?.tokenizer,
                tokenIat: decoded?.iat,
             },
-            { unsafePass: { email_verified: true, email: true, tokenizer: true, } }
+            {
+               unsafePass: {
+                  email_verified: true,
+                  email: true,
+                  tokenizer: true,
+               },
+            }
          )
       } else {
          user = decoded
