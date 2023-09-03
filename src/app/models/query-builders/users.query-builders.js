@@ -1,16 +1,13 @@
 const db = require('../../../config/database/db')
 
 exports.buildGetCurrentUserQuery = {
-   build: (userId) => {
-      return db('users as user')
+   build: (userId) =>
+      db('users as user')
          .where('user.id', userId)
-         .andWhere('user.is_active', '=', 'true')
-   },
-   base: (query) => {
-      return query.select('user.*')
-   },
-   creatorOf: (query) => {
-      return query
+         .andWhere('user.is_active', '=', 'true'),
+   base: (query) => query.select('user.*'),
+   creatorOf: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object(
@@ -26,10 +23,9 @@ exports.buildGetCurrentUserQuery = {
                '=',
                db.raw('true')
             )
-         })
-   },
-   memberIn: (query) => {
-      return query
+         }),
+   memberIn: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object(
@@ -49,10 +45,9 @@ exports.buildGetCurrentUserQuery = {
                db.raw('true')
             )
          })
-         .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id')
-   },
-   bonds: (query) => {
-      return query
+         .leftJoin('channels as c_member', 'cm.channel_id', 'c_member.id'),
+   bonds: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object('boundId', b.id,
@@ -77,10 +72,9 @@ exports.buildGetCurrentUserQuery = {
             })
             this.andOn('b_u.is_active', '=', db.raw('?', ['true']))
             this.andOn('b_u.id', '!=', 'user.id')
-         })
-   },
-   bondsRequestsSent: (query) => {
-      return query
+         }),
+   bondsRequestsSent: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object(
@@ -98,11 +92,10 @@ exports.buildGetCurrentUserQuery = {
          .leftJoin('users as brs_u', function () {
             this.on('brs_u.id', '=', 'brs.requested_id')
             this.andOn('brs_u.is_active', '=', db.raw('?', ['true']))
-         })
-   },
+         }),
 
-   bondsRequestsReceived: (query) => {
-      return query
+   bondsRequestsReceived: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object(
@@ -120,11 +113,10 @@ exports.buildGetCurrentUserQuery = {
          .leftJoin('users as brr_u', function () {
             this.on('brr_u.id', '=', 'brr.requester_id')
             this.andOn('brr_u.is_active', '=', db.raw('?', ['true']))
-         })
-   },
+         }),
 
-   inviteSent: (query) => {
-      return query
+   inviteSent: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object(
@@ -151,11 +143,10 @@ exports.buildGetCurrentUserQuery = {
          .leftJoin('users as i_t', function () {
             this.on('i_t.id', '=', 'i.target_id')
             this.andOn('i_t.is_active', '=', db.raw('?', ['true']))
-         })
-   },
+         }),
 
-   inviteReceived: (query) => {
-      return query
+   inviteReceived: (query) =>
+      query
          .select(
             db.raw(
                `JSON_AGG(DISTINCT jsonb_build_object(
@@ -183,26 +174,23 @@ exports.buildGetCurrentUserQuery = {
          .leftJoin('users as i_s', function () {
             this.on('i_s.id', '=', 'i2.creator_id')
             this.andOn('i_s.is_active', '=', db.raw('?', ['true']))
-         })
-   },
+         }),
 }
 
 exports.buildGetUserQuery = {
-   build: (username) => {
-      return db('users as user')
+   build: (username) =>
+      db('users as user')
          .where('user.username', username)
-         .andWhere('user.is_active', '=', 'true')
-   },
-   base: (query) => {
-      return query.select(
+         .andWhere('user.is_active', '=', 'true'),
+   base: (query) =>
+      query.select(
          'user.id as id',
          'user.username as username',
          'user.image_url as image_url',
          'user.display_name as display_name',
          'user.bio as bio',
          'user.created_at as created_at'
-      )
-   },
+      ),
 
    mutualChannels: (userId, targetName) => {
       const targetId = db.raw('(select id from users where username = ?)', [

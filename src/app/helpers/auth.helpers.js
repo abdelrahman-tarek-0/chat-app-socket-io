@@ -4,8 +4,6 @@ const {
    sendChangeEmail,
 } = require('../services/mail.services')
 
-const ErrorBuilder = require('../utils/ErrorBuilder')
-
 // i am adding the AuthModel as a parameter because i don't want to import it in this file
 // because it will create a circular dependency
 // if i wanted to import this file in the AuthModel file
