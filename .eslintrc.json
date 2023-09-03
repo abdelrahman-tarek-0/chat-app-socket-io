@@ -1,7 +1,6 @@
 {
   "parserOptions": {
-    "ecmaVersion": 2020,
-    "sourceTp": "module"
+    "ecmaVersion": 2020
   },
   "extends": ["airbnb", "prettier", "plugin:node/recommended"],
   "plugins": ["prettier"],
