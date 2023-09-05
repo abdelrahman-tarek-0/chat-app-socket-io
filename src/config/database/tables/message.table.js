@@ -1,7 +1,6 @@
-exports.messages = (knex) => (table) => {
+exports.channels_messages = (knex) => (table) => {
     table.uuid('id').primary().defaultTo(knex.fn.uuid())
     table.increments('raw_id').unique().unsigned().notNullable()
-
 
     table
         .uuid('sender_id')
