@@ -16,7 +16,7 @@ exports.messages = (knex) => (table) => {
    table
       .uuid('reply_to')
       .references('id')
-      .inTable('channels_messages')
+      .inTable('messages')
       .onDelete('CASCADE')
 }
 
