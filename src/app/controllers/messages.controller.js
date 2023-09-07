@@ -8,12 +8,11 @@ exports.getMessages = (mode) =>
    catchAsync(async (req, res, next) => {
       const id =
          mode === 'channel' ? req?.params?.channelId : req?.params?.bondId
+         
+      const messages = await Message.getMessages({
+          id,
+          mode,
+      })
 
-      console.log('id', id)
-      // const messages = await Message.getMessages({
-      //     id,
-      //     mode,
-      // })
-
-      // return resBuilder(res, 200, 'messages retrieved successfully', messages)
+      return resBuilder(res, 200, 'messages retrieved successfully', messages)
    })
