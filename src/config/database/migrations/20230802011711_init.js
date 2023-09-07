@@ -83,13 +83,15 @@ exports.down = function (knex) {
    return knex.schema
       .dropTableIfExists('channel_members')
       .dropTableIfExists('channel_invites')
-      .dropTableIfExists('channels')
-      .dropTableIfExists('verifications')
-      .dropTableIfExists('bonds')
       .dropTableIfExists('bonds_requests')
-      .dropTableIfExists('messages')
       .dropTableIfExists('bonds_messages')
       .dropTableIfExists('channels_messages')
+      .dropTableIfExists('verifications')
+
+
+      .dropTableIfExists('messages')
+      .dropTableIfExists('bonds')
+      .dropTableIfExists('channels')
       .dropTableIfExists('users')
 
 }

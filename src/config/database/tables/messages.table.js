@@ -18,6 +18,8 @@ exports.messages = (knex) => (table) => {
       .references('id')
       .inTable('messages')
       .onDelete('CASCADE')
+
+   table.timestamps(true, true)
 }
 
 exports.attachments = (knex) => (table) => {

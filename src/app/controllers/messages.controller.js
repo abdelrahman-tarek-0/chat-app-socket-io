@@ -7,7 +7,7 @@ const catchAsync = require('../utils/catchAsync')
 exports.getBondMessages = catchAsync(async (req, res) => {
 
    const messages = await Message.getBondMessages({
-      bondId: req?.params?.bondId,
+      bondId: req?.params?.channelId,
       userId: req?.user?.id,
    })
 
