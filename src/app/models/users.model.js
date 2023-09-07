@@ -79,7 +79,7 @@ class User {
       const { id } = data
 
       let task
-      if (!data.email_verified) {
+      if (!data.email_verified && data.email) {
          // background job to expire all other email verifications (no need to await)
          task = db('verifications')
             .update({
