@@ -10,6 +10,12 @@ const {
    channelsMembers,
 } = require('../tables/channels.table')
 
+const {
+   messages,
+   bonds_messages,
+   channels_messages,
+} = require('../tables/messages.table')
+
 const tableMapping = {
    users: users,
    verifications: verifications,
@@ -18,6 +24,9 @@ const tableMapping = {
    channel_members: channelsMembers,
    bonds: bonds,
    bonds_requests: bondsRequests,
+   messages: messages,
+   bonds_messages: bonds_messages,
+   channels_messages: channels_messages,
 }
 
 const tableNames = Object.keys(tableMapping)
@@ -78,5 +87,9 @@ exports.down = function (knex) {
       .dropTableIfExists('verifications')
       .dropTableIfExists('bonds')
       .dropTableIfExists('bonds_requests')
+      .dropTableIfExists('messages')
+      .dropTableIfExists('bonds_messages')
+      .dropTableIfExists('channels_messages')
       .dropTableIfExists('users')
+
 }
