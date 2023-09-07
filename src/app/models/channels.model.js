@@ -171,16 +171,6 @@ class Channel {
    }
 
    static async createChannel(creator, data) {
-      const userChannelsCount = Number(
-         (
-            await db
-               .select(db.raw(`COUNT(*) as count`))
-               .from('channels')
-               .where('creator', creator)
-               .andWhere('is_active', 'true')
-               .first()
-         ).count
-      )
 
       if (userChannelsCount >= 25)
          throw new ErrorBuilder(
