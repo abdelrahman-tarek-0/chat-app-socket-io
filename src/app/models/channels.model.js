@@ -171,14 +171,6 @@ class Channel {
    }
 
    static async createChannel(creator, data) {
-
-      if (userChannelsCount >= 25)
-         throw new ErrorBuilder(
-            'User have max channel number',
-            400,
-            'CREATE_CHANNEL'
-         )
-
       const channel = await db('channels')
          .insert({ creator, ...data })
          .returning('*')
