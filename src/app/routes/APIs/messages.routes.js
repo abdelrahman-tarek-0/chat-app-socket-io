@@ -1,11 +1,11 @@
 const { Router } = require('express')
 
-const { getMessages } = require('../../controllers/messages.controller')
+const { getBondMessages } = require('../../controllers/messages.controller')
 
 const { loggedIn } = require('../../middlewares/auth.middleware')
 
 const router = Router()
 
-router.get('/channels/:channelId', loggedIn(), getMessages('channel'))
+router.get('/channels/:channelId', loggedIn(), getBondMessages)
 
 module.exports = router
