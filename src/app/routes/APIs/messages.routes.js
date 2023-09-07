@@ -6,6 +6,6 @@ const { loggedIn } = require('../../middlewares/auth.middleware')
 
 const router = Router()
 
-router.get('/channels/:channelId', loggedIn(), )
+router.get('/channels/:channelId', loggedIn(), getMessages('channel'))
 
 module.exports = router
