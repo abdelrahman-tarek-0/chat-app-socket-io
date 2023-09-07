@@ -3,6 +3,7 @@ const authRoutes = require('./APIs/auth.routes')
 const channelsRoutes = require('./APIs/channels.routes')
 const usersRoutes = require('./APIs/users.routes')
 const channelsUsersRoutes = require('./APIs/channels-users.routes')
+const messagesRoutes = require('./APIs/messages.routes')
 
 const { loggedIn } = require('../middlewares/auth.middleware')
 
@@ -21,5 +22,6 @@ router.use('/auth', authRoutes)
 router.use('/channels', channelsRoutes)
 router.use('/users', usersRoutes)
 router.use('/channels-users', channelsUsersRoutes)
+router.use('/messages', messagesRoutes)
 
 module.exports = router
