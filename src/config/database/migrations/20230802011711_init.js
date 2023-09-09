@@ -88,10 +88,8 @@ exports.down = function (knex) {
       .dropTableIfExists('channels_messages')
       .dropTableIfExists('verifications')
 
-
       .dropTableIfExists('messages')
       .dropTableIfExists('bonds')
       .dropTableIfExists('channels')
       .dropTableIfExists('users')
-
 }
