@@ -9,7 +9,9 @@ const verifyToken = (token) =>
    })
 
 const verifyRefreshToken = (token) =>
-   promisify(jwt.verify)(token, security.refReshTokenSecret)
+   promisify(jwt.verify)(token, security.refReshTokenSecret,{
+      ignoreExpiration: true,
+   })
 
 const signToken = (data, tokenizer) =>
    promisify(jwt.sign)({ ...data, tokenizer }, security.tokenSecret, {
