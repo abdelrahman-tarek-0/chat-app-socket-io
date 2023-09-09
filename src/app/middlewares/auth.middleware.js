@@ -17,29 +17,46 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
       opts = optsConfig(opts)
 
       const token = req?.cookies?.token
-
-      // verify token
-      let decoded = token ? await verifyToken(token) : {}
-      let user
+      const refreshToken = req?.cookies?.refreshToken
+      let user = {}
       let requireRefresh = false
 
-      if (decoded?.exp < Math.round(Date.now() / 1000)) {
-         const refreshToken = req?.cookies?.refreshToken
-         if (!refreshToken)
+      // verify token
+      let decodedToken = token ? await verifyToken(token) : {}
+      let decodedRefreshToken = refreshToken
+         ? await verifyRefreshToken(refreshToken)
+         : {}
+
+      const isTokenValid =
+         token &&
+         decodedToken?.exp > Math.round(Date.now() / 1000) &&
+         decodedToken?.id
+
+      const isRefreshTokenValid =
+         refreshToken &&
+         decodedRefreshToken?.exp > Math.round(Date.now() / 1000) &&
+         decodedRefreshToken?.id
+
+      if (!isTokenValid && !isRefreshTokenValid)
+         throw new ErrorBuilder(
+            'Invalid token, Please login',
+            401,
+            'TOKEN_ERROR'
+         )
+
+      if (!isTokenValid) {
+         if (!isRefreshTokenValid)
             throw new ErrorBuilder(
                'Invalid token, Please login',
                401,
                'TOKEN_ERROR'
             )
 
-         decoded = await verifyRefreshToken(refreshToken)
-         console.log(decoded)
-
          user = await Auth.verifyUser(
             {
-               id: decoded?.id,
-               tokenizer: decoded?.tokenizer,
-               tokenIat: decoded?.iat,
+               id: decodedRefreshToken?.id,
+               tokenizer: decodedRefreshToken?.tokenizer,
+               tokenIat: decodedRefreshToken?.iat,
             },
             {
                unsafePass: {
@@ -49,20 +66,14 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
                },
             }
          )
+
          requireRefresh = true
       } else if (opts.populateUser) {
-         if (!decoded?.id)
-            throw new ErrorBuilder(
-               'Invalid token, Please login',
-               401,
-               'TOKEN_ERROR'
-            )
-
          user = await Auth.verifyUser(
             {
-               id: decoded?.id,
-               tokenizer: decoded?.tokenizer,
-               tokenIat: decoded?.iat,
+               id: decodedToken?.id,
+               tokenizer: decodedToken?.tokenizer,
+               tokenIat: decodedToken?.iat,
             },
             {
                unsafePass: {
@@ -73,10 +84,12 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
             }
          )
       } else {
-         user = decoded
+         user = decodedToken
       }
 
       console.log(user)
+      console.log(decodedToken)
+      console.log(decodedRefreshToken)
       console.log(requireRefresh)
 
       if (!user?.id)
@@ -104,7 +117,6 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
             'CONFIRM_EMAIL'
          )
 
-      // TODO: handel disabled users
       user.tokenizer = undefined
       req.user = user
       return next()
