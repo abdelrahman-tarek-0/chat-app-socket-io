@@ -150,5 +150,13 @@ exports.bondsRequests = (knex) => (table) => {
    table.unique(['requester_id', 'requested_id'])
    table.unique(['requested_id', 'requester_id'])
 
+   table.specificType(
+      'unique_bond_request',
+      `
+      text UNIQUE generated always as
+      ( LEAST(CAST(requester_id AS TEXT) , CAST(requested_id AS TEXT) ) || ' ' || GREATEST(CAST(requester_id AS TEXT)  , CAST(requested_id AS TEXT)) ) stored
+      `
+   )
+
    table.timestamps(true, true)
 }

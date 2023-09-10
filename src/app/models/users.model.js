@@ -235,10 +235,10 @@ class User {
          })
          .returning('*')
 
-      if (!bondRequest[0])
+      if (!bondRequest?.[0])
          throw new ErrorBuilder('Bond request not found', 404, 'NOT_FOUND')
 
-      const requesterId = bondRequest[0].requester_id
+      const requesterId = bondRequest[0]?.requester_id
 
       const bond = await db('bonds')
          .insert({
