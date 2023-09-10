@@ -12,6 +12,7 @@ const {
 
 const {
    messages,
+   attachments,
    bonds_messages,
    channels_messages,
 } = require('../tables/messages.table')
@@ -25,6 +26,7 @@ const tableMapping = {
    bonds: bonds,
    bonds_requests: bondsRequests,
    messages: messages,
+   attachments: attachments,
    bonds_messages: bonds_messages,
    channels_messages: channels_messages,
 }
@@ -87,6 +89,7 @@ exports.down = function (knex) {
       .dropTableIfExists('bonds_messages')
       .dropTableIfExists('channels_messages')
       .dropTableIfExists('verifications')
+      .dropTableIfExists('attachments')
 
       .dropTableIfExists('messages')
       .dropTableIfExists('bonds')

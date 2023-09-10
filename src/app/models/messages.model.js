@@ -44,9 +44,25 @@ class Message {
                            ELSE NULL
                         END
                      ),
+                     'attachments', JSON_AGG( DISTINCT
+                        jsonb_build_object(
+                           'id', reply_to_attachments.id,
+                           'type', reply_to_attachments.type,
+                           'url', reply_to_attachments.url
+                        ) 
+                     ),
                      'isActive', reply.is_active
                   ) as reply_to
                `),
+                  db.raw(`
+                    JSON_AGG(DISTINCT
+                        jsonb_build_object(
+                           'id', attachment.id,
+                           'type', attachment.type,
+                           'url', attachment.url
+                        )
+                    ) as attachments
+                  `),
                   'message.sender_id as sender_id',
                   'sender.username as sender_username',
                   'sender.display_name as sender_display_name',
@@ -59,11 +75,20 @@ class Message {
                .leftJoin('messages as reply', 'reply.id', 'message.reply_to')
                .leftJoin('users as sender', function () {
                   this.on('sender.id', '=', 'message.sender_id')
-                  this.on('sender.is_active', '=', db.raw('?', ['true']))
+                  .andOn('sender.is_active', '=', db.raw('?', ['true']))
+               })
+               .leftJoin('attachments as attachment', function () {
+                  this.on('attachment.message_id', '=', 'message.id')
+                  .andOn('message.is_active', '=', db.raw('?', ['true']))
+               })
+               .leftJoin('attachments as reply_to_attachments', function () {
+                  this.on('reply_to_attachments.message_id', '=', 'reply.id')
+                  .andOn('reply.is_active', '=', db.raw('?', ['true']))
                })
                .where('bm.bond_id', '=', bondId)
                .orderBy('bm.created_at', 'asc')
                .limit(50)
+               .groupBy('message.id', 'reply.id', 'sender.id', 'bm.created_at')
                .toString()}  
          `
       )
