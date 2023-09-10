@@ -74,6 +74,28 @@ exports.up = async function (knex) {
       BEFORE INSERT ON users
       FOR EACH ROW
       EXECUTE FUNCTION users_insert_trigger();
+
+
+      CREATE SEQUENCE IF NOT EXISTS bond_local_id_seq;
+
+      CREATE OR REPLACE FUNCTION update_local_id()
+      RETURNS TRIGGER AS $$
+      BEGIN
+         -- Calculate the local_id based on the bond_id
+         NEW.local_id := (
+            SELECT COALESCE(MAX(local_id), -1) + 1
+            FROM bonds_messages
+            WHERE bond_id = NEW.bond_id
+         );
+
+         RETURN NEW;
+      END;
+      $$ LANGUAGE plpgsql;
+
+      CREATE TRIGGER set_local_id
+      BEFORE INSERT ON bonds_messages
+      FOR EACH ROW
+      EXECUTE FUNCTION update_local_id();
 `)
 }
 

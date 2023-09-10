@@ -79,5 +79,7 @@ exports.bonds_messages = (knex) => (table) => {
       .onDelete('SET NULL')
       .notNullable()
 
+   table.integer('local_id').unsigned().notNullable()
+
    table.timestamps(true, true)
 }

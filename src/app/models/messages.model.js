@@ -18,6 +18,7 @@ class Message {
             ${db('bonds_messages as bm')
                .select(
                   'message.id as id',
+                  'bm.local_id as localId',
                   'message.is_active as isActive',
                   db.raw(
                      `
@@ -37,6 +38,7 @@ class Message {
                   db.raw(`
                   json_build_object(
                      'id', reply.id,
+                     'localId', reply_bond_message.local_id,
                      'content',(
                         CASE
                            WHEN reply.is_active = true THEN reply.content
@@ -85,10 +87,13 @@ class Message {
                   this.on('reply_to_attachments.message_id', '=', 'reply.id')
                   .andOn('reply.is_active', '=', db.raw('?', ['true']))
                })
+               .leftJoin('bonds_messages as reply_bond_message', function () {
+                  this.on('reply_bond_message.message_id', '=', 'reply.id')
+               })
                .where('bm.bond_id', '=', bondId)
                .orderBy('bm.created_at', 'asc')
                .limit(50)
-               .groupBy('message.id', 'reply.id', 'sender.id', 'bm.created_at')
+               .groupBy('message.id', 'reply.id', 'sender.id', 'bm.created_at','bm.local_id','reply_bond_message.local_id')
                .toString()}  
          `
       )
