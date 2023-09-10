@@ -18,6 +18,7 @@ class Message {
             ${db('bonds_messages as bm')
                .select(
                   'message.id as id',
+                  'message.is_active as isActive',
                   db.raw(
                      `
                   CASE
@@ -30,7 +31,7 @@ class Message {
                   db.raw(`
                   CASE
                      WHEN message.is_active = true THEN message.content
-                     ELSE null
+                     ELSE 'Xx This message has been deleted xX'
                   END as content
                `),
                   db.raw(`
@@ -39,9 +40,11 @@ class Message {
                      'content',(
                         CASE
                            WHEN reply.is_active = true THEN reply.content
+                           WHEN reply.is_active = false THEN 'Xx This message has been deleted xX'
                            ELSE NULL
                         END
-                     )
+                     ),
+                     'isActive', reply.is_active
                   ) as reply_to
                `),
                   'message.sender_id as sender_id',
@@ -59,7 +62,7 @@ class Message {
                   this.on('sender.is_active', '=', db.raw('?', ['true']))
                })
                .where('bm.bond_id', '=', bondId)
-               .orderBy('bm.created_at', 'desc')
+               .orderBy('bm.created_at', 'asc')
                .limit(50)
                .toString()}  
          `
