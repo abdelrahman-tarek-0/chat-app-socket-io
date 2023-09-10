@@ -6,7 +6,7 @@ exports.messages = (knex) => (table) => {
       .uuid('sender_id')
       .references('id')
       .inTable('users')
-      .onDelete('CASCADE')
+      .onDelete('SET NULL')
       .notNullable()
 
    table.string('content').notNullable()
@@ -17,7 +17,7 @@ exports.messages = (knex) => (table) => {
       .uuid('reply_to')
       .references('id')
       .inTable('messages')
-      .onDelete('CASCADE')
+      .onDelete('SET NULL')
 
    table.timestamps(true, true)
 }
@@ -55,7 +55,7 @@ exports.channels_messages = (knex) => (table) => {
       .uuid('message_id')
       .references('id')
       .inTable('messages')
-      .onDelete('CASCADE')
+      .onDelete('SET NULL')
       .notNullable()
 
    table.timestamps(true, true)
@@ -76,7 +76,7 @@ exports.bonds_messages = (knex) => (table) => {
       .uuid('message_id')
       .references('id')
       .inTable('messages')
-      .onDelete('CASCADE')
+      .onDelete('SET NULL')
       .notNullable()
 
    table.timestamps(true, true)

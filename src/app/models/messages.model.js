@@ -35,7 +35,7 @@ class Message {
                `),
                   db.raw(`
                   json_build_object(
-                     'id', message.id,
+                     'id', reply.id,
                      'content',(
                         CASE
                            WHEN reply.is_active = true THEN reply.content
