@@ -22,8 +22,8 @@ exports.loggedIn = (opts = { skipEmailConfirm: false, populateUser: true }) =>
       let requireRefresh = false
 
       // verify token
-      let decodedToken = token ? await verifyToken(token) : {}
-      let decodedRefreshToken = refreshToken
+      const decodedToken = token ? await verifyToken(token) : {}
+      const decodedRefreshToken = refreshToken
          ? await verifyRefreshToken(refreshToken)
          : {}
 
