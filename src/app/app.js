@@ -73,4 +73,26 @@ app.use((req, res) => {
 // i will change the behavior of the public channel after adding a (channel_settings, request_join) tables, in the near future
 // user_settings| channel_settings | roles | friends-inboxes (Bond) | request_join
 // mutual bonds
+
+
+// change the app structure to the 3-tier architecture
+// using the concept of modules
+// src
+//    app
+//       routes
+//          index.routes.js
+//          module_name.routes.js
+//       modules
+//          module_name
+//             module_name.controller.js
+//             module_name.service.js
+//             module_name.model.js
+//       shared
+//          middlewares
+//          utils
+//          errors
+//          constants
+//          config
+//          db
+
 module.exports = app
